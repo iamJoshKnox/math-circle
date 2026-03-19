@@ -53,15 +53,16 @@ Games that already have hints: 06-magic-square, 08-code-breaker.
 
 ### 1.4 Keyboard Navigation
 Support basic keyboard controls so mouse isn't required.
-- [ ] 01-odd-one-out
-- [ ] 02-symmetry-mirror
-- [ ] 03-logic-deduction
-- [ ] 04-tower-of-hanoi
-- [ ] 05-dice-roller
-- [ ] 06-magic-square
-- [ ] 07-euler-explorer
-- [ ] 08-code-breaker
-- [ ] 09-floor-plan
+Each game has a keyboard legend (auto-hidden on touch devices) and visible focus indicators.
+- [x] 01-odd-one-out — Arrow/number keys to select items, Enter to confirm, H hint, N next
+- [x] 02-symmetry-mirror — Arrows to move grid cursor, 1-6 paint colors, E eraser, Enter check, H peek
+- [x] 03-logic-deduction — Left/Right between creatures, Up/Down cycle options, Enter select, H hint, N next
+- [x] 04-tower-of-hanoi — 1/2/3 select pegs, H hint, R reset, Left/Right change disk count
+- [x] 05-dice-roller — Space/Enter roll, T 10x, H 100x, 2-9/0/-/= predict sums, R reset
+- [x] 06-magic-square — Arrows move grid focus, 1-9 place numbers, Backspace remove, H hint, C clear
+- [x] 07-euler-explorer — Left/Right cycle shapes, Tab between inputs, Enter check, H hint
+- [x] 08-code-breaker — Left/Right between substitution inputs, Up/Down switch puzzles, H hint
+- [x] 09-floor-plan — Arrows move grid cursor, 1-9 select furniture, R rotate, Enter place, Delete remove, P peek, C clear
 
 ### 1.5 Sound Effects
 Add optional audio feedback (success chimes, clicks, dice rolls).

@@ -202,6 +202,38 @@ h1 {
   margin-right: auto;
 }
 .reset-progress-btn:hover { color: #e53935; border-color: #e53935; }
+.kbd-legend {
+  text-align: center;
+  color: #8aaa70;
+  font-size: 0.82em;
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: rgba(74,124,35,0.08);
+  border: 1px solid rgba(74,124,35,0.2);
+  border-radius: 10px;
+  line-height: 1.7;
+}
+.kbd-legend kbd {
+  display: inline-block;
+  background: rgba(74,124,35,0.12);
+  border: 1px solid rgba(74,124,35,0.3);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 0.95em;
+  margin: 0 1px;
+  color: #4a7c23;
+}
+.grid-cursor {
+  outline: 4px solid #ff9800;
+  outline-offset: -2px;
+  box-shadow: 0 0 12px rgba(255,152,0,0.6);
+  animation: cursorPulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes cursorPulse {
+  from { box-shadow: 0 0 8px rgba(255,152,0,0.4); }
+  to { box-shadow: 0 0 18px rgba(255,152,0,0.8); }
+}
 </style>
 </head>
 <body>
@@ -239,6 +271,17 @@ h1 {
 
   <div class="result-box" id="resultBox"></div>
   <button class="reset-progress-btn" onclick="resetProgress()">Reset Progress</button>
+
+  <div class="kbd-legend" id="kbdLegend">
+    &#x2328; Keyboard: <kbd>&larr;</kbd><kbd>&rarr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd> move cursor &nbsp;|&nbsp;
+    <kbd>1</kbd>-<kbd>9</kbd> select furniture &nbsp;|&nbsp;
+    <kbd>R</kbd> rotate &nbsp;|&nbsp;
+    <kbd>Enter</kbd>/<kbd>Space</kbd> place &nbsp;|&nbsp;
+    <kbd>Del</kbd> remove at cursor &nbsp;|&nbsp;
+    <kbd>X</kbd> remove mode &nbsp;|&nbsp;
+    <kbd>P</kbd> peek &nbsp;|&nbsp;
+    <kbd>C</kbd> clear
+  </div>
 </div>
 
 <script>
@@ -635,6 +678,8 @@ function drawFurniture3D(f, ft, W, H) {
 }
 
 let hoverGridX = -1, hoverGridY = -1;
+let cursorX = 0, cursorY = 0;
+let kbCursorActive = false;
 
 function drawGrid() {
   const W = gridCanvas.width, H = gridCanvas.height;
@@ -728,6 +773,17 @@ function drawGrid() {
       c.fillText(ft.name, f.x * cellW + f.w * cellW / 2, f.y * cellH + f.h * cellH / 2 + 4);
       c.globalAlpha = 1;
     });
+  }
+
+  // Keyboard cursor
+  if (kbCursorActive) {
+    c.save();
+    c.strokeStyle = '#ff9800';
+    c.lineWidth = 4;
+    c.shadowColor = 'rgba(255,152,0,0.7)';
+    c.shadowBlur = 10;
+    c.strokeRect(cursorX * cellW + 3, cursorY * cellH + 3, cellW - 6, cellH - 6);
+    c.restore();
   }
 
   // Remove mode indicator
@@ -901,6 +957,129 @@ function peekAnswer() {
   }
   requestAnimationFrame(fadeStep);
 }
+
+// Hide keyboard legend on touch devices
+if ('ontouchstart' in window) {
+  const kl = document.getElementById('kbdLegend');
+  if (kl) kl.style.display = 'none';
+}
+
+// Helper to place furniture at cursor via keyboard
+function placeAtCursor() {
+  if (isRemoveMode) {
+    const idx = placedFurniture.findIndex(f =>
+      cursorX >= f.x && cursorX < f.x + f.w && cursorY >= f.y && cursorY < f.y + f.h
+    );
+    if (idx >= 0) {
+      placedFurniture.splice(idx, 1);
+    }
+    drawGrid();
+    return;
+  }
+  if (!selectedType) return;
+  const ft = furnitureTypes[selectedType];
+  let pw = isRotated ? ft.h : ft.w;
+  let ph = isRotated ? ft.w : ft.h;
+  if (cursorX + pw > GRID || cursorY + ph > GRID) return;
+  const overlaps = placedFurniture.some(f =>
+    cursorX < f.x + f.w && cursorX + pw > f.x && cursorY < f.y + f.h && cursorY + ph > f.y
+  );
+  if (overlaps) return;
+  placedFurniture.push({ type: selectedType, x: cursorX, y: cursorY, w: pw, h: ph });
+  drawGrid();
+}
+
+// Helper to remove furniture at cursor
+function removeAtCursor() {
+  const idx = placedFurniture.findIndex(f =>
+    cursorX >= f.x && cursorX < f.x + f.w && cursorY >= f.y && cursorY < f.y + f.h
+  );
+  if (idx >= 0) {
+    placedFurniture.splice(idx, 1);
+    drawGrid();
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  // Don't capture when typing in an input
+  const tag = document.activeElement ? document.activeElement.tagName : '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+  const paletteItems = Array.from(document.querySelectorAll('.furniture-item'));
+
+  switch (e.key) {
+    case 'ArrowLeft':
+      e.preventDefault();
+      kbCursorActive = true;
+      cursorX = Math.max(0, cursorX - 1);
+      hoverGridX = cursorX; hoverGridY = cursorY;
+      drawGrid();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      kbCursorActive = true;
+      cursorX = Math.min(GRID - 1, cursorX + 1);
+      hoverGridX = cursorX; hoverGridY = cursorY;
+      drawGrid();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      kbCursorActive = true;
+      cursorY = Math.max(0, cursorY - 1);
+      hoverGridX = cursorX; hoverGridY = cursorY;
+      drawGrid();
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      kbCursorActive = true;
+      cursorY = Math.min(GRID - 1, cursorY + 1);
+      hoverGridX = cursorX; hoverGridY = cursorY;
+      drawGrid();
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      placeAtCursor();
+      break;
+    case 'r':
+    case 'R':
+      e.preventDefault();
+      rotateSelected();
+      break;
+    case 'x':
+    case 'X':
+      e.preventDefault();
+      removeMode();
+      break;
+    case 'p':
+    case 'P':
+      e.preventDefault();
+      peekAnswer();
+      break;
+    case 'c':
+    case 'C':
+      e.preventDefault();
+      clearGrid();
+      break;
+    case 'Delete':
+    case 'Backspace':
+      e.preventDefault();
+      removeAtCursor();
+      break;
+    default:
+      // Number keys 1-9 to select palette items
+      if (e.key >= '1' && e.key <= '9') {
+        const idx = parseInt(e.key) - 1;
+        if (idx < paletteItems.length) {
+          e.preventDefault();
+          paletteItems[idx].click();
+        }
+      }
+      break;
+  }
+});
 
 init();
 </script>

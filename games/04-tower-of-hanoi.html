@@ -87,6 +87,31 @@ button:active { transform: scale(0.95); }
 .peg-zone:hover, .peg-zone.highlight {
   background: rgba(255,255,255,0.07);
 }
+.peg-zone.kb-focus {
+  outline: 3px solid #f1c40f;
+  outline-offset: -3px;
+  box-shadow: 0 0 18px 4px rgba(241,196,15,0.35);
+  animation: kbPulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes kbPulse {
+  from { box-shadow: 0 0 12px 2px rgba(241,196,15,0.25); }
+  to { box-shadow: 0 0 22px 6px rgba(241,196,15,0.45); }
+}
+.kbd-legend {
+  font-size: 0.82rem;
+  color: #888;
+  margin-top: 10px;
+  text-align: center;
+  line-height: 1.6;
+}
+.kbd-legend kbd {
+  background: rgba(255,255,255,0.12);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  border: 1px solid rgba(255,255,255,0.2);
+}
 .peg-zone.invalid-flash {
   background: rgba(231, 76, 60, 0.25);
 }
@@ -265,6 +290,13 @@ button:active { transform: scale(0.95); }
 </div>
 
 <canvas class="confetti" id="confettiCanvas"></canvas>
+
+<div class="kbd-legend" id="kbdLegend">
+  <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Select peg &nbsp;
+  <kbd>&larr;</kbd><kbd>&rarr;</kbd> Change disk count &nbsp;
+  <kbd>H</kbd> Hint &nbsp;
+  <kbd>R</kbd> Reset
+</div>
 
 <script>
 const COLORS = [
@@ -558,6 +590,72 @@ function stopConfetti() {
   if (confettiAnim) cancelAnimationFrame(confettiAnim);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   confettiPieces = [];
+}
+
+/* --- Keyboard Navigation --- */
+let kbFocusPeg = -1;
+
+function setKbFocus(p) {
+  kbFocusPeg = p;
+  document.querySelectorAll('.peg-zone').forEach((z, i) => {
+    z.classList.toggle('kb-focus', i === kbFocusPeg);
+  });
+}
+
+function clearKbFocus() {
+  kbFocusPeg = -1;
+  document.querySelectorAll('.peg-zone').forEach(z => z.classList.remove('kb-focus'));
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const key = e.key;
+
+  if (key === '1' || key === '2' || key === '3') {
+    e.preventDefault();
+    const pegIdx = parseInt(key) - 1;
+    setKbFocus(pegIdx);
+    pegClick(pegIdx);
+    return;
+  }
+
+  if (key === 'h' || key === 'H') {
+    e.preventDefault();
+    showHint();
+    return;
+  }
+
+  if (key === 'r' || key === 'R') {
+    e.preventDefault();
+    resetGame();
+    return;
+  }
+
+  if (key === 'ArrowLeft' || key === 'ArrowRight') {
+    e.preventDefault();
+    const diskOptions = [3, 4, 5];
+    const currentIdx = diskOptions.indexOf(numDisks);
+    let newIdx;
+    if (key === 'ArrowLeft') {
+      newIdx = Math.max(0, currentIdx - 1);
+    } else {
+      newIdx = Math.min(diskOptions.length - 1, currentIdx + 1);
+    }
+    if (newIdx !== currentIdx) {
+      numDisks = diskOptions[newIdx];
+      document.querySelectorAll('.btn-disk').forEach((b, i) => {
+        b.classList.toggle('active', i === newIdx);
+      });
+      resetGame();
+    }
+    return;
+  }
+});
+
+// Hide keyboard legend on touch devices
+if ('ontouchstart' in window) {
+  const legend = document.getElementById('kbdLegend');
+  if (legend) legend.style.display = 'none';
 }
 
 resetGame();

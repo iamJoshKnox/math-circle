@@ -272,6 +272,37 @@ h1 {
   margin-right: auto;
 }
 .reset-progress-btn:hover { color: #ff6b6b; border-color: #ff6b6b; }
+.kbd-legend {
+  text-align: center;
+  color: #88aacc;
+  font-size: 0.82em;
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: rgba(0,255,136,0.06);
+  border: 1px solid rgba(0,255,136,0.15);
+  border-radius: 10px;
+  line-height: 1.7;
+}
+.kbd-legend kbd {
+  display: inline-block;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 0.95em;
+  margin: 0 1px;
+  color: #00ff88;
+}
+.sub-to:focus-visible {
+  border-color: #00ff88 !important;
+  box-shadow: 0 0 12px rgba(0,255,136,0.5) !important;
+  outline: none;
+}
+.sub-to.kb-focused {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 12px rgba(255,193,7,0.5) !important;
+}
 </style>
 </head>
 <body>
@@ -310,6 +341,12 @@ h1 {
   </div>
 
   <button class="reset-progress-btn" onclick="resetProgress()">Reset Progress</button>
+
+  <div class="kbd-legend" id="kbdLegend">
+    &#x2328; Keyboard: <kbd>&larr;</kbd><kbd>&rarr;</kbd> move between letter fields &nbsp;|&nbsp;
+    <kbd>&uarr;</kbd><kbd>&darr;</kbd> switch puzzle &nbsp;|&nbsp;
+    <kbd>H</kbd> hint (when not typing)
+  </div>
 </div>
 
 <script>
@@ -686,6 +723,51 @@ function launchConfetti() {
     setTimeout(() => conf.remove(), dur);
   }
 }
+
+// Hide keyboard legend on touch devices
+if ('ontouchstart' in window) {
+  const kl = document.getElementById('kbdLegend');
+  if (kl) kl.style.display = 'none';
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+  const inputs = Array.from(document.querySelectorAll('.sub-to'));
+  const activeEl = document.activeElement;
+  const isSubInput = activeEl && activeEl.classList.contains('sub-to');
+  const currentIdx = isSubInput ? inputs.indexOf(activeEl) : -1;
+
+  if (e.key === 'ArrowLeft') {
+    if (isSubInput || inputs.length > 0) {
+      e.preventDefault();
+      const nextIdx = isSubInput ? Math.max(0, currentIdx - 1) : 0;
+      inputs[nextIdx].focus();
+    }
+  } else if (e.key === 'ArrowRight') {
+    if (isSubInput || inputs.length > 0) {
+      e.preventDefault();
+      const nextIdx = isSubInput ? Math.min(inputs.length - 1, currentIdx + 1) : 0;
+      inputs[nextIdx].focus();
+    }
+  } else if (e.key === 'ArrowUp') {
+    if (!isSubInput) {
+      e.preventDefault();
+      const newIdx = (currentPuzzle - 1 + puzzles.length) % puzzles.length;
+      selectPuzzle(newIdx);
+    }
+  } else if (e.key === 'ArrowDown') {
+    if (!isSubInput) {
+      e.preventDefault();
+      const newIdx = (currentPuzzle + 1) % puzzles.length;
+      selectPuzzle(newIdx);
+    }
+  } else if ((e.key === 'h' || e.key === 'H') && !isSubInput) {
+    e.preventDefault();
+    giveHint();
+  }
+});
 
 init();
 </script>

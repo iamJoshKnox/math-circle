@@ -198,6 +198,23 @@ h1 {
 .cell.peek-glow {
   animation: peekPulse 0.5s ease-in-out 3;
 }
+.cell.kb-focus {
+  outline: 4px solid #ffd740;
+  outline-offset: 2px;
+  box-shadow: 0 0 16px 4px rgba(255,215,64,0.5) !important;
+  animation: kbPulse 1.2s ease-in-out infinite;
+}
+@keyframes kbPulse {
+  0%, 100% { outline-color: #ffd740; }
+  50% { outline-color: #ffab00; }
+}
+.kb-legend {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.8rem;
+  margin-top: 10px;
+  text-align: center;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -225,6 +242,10 @@ h1 {
   <button class="btn-peek" id="peekBtn" onclick="usePeek()">Peek</button>
   <button class="btn btn-check" onclick="checkAnswer()">Check!</button>
   <button class="btn btn-next" id="nextBtn" onclick="nextLevel()">Next Level</button>
+</div>
+
+<div class="kb-legend" id="kbLegend" style="display:none">
+  ⌨ Arrows to move &bull; 1-6 for colors &bull; E = Eraser &bull; Delete = Clear cell &bull; Enter = Check &bull; H = Peek
 </div>
 
 <div class="end-screen" id="endScreen">
@@ -508,6 +529,123 @@ function restart() {
   isEraser = false;
   saveProgress(0);
   renderLevel();
+}
+
+// --- Keyboard Navigation ---
+let kbRow = -1, kbCol = -1;
+
+function getKbCell() {
+  if (kbRow < 0 || kbCol < 0) return null;
+  const cells = document.querySelectorAll('#rightGrid .cell');
+  for (const cell of cells) {
+    if (parseInt(cell.dataset.row) === kbRow && parseInt(cell.dataset.col) === kbCol) return cell;
+  }
+  return null;
+}
+
+function updateKbFocus() {
+  document.querySelectorAll('#rightGrid .cell').forEach(c => c.classList.remove('kb-focus'));
+  const cell = getKbCell();
+  if (cell) cell.classList.add('kb-focus');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  if (currentLevel >= levels.length) return;
+  const lv = levels[currentLevel];
+  const rows = lv.rows, cols = lv.cols;
+
+  switch (e.key) {
+    case 'ArrowRight':
+      e.preventDefault();
+      if (kbRow < 0) { kbRow = 0; kbCol = 0; }
+      else { kbCol = (kbCol + 1) % cols; }
+      updateKbFocus();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      if (kbRow < 0) { kbRow = 0; kbCol = cols - 1; }
+      else { kbCol = (kbCol - 1 + cols) % cols; }
+      updateKbFocus();
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      if (kbRow < 0) { kbRow = 0; kbCol = 0; }
+      else { kbRow = (kbRow + 1) % rows; }
+      updateKbFocus();
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      if (kbRow < 0) { kbRow = 0; kbCol = 0; }
+      else { kbRow = (kbRow - 1 + rows) % rows; }
+      updateKbFocus();
+      break;
+    case '1': case '2': case '3': case '4': case '5': case '6':
+      var ci = parseInt(e.key) - 1;
+      var usedColors = lv.colors || [0];
+      if (ci < usedColors.length) {
+        selectedColor = COLORS[usedColors[ci]];
+        isEraser = false;
+        document.querySelectorAll('.color-swatch, .eraser').forEach(el => el.classList.remove('active'));
+        var swatches = document.querySelectorAll('.color-swatch');
+        if (swatches[ci]) swatches[ci].classList.add('active');
+        // Paint focused cell
+        var cell = getKbCell();
+        if (cell) paintCell(cell);
+      }
+      break;
+    case 'e':
+    case 'E':
+      e.preventDefault();
+      isEraser = !isEraser;
+      document.querySelectorAll('.color-swatch, .eraser').forEach(el => el.classList.remove('active'));
+      if (isEraser) {
+        var eraserEl = document.querySelector('.eraser');
+        if (eraserEl) eraserEl.classList.add('active');
+      } else {
+        var sw = document.querySelectorAll('.color-swatch');
+        if (sw.length) sw[0].classList.add('active');
+        selectedColor = COLORS[(lv.colors || [0])[0]];
+      }
+      break;
+    case 'Enter':
+      e.preventDefault();
+      checkAnswer();
+      break;
+    case ' ':
+      e.preventDefault();
+      var focusedCell = getKbCell();
+      if (focusedCell) paintCell(focusedCell);
+      break;
+    case 'Backspace':
+    case 'Delete':
+      e.preventDefault();
+      var dc = getKbCell();
+      if (dc) {
+        var dr = parseInt(dc.dataset.row), dco = parseInt(dc.dataset.col);
+        dc.style.background = EMPTY;
+        rightState[dr][dco] = EMPTY;
+      }
+      break;
+    case 'h':
+    case 'H':
+      e.preventDefault();
+      usePeek();
+      break;
+  }
+});
+
+// Reset focus on new level
+const origRenderLevel = renderLevel;
+renderLevel = function() {
+  origRenderLevel();
+  kbRow = -1;
+  kbCol = -1;
+};
+
+// Show keyboard legend on non-touch devices
+if (!('ontouchstart' in window)) {
+  document.getElementById('kbLegend').style.display = '';
 }
 
 loadProgress();

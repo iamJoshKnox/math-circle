@@ -282,6 +282,35 @@ h1 {
   margin-right: auto;
 }
 .reset-progress-btn:hover { color: #e53935; border-color: #e53935; }
+.kbd-legend {
+  text-align: center;
+  color: #c0b0dd;
+  font-size: 0.82em;
+  margin-top: 12px;
+  padding: 6px 12px;
+  background: rgba(118,75,162,0.18);
+  border-radius: 10px;
+  line-height: 1.7;
+}
+.kbd-legend kbd {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 0.95em;
+  margin: 0 1px;
+}
+.shape-btn:focus-visible {
+  outline: 3px solid #ffc107;
+  outline-offset: 2px;
+  box-shadow: 0 0 8px rgba(255,193,7,0.5);
+}
+.input-row input:focus-visible {
+  border-color: #ffc107;
+  box-shadow: 0 0 8px rgba(255,193,7,0.5);
+}
 </style>
 </head>
 <body>
@@ -317,17 +346,17 @@ h1 {
       <div class="input-group">
         <div class="input-row">
           <label>&#x1F7E5; Faces (F):</label>
-          <input type="number" id="inputF" min="0" max="99">
+          <input type="number" id="inputF" min="0" max="99" tabindex="1">
           <span class="status" id="statusF"></span>
         </div>
         <div class="input-row">
           <label>&#x1F7E2; Vertices (V):</label>
-          <input type="number" id="inputV" min="0" max="99">
+          <input type="number" id="inputV" min="0" max="99" tabindex="2">
           <span class="status" id="statusV"></span>
         </div>
         <div class="input-row">
           <label>&#x1F535; Edges (E):</label>
-          <input type="number" id="inputE" min="0" max="99">
+          <input type="number" id="inputE" min="0" max="99" tabindex="3">
           <span class="status" id="statusE"></span>
         </div>
       </div>
@@ -351,6 +380,13 @@ h1 {
   </table>
 
   <button class="reset-progress-btn" onclick="resetProgress()">Reset Progress</button>
+
+  <div class="kbd-legend" id="kbdLegend">
+    &#x2328; Keyboard: <kbd>&larr;</kbd><kbd>&rarr;</kbd> switch shape &nbsp;|&nbsp;
+    <kbd>Tab</kbd> move between fields &nbsp;|&nbsp;
+    <kbd>Enter</kbd> check answers &nbsp;|&nbsp;
+    <kbd>H</kbd> hint
+  </div>
 
   <div class="discovery-box" id="discoveryBox">
     <div style="font-size:1.8em;">&#x1F389; Amazing Discovery! &#x1F389;</div>
@@ -857,6 +893,41 @@ function giveHint() {
   document.getElementById('hintBtn').disabled = true;
   document.getElementById('hintBtn').textContent = 'Hint Used';
 }
+
+// Hide keyboard legend on touch devices
+if ('ontouchstart' in window) {
+  const kl = document.getElementById('kbdLegend');
+  if (kl) kl.style.display = 'none';
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  // Don't interfere with browser shortcuts
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+  const tag = document.activeElement ? document.activeElement.tagName : '';
+  const isInput = (tag === 'INPUT' || tag === 'TEXTAREA');
+
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    const newIdx = (currentShapeIdx - 1 + shapes.length) % shapes.length;
+    selectShape(newIdx);
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    const newIdx = (currentShapeIdx + 1) % shapes.length;
+    selectShape(newIdx);
+  } else if (e.key === 'Enter' && !isInput) {
+    e.preventDefault();
+    checkAnswers();
+  } else if (e.key === 'Enter' && isInput) {
+    // Allow Enter from input fields to also check
+    e.preventDefault();
+    checkAnswers();
+  } else if ((e.key === 'h' || e.key === 'H') && !isInput) {
+    e.preventDefault();
+    giveHint();
+  }
+});
 
 init();
 </script>

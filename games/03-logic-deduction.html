@@ -237,6 +237,29 @@ h1 {
   margin-bottom: 10px;
   line-height: 1.4;
 }
+.assign-row.kb-focus-row {
+  outline: 3px solid #ffd740;
+  outline-offset: 3px;
+  border-radius: 12px;
+  box-shadow: 0 0 14px 3px rgba(255,215,64,0.4);
+  animation: kbPulse 1.2s ease-in-out infinite;
+}
+.choice-btn.kb-focus-btn {
+  outline: 3px solid #ffd740;
+  outline-offset: 2px;
+  box-shadow: 0 0 12px 3px rgba(255,215,64,0.5);
+}
+@keyframes kbPulse {
+  0%, 100% { outline-color: #ffd740; }
+  50% { outline-color: #ffab00; }
+}
+.kb-legend {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.8rem;
+  margin-top: 10px;
+  text-align: center;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -261,6 +284,10 @@ h1 {
     <button class="btn btn-check" id="checkBtn" onclick="checkAnswer()">Check Answer!</button>
     <button class="btn btn-next" id="nextBtn" onclick="nextPuzzle()">Next Puzzle</button>
   </div>
+</div>
+
+<div class="kb-legend" id="kbLegend" style="display:none">
+  ⌨ ←/→ move between rows &bull; ↑/↓ cycle creature choices &bull; Enter = Check &bull; H = Hint &bull; N = Next
 </div>
 
 <div class="end-screen" id="endScreen">
@@ -583,6 +610,104 @@ function restart() {
   document.getElementById('gameArea').style.display = '';
   saveProgress();
   renderPuzzle();
+}
+
+// --- Keyboard Navigation ---
+let kbRoleIndex = -1;
+let kbCreatureIndex = -1;
+
+function getAssignRows() {
+  return document.querySelectorAll('.assign-row');
+}
+
+function updateKbFocus03() {
+  const rows = getAssignRows();
+  rows.forEach(r => r.classList.remove('kb-focus-row'));
+  document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('kb-focus-btn'));
+
+  if (kbRoleIndex < 0 || kbRoleIndex >= rows.length) return;
+  rows[kbRoleIndex].classList.add('kb-focus-row');
+
+  const btns = rows[kbRoleIndex].querySelectorAll('.choice-btn');
+  if (kbCreatureIndex >= 0 && kbCreatureIndex < btns.length) {
+    btns[kbCreatureIndex].classList.add('kb-focus-btn');
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  if (answered && e.key !== 'n' && e.key !== 'N') return;
+
+  const rows = getAssignRows();
+  if (!rows.length && e.key !== 'n' && e.key !== 'N') return;
+  const p = puzzles[currentPuzzle];
+  if (!p) return;
+  const creatureCount = p.creatures.length;
+
+  switch (e.key) {
+    case 'ArrowDown':
+    case 'ArrowRight':
+      e.preventDefault();
+      if (e.key === 'ArrowDown') {
+        // Cycle creature within focused row
+        if (kbRoleIndex < 0) { kbRoleIndex = 0; kbCreatureIndex = 0; }
+        else { kbCreatureIndex = (kbCreatureIndex + 1) % creatureCount; }
+      } else {
+        // Move to next role row
+        if (kbRoleIndex < 0) { kbRoleIndex = 0; kbCreatureIndex = 0; }
+        else { kbRoleIndex = (kbRoleIndex + 1) % rows.length; kbCreatureIndex = Math.max(kbCreatureIndex, 0); }
+      }
+      updateKbFocus03();
+      break;
+    case 'ArrowUp':
+    case 'ArrowLeft':
+      e.preventDefault();
+      if (e.key === 'ArrowUp') {
+        if (kbRoleIndex < 0) { kbRoleIndex = 0; kbCreatureIndex = creatureCount - 1; }
+        else { kbCreatureIndex = (kbCreatureIndex - 1 + creatureCount) % creatureCount; }
+      } else {
+        if (kbRoleIndex < 0) { kbRoleIndex = rows.length - 1; kbCreatureIndex = 0; }
+        else { kbRoleIndex = (kbRoleIndex - 1 + rows.length) % rows.length; kbCreatureIndex = Math.max(kbCreatureIndex, 0); }
+      }
+      updateKbFocus03();
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      if (kbRoleIndex >= 0 && kbCreatureIndex >= 0) {
+        var btns = rows[kbRoleIndex].querySelectorAll('.choice-btn');
+        if (btns[kbCreatureIndex]) btns[kbCreatureIndex].click();
+      } else if (e.key === 'Enter') {
+        checkAnswer();
+      }
+      break;
+    case 'h':
+    case 'H':
+      e.preventDefault();
+      useHint();
+      break;
+    case 'n':
+    case 'N':
+      e.preventDefault();
+      var nextBtnEl = document.getElementById('nextBtn');
+      if (nextBtnEl && nextBtnEl.style.display !== 'none') {
+        nextPuzzle();
+      }
+      break;
+  }
+});
+
+// Reset focus on new puzzle
+const origRenderPuzzle = renderPuzzle;
+renderPuzzle = function() {
+  origRenderPuzzle();
+  kbRoleIndex = -1;
+  kbCreatureIndex = -1;
+};
+
+// Show keyboard legend on non-touch devices
+if (!('ontouchstart' in window)) {
+  document.getElementById('kbLegend').style.display = '';
 }
 
 loadProgress();

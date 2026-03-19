@@ -210,6 +210,23 @@ h1 {
   box-shadow: 0 0 16px 4px rgba(255,215,0,0.6) !important;
   border-color: #ffd700;
 }
+.item-card.kb-focus {
+  outline: 4px solid #ffd740;
+  outline-offset: 3px;
+  box-shadow: 0 0 18px 5px rgba(255,215,64,0.5);
+  animation: kbPulse 1.2s ease-in-out infinite;
+}
+@keyframes kbPulse {
+  0%, 100% { outline-color: #ffd740; }
+  50% { outline-color: #ffab00; }
+}
+.kb-legend {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.8rem;
+  margin-top: 15px;
+  text-align: center;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -227,6 +244,10 @@ h1 {
 <div class="feedback" id="feedback"></div>
 <div class="reason-box" id="reasonBox"></div>
 <button class="btn btn-next" id="nextBtn" onclick="nextRound()">Next Round</button>
+
+<div class="kb-legend" id="kbLegend" style="display:none">
+  ⌨ Arrow keys or 1-5 to pick &bull; Enter/Space to select &bull; H = Hint &bull; N = Next
+</div>
 
 <div class="end-screen" id="endScreen">
   <h2 id="endTitle"></h2>
@@ -582,6 +603,78 @@ function restart() {
   document.getElementById('endScreen').style.display = 'none';
   saveProgress();
   renderRound();
+}
+
+// --- Keyboard Navigation ---
+let kbFocusIndex = -1;
+
+function updateKbFocus() {
+  const cards = document.querySelectorAll('.item-card');
+  cards.forEach((c, i) => {
+    if (i === kbFocusIndex) c.classList.add('kb-focus');
+    else c.classList.remove('kb-focus');
+  });
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const cards = document.querySelectorAll('.item-card');
+  const count = cards.length;
+  if (!count && e.key !== 'n' && e.key !== 'N') return;
+
+  switch (e.key) {
+    case 'ArrowRight':
+    case 'ArrowDown':
+      e.preventDefault();
+      kbFocusIndex = (kbFocusIndex + 1) % count;
+      updateKbFocus();
+      break;
+    case 'ArrowLeft':
+    case 'ArrowUp':
+      e.preventDefault();
+      kbFocusIndex = (kbFocusIndex - 1 + count) % count;
+      updateKbFocus();
+      break;
+    case '1': case '2': case '3': case '4': case '5':
+      var idx = parseInt(e.key) - 1;
+      if (idx < count) {
+        kbFocusIndex = idx;
+        updateKbFocus();
+      }
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      if (kbFocusIndex >= 0 && kbFocusIndex < count) {
+        cards[kbFocusIndex].click();
+      }
+      break;
+    case 'h':
+    case 'H':
+      e.preventDefault();
+      useHint();
+      break;
+    case 'n':
+    case 'N':
+      e.preventDefault();
+      var nextBtnEl = document.getElementById('nextBtn');
+      if (nextBtnEl && nextBtnEl.style.display !== 'none') {
+        nextRound();
+      }
+      break;
+  }
+});
+
+// Reset focus on new round
+const origRenderRound = renderRound;
+renderRound = function() {
+  origRenderRound();
+  kbFocusIndex = -1;
+};
+
+// Show keyboard legend on non-touch devices
+if (!('ontouchstart' in window)) {
+  document.getElementById('kbLegend').style.display = '';
 }
 
 loadProgress();
