@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Venn Diagram Labels – Lesson 1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial Black', 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.45in 0.4in;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0.25in;
+    page-break-after: always;
+  }
+
+  .label-card {
+    border: 2.5px dashed #444;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.15in 0.18in;
+    background: #fff;
+    position: relative;
+    /* each cell is roughly (8.5 - 0.8 - 0.5) / 3 ≈ 2.4in wide
+       and (11 - 0.9 - 0.75) / 4 ≈ 2.35in tall */
+    min-height: 2in;
+  }
+
+  .label-icon {
+    margin-bottom: 0.1in;
+    flex-shrink: 0;
+  }
+
+  .label-text {
+    font-size: 22pt;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: #111;
+    word-break: break-word;
+  }
+
+  /* Color the icon accent per card for quick visual scanning */
+  .card-red    { border-color: #d02020; }
+  .card-blue   { border-color: #1050c0; }
+  .card-green  { border-color: #1a8020; }
+  .card-corners{ border-color: #9020b0; }
+  .card-round  { border-color: #c07000; }
+  .card-big    { border-color: #0080a0; }
+  .card-small  { border-color: #c04080; }
+  .card-wood   { border-color: #8a5020; }
+  .card-metal  { border-color: #505060; }
+  .card-roll   { border-color: #007050; }
+  .card-holes  { border-color: #c05000; }
+  .card-soft   { border-color: #9050c0; }
+
+  .cut-tip {
+    position: absolute;
+    bottom: 5px;
+    right: 8px;
+    font-size: 7pt;
+    color: #bbb;
+    font-weight: 400;
+    font-family: Arial, sans-serif;
+    font-style: italic;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      padding: 0.45in 0.4in;
+      page-break-after: always;
+    }
+    .label-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- 1. Red -->
+  <div class="label-card card-red">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="26" fill="#e82020" stroke="#900000" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="label-text">Red</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 2. Blue -->
+  <div class="label-card card-blue">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="26" fill="#2050e8" stroke="#0020a0" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="label-text">Blue</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 3. Green -->
+  <div class="label-card card-green">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="26" fill="#22a030" stroke="#007010" stroke-width="2.5"/>
+      </svg>
+    </div>
+    <div class="label-text">Green</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 4. Has corners -->
+  <div class="label-card card-corners">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- square with highlighted corners -->
+        <rect x="10" y="10" width="40" height="40" fill="#e8d0f8" stroke="#9020b0" stroke-width="2.5" rx="2"/>
+        <!-- corner dots -->
+        <circle cx="10" cy="10" r="4" fill="#9020b0"/>
+        <circle cx="50" cy="10" r="4" fill="#9020b0"/>
+        <circle cx="10" cy="50" r="4" fill="#9020b0"/>
+        <circle cx="50" cy="50" r="4" fill="#9020b0"/>
+      </svg>
+    </div>
+    <div class="label-text">Has Corners</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 5. Round -->
+  <div class="label-card card-round">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="24" fill="none" stroke="#c07000" stroke-width="4"/>
+        <!-- curved arrow to show round -->
+        <path d="M10,30 A20,20 0 1,1 30,10" fill="none" stroke="#c07000" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="30,5 25,13 35,13" fill="#c07000"/>
+      </svg>
+    </div>
+    <div class="label-text">Round</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 6. Bigger than your hand -->
+  <div class="label-card card-big">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- simple hand outline -->
+        <path d="M18,52 L18,28 Q18,24 22,24 Q26,24 26,28 L26,22 Q26,18 30,18 Q34,18 34,22 L34,24 Q34,20 38,20 Q42,20 42,24 L42,30 Q44,26 46,27 Q50,28 49,34 L46,48 Q44,54 38,54 L24,54 Q20,54 18,52Z" fill="#c8e8f8" stroke="#0080a0" stroke-width="2"/>
+        <!-- outward arrows -->
+        <line x1="8" y1="30" x2="2" y2="30" stroke="#0080a0" stroke-width="2"/>
+        <polygon points="2,30 6,27 6,33" fill="#0080a0"/>
+        <line x1="52" y1="30" x2="58" y2="30" stroke="#0080a0" stroke-width="2"/>
+        <polygon points="58,30 54,27 54,33" fill="#0080a0"/>
+      </svg>
+    </div>
+    <div class="label-text">Bigger than your hand</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 7. Smaller than a coin -->
+  <div class="label-card card-small">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- coin -->
+        <circle cx="30" cy="30" r="22" fill="#f0d860" stroke="#c09000" stroke-width="2"/>
+        <circle cx="30" cy="30" r="17" fill="none" stroke="#c09000" stroke-width="1.5"/>
+        <!-- inward arrows -->
+        <line x1="8" y1="30" x2="14" y2="30" stroke="#c04080" stroke-width="2"/>
+        <polygon points="14,30 10,27 10,33" fill="#c04080"/>
+        <line x1="52" y1="30" x2="46" y2="30" stroke="#c04080" stroke-width="2"/>
+        <polygon points="46,30 50,27 50,33" fill="#c04080"/>
+      </svg>
+    </div>
+    <div class="label-text">Smaller than a coin</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 8. Made of wood -->
+  <div class="label-card card-wood">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- log cross-section -->
+        <circle cx="30" cy="30" r="24" fill="#d4a060" stroke="#8a5020" stroke-width="2.5"/>
+        <!-- tree rings -->
+        <circle cx="30" cy="30" r="18" fill="none" stroke="#8a5020" stroke-width="1.2"/>
+        <circle cx="30" cy="30" r="12" fill="none" stroke="#8a5020" stroke-width="1"/>
+        <circle cx="30" cy="30" r="6" fill="none" stroke="#8a5020" stroke-width="0.8"/>
+        <!-- grain lines -->
+        <line x1="6" y1="28" x2="54" y2="28" stroke="#8a5020" stroke-width="0.7" opacity="0.5"/>
+        <line x1="6" y1="32" x2="54" y2="32" stroke="#8a5020" stroke-width="0.7" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="label-text">Made of Wood</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 9. Made of metal -->
+  <div class="label-card card-metal">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- bolt/screw -->
+        <rect x="22" y="8" width="16" height="44" rx="4" fill="#c0c0c8" stroke="#505060" stroke-width="2"/>
+        <!-- screw head -->
+        <rect x="16" y="8" width="28" height="10" rx="3" fill="#a0a0b0" stroke="#505060" stroke-width="2"/>
+        <!-- shine lines -->
+        <line x1="26" y1="14" x2="26" y2="48" stroke="#e8e8f0" stroke-width="1.5" opacity="0.6"/>
+        <line x1="32" y1="18" x2="32" y2="48" stroke="#e8e8f0" stroke-width="1" opacity="0.4"/>
+        <!-- thread lines -->
+        <line x1="22" y1="28" x2="38" y2="28" stroke="#505060" stroke-width="0.8"/>
+        <line x1="22" y1="36" x2="38" y2="36" stroke="#505060" stroke-width="0.8"/>
+        <line x1="22" y1="44" x2="38" y2="44" stroke="#505060" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <div class="label-text">Made of Metal</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 10. Can roll -->
+  <div class="label-card card-roll">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- ball rolling on surface -->
+        <line x1="5" y1="48" x2="55" y2="48" stroke="#007050" stroke-width="2"/>
+        <circle cx="30" cy="36" r="14" fill="#a0e8d0" stroke="#007050" stroke-width="2"/>
+        <!-- motion lines -->
+        <line x1="50" y1="42" x2="58" y2="42" stroke="#007050" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="52" y1="37" x2="58" y2="35" stroke="#007050" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="52" y1="47" x2="58" y2="49" stroke="#007050" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- spin arrow -->
+        <path d="M22,26 A10,10 0 0,1 40,30" fill="none" stroke="#007050" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="40,30 36,25 44,26" fill="#007050"/>
+      </svg>
+    </div>
+    <div class="label-text">Can Roll</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 11. Has holes -->
+  <div class="label-card card-holes">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- donut / ring shape -->
+        <circle cx="30" cy="30" r="24" fill="#f8d090" stroke="#c05000" stroke-width="2.5"/>
+        <circle cx="30" cy="30" r="10" fill="#fff" stroke="#c05000" stroke-width="2"/>
+        <!-- small hole indicators -->
+        <circle cx="30" cy="10" r="4" fill="#fff" stroke="#c05000" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="label-text">Has Holes</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+  <!-- 12. Soft -->
+  <div class="label-card card-soft">
+    <div class="label-icon">
+      <svg width="60" height="60" viewBox="0 0 60 60">
+        <!-- fluffy cloud shape -->
+        <path d="M12,42 Q8,42 8,36 Q8,30 14,30 Q14,20 24,20 Q28,14 36,16 Q44,14 46,22 Q52,22 52,30 Q56,32 56,38 Q56,44 50,44 Z" fill="#f0d8f8" stroke="#9050c0" stroke-width="2"/>
+        <!-- wavy squiggles to show softness -->
+        <path d="M16,38 Q20,34 24,38 Q28,42 32,38 Q36,34 40,38 Q44,42 48,38" fill="none" stroke="#9050c0" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="label-text">Soft</div>
+    <div class="cut-tip">✂ cut</div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Breaker - Math Circle Week 8</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  color: #e0e0e0;
+}
+h1 {
+  color: #00ff88;
+  font-size: 2.2em;
+  text-shadow: 0 0 20px rgba(0,255,136,0.5);
+  margin: 10px 0 5px;
+}
+.subtitle { color: #88aacc; font-size: 1.1em; margin-bottom: 10px; }
+.game-area {
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(0,255,136,0.3);
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 900px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+.level-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+.level-btn {
+  padding: 10px 18px;
+  border: 2px solid #00ff88;
+  border-radius: 12px;
+  background: rgba(0,255,136,0.1);
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  color: #00ff88;
+  transition: all 0.2s;
+}
+.level-btn:hover { background: rgba(0,255,136,0.25); transform: scale(1.05); }
+.level-btn.active { background: #00ff88; color: #1a1a2e; }
+.level-btn.completed { background: #ffc107; color: #1a1a2e; border-color: #ffc107; }
+.section-title {
+  color: #00ff88;
+  font-size: 1.2em;
+  margin: 15px 0 8px;
+  text-align: center;
+}
+.cipher-display {
+  background: rgba(0,0,0,0.4);
+  border: 2px solid #333;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.cipher-label {
+  color: #ff6b6b;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.encoded-text {
+  font-family: 'Courier New', monospace;
+  font-size: 1.8em;
+  color: #ff6b6b;
+  letter-spacing: 4px;
+  word-break: break-all;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+.decoded-text {
+  font-family: 'Courier New', monospace;
+  font-size: 1.8em;
+  color: #00ff88;
+  letter-spacing: 4px;
+  word-break: break-all;
+  line-height: 1.6;
+  font-weight: bold;
+  min-height: 50px;
+}
+.decoded-label {
+  color: #00ff88;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+.substitution-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 15px 0;
+}
+.sub-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.sub-from {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,107,107,0.2);
+  border: 2px solid #ff6b6b;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #ff6b6b;
+}
+.sub-arrow { color: #666; font-size: 0.9em; }
+.sub-to {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2em;
+  font-weight: bold;
+  border: 2px solid #555;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.4);
+  color: #00ff88;
+  outline: none;
+  text-transform: uppercase;
+  transition: border-color 0.2s;
+}
+.sub-to:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+.sub-to.correct { border-color: #00ff88; background: rgba(0,255,136,0.15); }
+.sub-to.wrong { border-color: #ff6b6b; background: rgba(255,107,107,0.15); }
+.sub-to.unused { opacity: 0.3; }
+.hint-box {
+  background: rgba(255,193,7,0.1);
+  border: 2px solid rgba(255,193,7,0.3);
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+}
+.hint-title { color: #ffc107; font-weight: bold; margin-bottom: 8px; text-align: center; }
+.freq-bar-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+.freq-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+}
+.freq-bar-wrap {
+  width: 20px;
+  height: 60px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.freq-bar {
+  width: 100%;
+  background: linear-gradient(to top, #ffc107, #ff9800);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s;
+}
+.freq-letter {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8em;
+  color: #ffc107;
+  margin-top: 2px;
+  font-weight: bold;
+}
+.freq-count { font-size: 0.65em; color: #888; }
+.hint-text {
+  text-align: center;
+  color: #ccc;
+  font-size: 0.9em;
+  margin-top: 10px;
+}
+.btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+.action-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.action-btn:hover { transform: scale(1.05); }
+.check-btn { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #1a1a2e; }
+.hint-btn { background: linear-gradient(135deg, #ffc107, #ff9800); color: #1a1a2e; }
+.reset-btn { background: linear-gradient(135deg, #ff6b6b, #e53935); color: white; }
+.success-box {
+  margin-top: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,204,106,0.2));
+  border: 2px solid #00ff88;
+  border-radius: 15px;
+  text-align: center;
+  display: none;
+  animation: glow 1s ease infinite alternate;
+}
+.success-box.show { display: block; }
+@keyframes glow {
+  from { box-shadow: 0 0 10px rgba(0,255,136,0.3); }
+  to { box-shadow: 0 0 30px rgba(0,255,136,0.6); }
+}
+.success-box .big { font-size: 1.8em; color: #00ff88; }
+.level-info {
+  text-align: center;
+  padding: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  color: #88aacc;
+}
+.confetti { position: fixed; pointer-events: none; z-index: 1000; }
+</style>
+</head>
+<body>
+<h1>&#x1F50D; Code Breaker</h1>
+<p class="subtitle">Crack the secret codes and decode hidden messages!</p>
+
+<div class="game-area">
+  <div class="level-selector" id="levelSelector"></div>
+  <div class="level-info" id="levelInfo"></div>
+
+  <div class="cipher-display">
+    <div class="cipher-label">&#x1F512; Encoded Message:</div>
+    <div class="encoded-text" id="encodedText"></div>
+    <div class="decoded-label">&#x1F513; Decoded Message:</div>
+    <div class="decoded-text" id="decodedText"></div>
+  </div>
+
+  <div class="section-title">Letter Substitutions</div>
+  <div class="substitution-grid" id="subGrid"></div>
+
+  <div class="hint-box">
+    <div class="hint-title">&#x1F4CA; Letter Frequency (how often each coded letter appears)</div>
+    <div class="freq-bar-container" id="freqBars"></div>
+    <div class="hint-text" id="hintText">Hint: In English, E, T, A, O, I, N are the most common letters!</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="action-btn hint-btn" onclick="giveHint()">&#x1F4A1; Give Me a Hint</button>
+    <button class="action-btn reset-btn" onclick="resetLevel()">&#x1F504; Reset</button>
+  </div>
+
+  <div class="success-box" id="successBox">
+    <div class="big">&#x1F389; Code Cracked! &#x1F389;</div>
+    <div id="successMsg" style="margin-top:10px;font-size:1.2em;color:#00ff88;"></div>
+  </div>
+</div>
+
+<script>
+const puzzles = [
+  {
+    name: "Puzzle 1",
+    difficulty: "Easy - Shift by 1",
+    type: "shift",
+    shift: 1,
+    message: "MATH IS FUN",
+    hint: "Each letter is shifted forward by 1. So A becomes B, B becomes C..."
+  },
+  {
+    name: "Puzzle 2",
+    difficulty: "Easy - Shift by 1",
+    type: "shift",
+    shift: 1,
+    message: "NUMBERS ARE COOL",
+    hint: "Each letter is shifted forward by 1 again. Try shifting each letter BACK by 1!"
+  },
+  {
+    name: "Puzzle 3",
+    difficulty: "Medium - Shift by 3",
+    type: "shift",
+    shift: 3,
+    message: "MATH IS LIKE A TREASURE HUNT",
+    hint: "Each letter shifted forward by 3. A becomes D, B becomes E..."
+  },
+  {
+    name: "Puzzle 4",
+    difficulty: "Medium - Shift by 5",
+    type: "shift",
+    shift: 5,
+    message: "CODES ARE EVERYWHERE",
+    hint: "Each letter shifted forward by 5. Try a few letters and look for patterns!"
+  },
+  {
+    name: "Puzzle 5",
+    difficulty: "Hard - Shift by 7",
+    type: "shift",
+    shift: 7,
+    message: "YOU ARE A SECRET AGENT",
+    hint: "Bigger shift this time! Count 7 letters forward from each original letter."
+  },
+  {
+    name: "Puzzle 6",
+    difficulty: "Hard - Symbol Code",
+    type: "symbol",
+    message: "CRACKING CODES IS AWESOME",
+    hint: "Each symbol stands for a different letter. Use frequency to figure out common letters first!",
+    symbolMap: null
+  },
+  {
+    name: "Puzzle 7",
+    difficulty: "Expert - Symbol Code",
+    type: "symbol",
+    message: "PATTERNS HELP US SOLVE PUZZLES",
+    hint: "Another symbol code! Short words like US or single repeated patterns can help.",
+    symbolMap: null
+  },
+  {
+    name: "Puzzle 8",
+    difficulty: "Expert - Symbol Code",
+    type: "symbol",
+    message: "EVERY PROBLEM HAS A SOLUTION",
+    hint: "Look for common short words and letter patterns. The most frequent symbol is probably E!",
+    symbolMap: null
+  }
+];
+
+const symbols = '\u2605\u2666\u2663\u2665\u2660\u25B2\u25CF\u25A0\u2736\u2764\u2600\u2602\u2601\u266B\u2618\u2744\u269A\u2693\u2690\u2691\u2694\u2696\u2697\u2698\u2699\u269B'.split('');
+
+// Generate symbol maps for symbol puzzles
+puzzles.forEach(p => {
+  if (p.type === 'symbol' && !p.symbolMap) {
+    const letters = [...new Set(p.message.replace(/ /g, '').split(''))];
+    const shuffled = [...symbols].sort(() => Math.random() - 0.5);
+    p.symbolMap = {};
+    letters.forEach((l, i) => { p.symbolMap[l] = shuffled[i]; });
+  }
+});
+
+let currentPuzzle = 0;
+let completedPuzzles = new Set();
+let substitutions = {};
+let hintsGiven = 0;
+
+function encode(puzzle) {
+  const msg = puzzle.message;
+  if (puzzle.type === 'shift') {
+    return msg.split('').map(c => {
+      if (c === ' ') return ' ';
+      const code = c.charCodeAt(0) - 65;
+      return String.fromCharCode(((code + puzzle.shift) % 26) + 65);
+    }).join('');
+  } else {
+    return msg.split('').map(c => {
+      if (c === ' ') return ' ';
+      return puzzle.symbolMap[c] || c;
+    }).join('');
+  }
+}
+
+function getUsedEncodedLetters(puzzle) {
+  const encoded = encode(puzzle);
+  return [...new Set(encoded.replace(/ /g, '').split(''))].sort();
+}
+
+function init() {
+  const sel = document.getElementById('levelSelector');
+  puzzles.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'level-btn';
+    btn.textContent = p.name;
+    btn.onclick = () => selectPuzzle(i);
+    btn.id = 'lbtn' + i;
+    sel.appendChild(btn);
+  });
+  selectPuzzle(0);
+}
+
+function selectPuzzle(idx) {
+  currentPuzzle = idx;
+  substitutions = {};
+  hintsGiven = 0;
+  document.querySelectorAll('.level-btn').forEach((b,i) => {
+    b.className = 'level-btn' + (i === idx ? ' active' : '') + (completedPuzzles.has(i) ? ' completed' : '');
+  });
+  const p = puzzles[idx];
+  document.getElementById('levelInfo').textContent = p.difficulty;
+  const encoded = encode(p);
+  document.getElementById('encodedText').textContent = encoded;
+  document.getElementById('hintText').textContent = p.hint;
+  document.getElementById('successBox').className = 'success-box';
+  buildSubGrid();
+  buildFreqBars();
+  updateDecoded();
+}
+
+function buildSubGrid() {
+  const grid = document.getElementById('subGrid');
+  grid.innerHTML = '';
+  const p = puzzles[currentPuzzle];
+  const encoded = encode(p);
+  const usedLetters = getUsedEncodedLetters(p);
+
+  usedLetters.forEach(letter => {
+    const pair = document.createElement('div');
+    pair.className = 'sub-pair';
+
+    const from = document.createElement('div');
+    from.className = 'sub-from';
+    from.textContent = letter;
+
+    const arrow = document.createElement('div');
+    arrow.className = 'sub-arrow';
+    arrow.textContent = '\u2193';
+
+    const to = document.createElement('input');
+    to.className = 'sub-to';
+    to.maxLength = 1;
+    to.dataset.from = letter;
+    to.addEventListener('input', (e) => {
+      const val = e.target.value.toUpperCase();
+      e.target.value = val;
+      if (val) {
+        substitutions[letter] = val;
+      } else {
+        delete substitutions[letter];
+      }
+      updateDecoded();
+      checkComplete();
+    });
+
+    if (substitutions[letter]) {
+      to.value = substitutions[letter];
+    }
+
+    pair.appendChild(from);
+    pair.appendChild(arrow);
+    pair.appendChild(to);
+    grid.appendChild(pair);
+  });
+}
+
+function buildFreqBars() {
+  const container = document.getElementById('freqBars');
+  container.innerHTML = '';
+  const p = puzzles[currentPuzzle];
+  const encoded = encode(p).replace(/ /g, '');
+  const freq = {};
+  let maxFreq = 0;
+
+  encoded.split('').forEach(c => {
+    freq[c] = (freq[c] || 0) + 1;
+    if (freq[c] > maxFreq) maxFreq = freq[c];
+  });
+
+  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+
+  sorted.forEach(([letter, count]) => {
+    const item = document.createElement('div');
+    item.className = 'freq-item';
+
+    const barWrap = document.createElement('div');
+    barWrap.className = 'freq-bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'freq-bar';
+    bar.style.height = (count / maxFreq * 100) + '%';
+    barWrap.appendChild(bar);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'freq-letter';
+    lbl.textContent = letter;
+
+    const cnt = document.createElement('div');
+    cnt.className = 'freq-count';
+    cnt.textContent = count;
+
+    item.appendChild(cnt);
+    item.appendChild(barWrap);
+    item.appendChild(lbl);
+    container.appendChild(item);
+  });
+}
+
+function updateDecoded() {
+  const p = puzzles[currentPuzzle];
+  const encoded = encode(p);
+  let decoded = '';
+  encoded.split('').forEach(c => {
+    if (c === ' ') {
+      decoded += '  ';
+    } else if (substitutions[c]) {
+      decoded += substitutions[c];
+    } else {
+      decoded += '_';
+    }
+  });
+  document.getElementById('decodedText').textContent = decoded;
+
+  // Highlight correct/wrong inputs
+  document.querySelectorAll('.sub-to').forEach(input => {
+    const from = input.dataset.from;
+    const val = input.value.toUpperCase();
+    input.className = 'sub-to';
+    if (!val) return;
+
+    // Find what the correct answer is
+    const correctLetter = getCorrectMapping(from);
+    if (val === correctLetter) {
+      input.classList.add('correct');
+    } else {
+      input.classList.add('wrong');
+    }
+  });
+}
+
+function getCorrectMapping(encodedChar) {
+  const p = puzzles[currentPuzzle];
+  if (p.type === 'shift') {
+    const code = encodedChar.charCodeAt(0) - 65;
+    return String.fromCharCode(((code - p.shift + 26) % 26) + 65);
+  } else {
+    for (const [original, symbol] of Object.entries(p.symbolMap)) {
+      if (symbol === encodedChar) return original;
+    }
+    return '?';
+  }
+}
+
+function checkComplete() {
+  const p = puzzles[currentPuzzle];
+  const encoded = encode(p);
+  const usedLetters = getUsedEncodedLetters(p);
+
+  let allCorrect = true;
+  usedLetters.forEach(letter => {
+    if (!substitutions[letter] || substitutions[letter] !== getCorrectMapping(letter)) {
+      allCorrect = false;
+    }
+  });
+
+  if (allCorrect) {
+    completedPuzzles.add(currentPuzzle);
+    document.getElementById('lbtn' + currentPuzzle).className = 'level-btn active completed';
+    const sb = document.getElementById('successBox');
+    sb.className = 'success-box show';
+    document.getElementById('successMsg').textContent = 'The message was: "' + p.message + '"';
+    launchConfetti();
+  }
+}
+
+function giveHint() {
+  const p = puzzles[currentPuzzle];
+  const usedLetters = getUsedEncodedLetters(p);
+
+  // Find an unsolved letter
+  const unsolved = usedLetters.filter(l => !substitutions[l] || substitutions[l] !== getCorrectMapping(l));
+  if (unsolved.length === 0) return;
+
+  // Reveal one
+  const reveal = unsolved[0];
+  substitutions[reveal] = getCorrectMapping(reveal);
+
+  // Update input
+  document.querySelectorAll('.sub-to').forEach(input => {
+    if (input.dataset.from === reveal) {
+      input.value = substitutions[reveal];
+    }
+  });
+
+  updateDecoded();
+  checkComplete();
+  hintsGiven++;
+}
+
+function resetLevel() {
+  substitutions = {};
+  hintsGiven = 0;
+  document.getElementById('successBox').className = 'success-box';
+  buildSubGrid();
+  updateDecoded();
+}
+
+function launchConfetti() {
+  for (let i = 0; i < 35; i++) {
+    const conf = document.createElement('div');
+    conf.className = 'confetti';
+    conf.style.left = Math.random() * 100 + 'vw';
+    conf.style.top = '-20px';
+    conf.style.width = '10px';
+    conf.style.height = '10px';
+    conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    conf.style.background = ['#00ff88','#ffc107','#ff6b6b','#2196F3','#9C27B0','#00bcd4'][Math.floor(Math.random()*6)];
+    document.body.appendChild(conf);
+    const dur = 1500 + Math.random() * 2000;
+    conf.animate([
+      { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+      { transform: 'translateY(' + (window.innerHeight + 40) + 'px) rotate(' + (Math.random()*720-360) + 'deg)', opacity: 0 }
+    ], { duration: dur, easing: 'ease-out' });
+    setTimeout(() => conf.remove(), dur);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

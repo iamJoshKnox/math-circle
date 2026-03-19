@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Circle Games</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: white;
+  font-size: 2.8em;
+  text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+  margin-bottom: 5px;
+}
+.tagline {
+  text-align: center;
+  color: #e8d5f5;
+  font-size: 1.3em;
+  margin-bottom: 30px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+}
+.card:nth-child(1)::before { background: linear-gradient(90deg, #FF6B6B, #FF8E53); }
+.card:nth-child(2)::before { background: linear-gradient(90deg, #4ECDC4, #44CF6C); }
+.card:nth-child(3)::before { background: linear-gradient(90deg, #A18CD1, #FBC2EB); }
+.card:nth-child(4)::before { background: linear-gradient(90deg, #F093FB, #F5576C); }
+.card:nth-child(5)::before { background: linear-gradient(90deg, #4FACFE, #00F2FE); }
+.card:nth-child(6)::before { background: linear-gradient(90deg, #43E97B, #38F9D7); }
+.card:nth-child(7)::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+.card:nth-child(8)::before { background: linear-gradient(90deg, #0F3460, #00FF88); }
+.card:nth-child(9)::before { background: linear-gradient(90deg, #4a7c23, #8BC34A); }
+.card-icon {
+  font-size: 3.5em;
+  margin: 10px 0;
+}
+.card-week {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #888;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.card-title {
+  font-size: 1.4em;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+.card-desc {
+  color: #777;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+.card:nth-child(1) .card-title { color: #FF6B6B; }
+.card:nth-child(2) .card-title { color: #4ECDC4; }
+.card:nth-child(3) .card-title { color: #A18CD1; }
+.card:nth-child(4) .card-title { color: #F5576C; }
+.card:nth-child(5) .card-title { color: #4FACFE; }
+.card:nth-child(6) .card-title { color: #43E97B; }
+.card:nth-child(7) .card-title { color: #667eea; }
+.card:nth-child(8) .card-title { color: #0F3460; }
+.card:nth-child(9) .card-title { color: #4a7c23; }
+.footer {
+  text-align: center;
+  color: rgba(255,255,255,0.6);
+  margin-top: 30px;
+  font-size: 0.9em;
+}
+</style>
+</head>
+<body>
+
+<h1>&#x1F3B2; Math Circle Games</h1>
+<p class="tagline">Fun math adventures for curious minds!</p>
+
+<div class="grid">
+  <a class="card" href="01-odd-one-out.html">
+    <div class="card-week">Week 1</div>
+    <div class="card-icon">&#x1F50D;</div>
+    <div class="card-title">Odd One Out</div>
+    <div class="card-desc">Spot the number that doesn't belong! Use your pattern-finding skills to find the oddball.</div>
+  </a>
+
+  <a class="card" href="02-symmetry-mirror.html">
+    <div class="card-week">Week 2</div>
+    <div class="card-icon">&#x1FA9E;</div>
+    <div class="card-title">Symmetry Mirror</div>
+    <div class="card-desc">Complete the pattern on the other side of the mirror! Place colored pegs to make it symmetric.</div>
+  </a>
+
+  <a class="card" href="03-logic-deduction.html">
+    <div class="card-week">Week 3</div>
+    <div class="card-icon">&#x1F9D0;</div>
+    <div class="card-title">Logic Deduction</div>
+    <div class="card-desc">Meet Gobr, Stoon, and friends! Use clues to figure out who is who. Think like a detective!</div>
+  </a>
+
+  <a class="card" href="04-tower-of-hanoi.html">
+    <div class="card-week">Week 4</div>
+    <div class="card-icon">&#x1F3D7;&#xFE0F;</div>
+    <div class="card-title">Tower of Hanoi</div>
+    <div class="card-desc">Move the stack of disks from one peg to another. Can you do it in the fewest moves?</div>
+  </a>
+
+  <a class="card" href="05-dice-roller.html">
+    <div class="card-week">Week 5</div>
+    <div class="card-icon">&#x1F3B2;</div>
+    <div class="card-title">Dice Roller</div>
+    <div class="card-desc">Roll two dice and track the sums. Which number comes up most? Make a prediction and find out!</div>
+  </a>
+
+  <a class="card" href="06-magic-square.html">
+    <div class="card-week">Week 6</div>
+    <div class="card-icon">&#x2728;</div>
+    <div class="card-title">Magic Square Builder</div>
+    <div class="card-desc">Place numbers 1-9 so every row, column, and diagonal adds to 15. It's like a number puzzle!</div>
+  </a>
+
+  <a class="card" href="07-euler-explorer.html">
+    <div class="card-week">Week 7</div>
+    <div class="card-icon">&#x1F30D;</div>
+    <div class="card-title">Euler Explorer</div>
+    <div class="card-desc">Count faces, vertices, and edges of 3D shapes and discover a magical formula!</div>
+  </a>
+
+  <a class="card" href="08-code-breaker.html">
+    <div class="card-week">Week 8</div>
+    <div class="card-icon">&#x1F510;</div>
+    <div class="card-title">Code Breaker</div>
+    <div class="card-desc">Crack secret codes and decode hidden messages. Become a master codebreaker!</div>
+  </a>
+
+  <a class="card" href="09-floor-plan.html">
+    <div class="card-week">Week 9</div>
+    <div class="card-icon">&#x1F3E0;</div>
+    <div class="card-title">Floor Plan Designer</div>
+    <div class="card-desc">Look at a 3D room and recreate it as a top-down floor plan. Think in new dimensions!</div>
+  </a>
+</div>
+
+<div class="footer">Math Circle 2026 - Learning through play!</div>
+
+</body>
+</html>

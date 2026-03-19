@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symmetry Mirror!</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  user-select: none;
+}
+h1 {
+  color: #fff;
+  font-size: 2.4rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin-bottom: 3px;
+}
+.subtitle {
+  color: #d0ffec;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+.top-bar {
+  display: flex;
+  gap: 25px;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.15);
+  padding: 7px 22px;
+  border-radius: 20px;
+}
+.grid-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 15px;
+}
+.grid {
+  display: grid;
+  gap: 2px;
+  background: #fff;
+  padding: 3px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.cell {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  transition: background 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.cell.left-side {
+  cursor: default;
+}
+.cell.right-side {
+  cursor: pointer;
+  border: 2px dashed rgba(0,0,0,0.1);
+}
+.cell.right-side:hover {
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,0.5);
+}
+.mirror-line {
+  width: 6px;
+  background: linear-gradient(180deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #ff6b6b);
+  border-radius: 3px;
+  align-self: stretch;
+  box-shadow: 0 0 12px rgba(255,255,255,0.6);
+  margin: 3px 0;
+}
+.cell.correct-glow {
+  box-shadow: 0 0 12px 3px #4CAF50 !important;
+}
+.cell.wrong-glow {
+  box-shadow: 0 0 12px 3px #ff5252 !important;
+}
+.feedback {
+  color: #fff;
+  font-size: 1.4rem;
+  min-height: 40px;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  margin-bottom: 10px;
+}
+.btn-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.btn {
+  padding: 12px 32px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.1s;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+.btn:hover { transform: scale(1.05); }
+.btn-check { background: linear-gradient(135deg, #ffd93d, #ff6b6b); color: #fff; }
+.btn-clear { background: rgba(255,255,255,0.3); color: #fff; }
+.btn-next { background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: #333; display: none; }
+.btn-restart { background: linear-gradient(135deg, #43e97b, #38f9d7); color: #333; }
+.color-palette {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.color-swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid transparent;
+  transition: transform 0.1s, border-color 0.1s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.color-swatch:hover { transform: scale(1.15); }
+.color-swatch.active { border-color: #fff; transform: scale(1.15); }
+.eraser {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid transparent;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  transition: transform 0.1s, border-color 0.1s;
+}
+.eraser:hover { transform: scale(1.15); }
+.eraser.active { border-color: #fff; transform: scale(1.15); }
+.end-screen { display: none; flex-direction: column; align-items: center; gap: 15px; }
+.end-screen h2 { color: #fff; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+.instruction { color: #d0ffec; font-size: 1rem; margin-bottom: 8px; text-align: center; }
+</style>
+</head>
+<body>
+<h1>Symmetry Mirror!</h1>
+<p class="subtitle">Complete the reflection across the mirror line</p>
+<div class="top-bar">
+  <span>Level: <span id="levelNum">1</span> / <span id="totalLevels">10</span></span>
+  <span>Stars: <span id="stars">0</span></span>
+</div>
+<p class="instruction" id="instruction">Pick a color below, then click cells on the RIGHT side to paint them.</p>
+
+<div class="color-palette" id="palette"></div>
+
+<div class="grid-wrapper">
+  <div class="grid" id="leftGrid"></div>
+  <div class="mirror-line"></div>
+  <div class="grid" id="rightGrid"></div>
+</div>
+
+<div class="feedback" id="feedback"></div>
+<div class="btn-row">
+  <button class="btn btn-clear" onclick="clearRight()">Clear</button>
+  <button class="btn btn-check" onclick="checkAnswer()">Check!</button>
+  <button class="btn btn-next" id="nextBtn" onclick="nextLevel()">Next Level</button>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <h2>You finished all levels!</h2>
+  <div style="color:#ffd54f;font-size:2rem" id="finalStars"></div>
+  <button class="btn btn-restart" onclick="restart()">Play Again!</button>
+</div>
+
+<script>
+const COLORS = ['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#a855f7','#ff9f43'];
+const EMPTY = '#f0f0f0';
+let selectedColor = COLORS[0];
+let isEraser = false;
+
+const levels = [
+  { rows: 5, cols: 3, pattern: [[1,0,0],[0,1,0],[0,0,1],[0,1,0],[1,0,0]], colors: [0] },
+  { rows: 5, cols: 3, pattern: [[1,0,0],[1,1,0],[1,1,1],[1,1,0],[1,0,0]], colors: [1] },
+  { rows: 5, cols: 3, pattern: [[0,1,0],[1,0,1],[1,1,1],[1,0,1],[0,1,0]], colors: [2] },
+  { rows: 6, cols: 3, pattern: [[1,0,0],[0,1,0],[0,0,1],[0,0,1],[0,1,0],[1,0,0]], colors: [3] },
+  { rows: 6, cols: 4, pattern: [[0,0,1,1],[0,1,1,0],[1,1,0,0],[1,1,0,0],[0,1,1,0],[0,0,1,1]], colors: [0,1], colorMap: [[0,0,1,1],[0,1,1,0],[1,1,0,0],[1,1,0,0],[0,1,1,0],[0,0,1,1]] },
+  { rows: 6, cols: 4, pattern: [[1,0,0,0],[1,1,0,0],[1,0,1,0],[0,1,0,1],[0,0,1,1],[0,0,0,1]], colors: [4] },
+  { rows: 7, cols: 4, pattern: [[0,0,0,1],[0,0,1,1],[0,1,0,1],[1,1,1,1],[0,1,0,1],[0,0,1,1],[0,0,0,1]], colors: [2,5], colorMap: [[0,0,0,0],[0,0,0,0],[0,1,0,1],[0,1,0,1],[0,1,0,1],[0,0,0,0],[0,0,0,0]] },
+  { rows: 7, cols: 4, pattern: [[1,1,1,1],[1,0,0,0],[1,0,0,0],[1,1,1,1],[0,0,0,1],[0,0,0,1],[1,1,1,1]], colors: [0,3], colorMap: [[0,0,0,0],[0,0,0,0],[0,0,0,0],[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]] },
+  { rows: 8, cols: 4, pattern: [[0,1,1,0],[1,0,0,1],[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,0,0,1],[0,1,1,0]], colors: [1,4], colorMap: [[0,0,0,0],[0,0,0,0],[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,0,0,1],[0,1,1,0]] },
+  { rows: 8, cols: 5, pattern: [[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1],[1,0,1,0,1],[1,0,1,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0]], colors: [0,2,5], colorMap: [[0,0,0,0,0],[0,0,0,0,0],[2,0,0,0,2],[2,0,1,0,2],[2,0,1,0,2],[2,0,0,0,2],[0,0,0,0,0],[0,0,0,0,0]] }
+];
+
+let currentLevel = 0;
+let starsCount = 0;
+let rightState = [];
+
+function buildPalette() {
+  const pal = document.getElementById('palette');
+  pal.innerHTML = '';
+  const lv = levels[currentLevel];
+  const usedColors = lv.colors || [0];
+  usedColors.forEach((ci, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (i === 0 && !isEraser ? ' active' : '');
+    sw.style.background = COLORS[ci];
+    sw.dataset.color = COLORS[ci];
+    sw.addEventListener('click', () => {
+      selectedColor = COLORS[ci];
+      isEraser = false;
+      document.querySelectorAll('.color-swatch, .eraser').forEach(e => e.classList.remove('active'));
+      sw.classList.add('active');
+    });
+    pal.appendChild(sw);
+  });
+  const er = document.createElement('div');
+  er.className = 'eraser';
+  er.textContent = '🧹';
+  er.addEventListener('click', () => {
+    isEraser = true;
+    document.querySelectorAll('.color-swatch, .eraser').forEach(e => e.classList.remove('active'));
+    er.classList.add('active');
+  });
+  pal.appendChild(er);
+  if (!isEraser) selectedColor = COLORS[usedColors[0]];
+}
+
+function getTargetColor(lv, r, c) {
+  if (!lv.pattern[r][c]) return EMPTY;
+  if (lv.colorMap) {
+    return COLORS[lv.colors[lv.colorMap[r][c]]];
+  }
+  return COLORS[lv.colors[0]];
+}
+
+function renderLevel() {
+  const lv = levels[currentLevel];
+  const rows = lv.rows;
+  const cols = lv.cols;
+  document.getElementById('levelNum').textContent = currentLevel + 1;
+  document.getElementById('totalLevels').textContent = levels.length;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('instruction').style.display = '';
+
+  buildPalette();
+
+  const leftGrid = document.getElementById('leftGrid');
+  const rightGrid = document.getElementById('rightGrid');
+  leftGrid.innerHTML = '';
+  rightGrid.innerHTML = '';
+  leftGrid.style.gridTemplateColumns = `repeat(${cols}, 48px)`;
+  leftGrid.style.gridTemplateRows = `repeat(${rows}, 48px)`;
+  rightGrid.style.gridTemplateColumns = `repeat(${cols}, 48px)`;
+  rightGrid.style.gridTemplateRows = `repeat(${rows}, 48px)`;
+
+  rightState = [];
+  for (let r = 0; r < rows; r++) {
+    rightState[r] = [];
+    for (let c = 0; c < cols; c++) {
+      // Left side
+      const lc = document.createElement('div');
+      lc.className = 'cell left-side';
+      lc.style.background = getTargetColor(lv, r, c);
+      leftGrid.appendChild(lc);
+
+      // Right side (mirrored column index)
+      const mc = cols - 1 - c;
+      const rc = document.createElement('div');
+      rc.className = 'cell right-side';
+      rc.style.background = EMPTY;
+      rc.dataset.row = r;
+      rc.dataset.col = mc;
+      rightState[r][mc] = EMPTY;
+
+      rc.addEventListener('click', () => paintCell(rc));
+      rightGrid.appendChild(rc);
+    }
+  }
+}
+
+function paintCell(cell) {
+  const r = parseInt(cell.dataset.row);
+  const c = parseInt(cell.dataset.col);
+  if (isEraser) {
+    cell.style.background = EMPTY;
+    rightState[r][c] = EMPTY;
+  } else {
+    cell.style.background = selectedColor;
+    rightState[r][c] = selectedColor;
+  }
+}
+
+function clearRight() {
+  const cells = document.querySelectorAll('#rightGrid .cell');
+  const lv = levels[currentLevel];
+  cells.forEach(cell => {
+    cell.style.background = EMPTY;
+    cell.classList.remove('correct-glow','wrong-glow');
+  });
+  for (let r = 0; r < lv.rows; r++)
+    for (let c = 0; c < lv.cols; c++)
+      rightState[r][c] = EMPTY;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+}
+
+function checkAnswer() {
+  const lv = levels[currentLevel];
+  const rows = lv.rows;
+  const cols = lv.cols;
+  let allCorrect = true;
+  let wrongCount = 0;
+
+  const cells = document.querySelectorAll('#rightGrid .cell');
+  cells.forEach(cell => {
+    cell.classList.remove('correct-glow','wrong-glow');
+    const r = parseInt(cell.dataset.row);
+    const c = parseInt(cell.dataset.col);
+    // dataset.col is already the mirrored index (cols-1-visualCol),
+    // so the expected color is simply the left side at (r, c)
+    const expected = getTargetColor(lv, r, c);
+    const actual = rightState[r][c];
+    if (actual === expected) {
+      if (actual !== EMPTY) cell.classList.add('correct-glow');
+    } else {
+      allCorrect = false;
+      wrongCount++;
+      cell.classList.add('wrong-glow');
+    }
+  });
+
+  if (allCorrect) {
+    starsCount++;
+    document.getElementById('stars').textContent = starsCount;
+    const msgs = ["Perfect symmetry! ⭐","Beautiful mirror! 🪞","You nailed it! 🌟","Symmetry master! ✨"];
+    document.getElementById('feedback').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+    document.getElementById('nextBtn').style.display = 'inline-block';
+  } else {
+    const hints = [
+      `Almost! ${wrongCount} cell${wrongCount>1?'s':''} need fixing. Look at the red glows!`,
+      `So close! Check the cells with red outlines.`,
+      `Keep trying! ${wrongCount} cell${wrongCount>1?'s are':' is'} not quite right.`
+    ];
+    document.getElementById('feedback').textContent = hints[Math.floor(Math.random()*hints.length)];
+  }
+}
+
+function nextLevel() {
+  currentLevel++;
+  if (currentLevel >= levels.length) {
+    showEnd();
+    return;
+  }
+  renderLevel();
+}
+
+function showEnd() {
+  document.getElementById('leftGrid').innerHTML = '';
+  document.getElementById('rightGrid').innerHTML = '';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('instruction').style.display = 'none';
+  document.getElementById('palette').innerHTML = '';
+  const end = document.getElementById('endScreen');
+  end.style.display = 'flex';
+  document.getElementById('finalStars').textContent = `You earned ${starsCount} stars! ${'⭐'.repeat(Math.min(starsCount,10))}`;
+}
+
+function restart() {
+  currentLevel = 0;
+  starsCount = 0;
+  document.getElementById('stars').textContent = 0;
+  document.getElementById('endScreen').style.display = 'none';
+  isEraser = false;
+  renderLevel();
+}
+
+renderLevel();
+</script>
+</body>
+</html>

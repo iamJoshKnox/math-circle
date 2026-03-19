@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dot Grid Mirror Paper – Lesson 2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #222;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.4in 0.45in;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.3in;
+    page-break-after: always;
+  }
+
+  .grid-panel {
+    border: 2px solid #333;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.15in 0.1in 0.12in;
+    background: #fff;
+    position: relative;
+  }
+
+  .grid-label {
+    font-size: 8.5pt;
+    font-weight: bold;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.1in;
+    text-align: center;
+  }
+
+  .grid-instruction {
+    font-size: 8pt;
+    color: #666;
+    text-align: center;
+    margin-top: 0.08in;
+    font-style: italic;
+  }
+
+  .panel-number {
+    position: absolute;
+    top: 6px;
+    left: 10px;
+    font-size: 7.5pt;
+    color: #bbb;
+    font-weight: bold;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      padding: 0.4in 0.45in;
+      page-break-after: always;
+    }
+    .grid-panel { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!--
+  Layout:
+  Page 1: grids 1–4
+  Page 2: grids 5–8
+
+  Each SVG dot grid:
+  - 11 columns × 9 rows of dots  (so mirror line falls between col 5 and 6 — col index 5 of 0–10)
+  - Dots spaced ~0.45in apart inside the SVG
+  - Bold vertical line down the middle
+  - SVG sized to fill the panel
+
+  Dot spacing in SVG units: 46px  (maps to ~0.45in at 96dpi screen; on paper ~0.45in)
+  Grid width:  10 * 46 + 20 margin each side = 500 px
+  Grid height:  8 * 46 + 16 margin each side = 400 px
+  Mirror line at x = 10 + 5*46 = 240 px
+-->
+
+<!-- ═══════════════════ PAGE 1 ═══════════════════ -->
+<div class="page">
+
+  <!-- Grid 1 -->
+  <div class="grid-panel">
+    <div class="panel-number">#1</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <!-- Dots: 11 cols (x = 20, 66, 112, 158, 204, 250, 296, 342, 388, 434, 480) -->
+      <!-- 9 rows  (y = 16, 62, 108, 154, 200, 246, 292, 338, 384) -->
+      <!-- Mirror line at x = 250 (between col index 5 and 6 of 0-based) -->
+
+      <!-- LEFT half label -->
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <!-- RIGHT half label -->
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+
+      <!-- Mirror line -->
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <!-- mirror line label top -->
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+
+      <!-- Dots -->
+      <!-- Row 1 y=20 -->
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="20" r="3.5" fill="#555"/>
+      <circle cx="112" cy="20" r="3.5" fill="#555"/>
+      <circle cx="158" cy="20" r="3.5" fill="#555"/>
+      <circle cx="204" cy="20" r="3.5" fill="#555"/>
+      <circle cx="296" cy="20" r="3.5" fill="#555"/>
+      <circle cx="342" cy="20" r="3.5" fill="#555"/>
+      <circle cx="388" cy="20" r="3.5" fill="#555"/>
+      <circle cx="434" cy="20" r="3.5" fill="#555"/>
+      <circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <!-- Row 2 y=66 -->
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="66" r="3.5" fill="#555"/>
+      <circle cx="112" cy="66" r="3.5" fill="#555"/>
+      <circle cx="158" cy="66" r="3.5" fill="#555"/>
+      <circle cx="204" cy="66" r="3.5" fill="#555"/>
+      <circle cx="296" cy="66" r="3.5" fill="#555"/>
+      <circle cx="342" cy="66" r="3.5" fill="#555"/>
+      <circle cx="388" cy="66" r="3.5" fill="#555"/>
+      <circle cx="434" cy="66" r="3.5" fill="#555"/>
+      <circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <!-- Row 3 y=112 -->
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="112" r="3.5" fill="#555"/>
+      <circle cx="112" cy="112" r="3.5" fill="#555"/>
+      <circle cx="158" cy="112" r="3.5" fill="#555"/>
+      <circle cx="204" cy="112" r="3.5" fill="#555"/>
+      <circle cx="296" cy="112" r="3.5" fill="#555"/>
+      <circle cx="342" cy="112" r="3.5" fill="#555"/>
+      <circle cx="388" cy="112" r="3.5" fill="#555"/>
+      <circle cx="434" cy="112" r="3.5" fill="#555"/>
+      <circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <!-- Row 4 y=158 -->
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="158" r="3.5" fill="#555"/>
+      <circle cx="112" cy="158" r="3.5" fill="#555"/>
+      <circle cx="158" cy="158" r="3.5" fill="#555"/>
+      <circle cx="204" cy="158" r="3.5" fill="#555"/>
+      <circle cx="296" cy="158" r="3.5" fill="#555"/>
+      <circle cx="342" cy="158" r="3.5" fill="#555"/>
+      <circle cx="388" cy="158" r="3.5" fill="#555"/>
+      <circle cx="434" cy="158" r="3.5" fill="#555"/>
+      <circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <!-- Row 5 y=204 -->
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="204" r="3.5" fill="#555"/>
+      <circle cx="112" cy="204" r="3.5" fill="#555"/>
+      <circle cx="158" cy="204" r="3.5" fill="#555"/>
+      <circle cx="204" cy="204" r="3.5" fill="#555"/>
+      <circle cx="296" cy="204" r="3.5" fill="#555"/>
+      <circle cx="342" cy="204" r="3.5" fill="#555"/>
+      <circle cx="388" cy="204" r="3.5" fill="#555"/>
+      <circle cx="434" cy="204" r="3.5" fill="#555"/>
+      <circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <!-- Row 6 y=250 -->
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="250" r="3.5" fill="#555"/>
+      <circle cx="112" cy="250" r="3.5" fill="#555"/>
+      <circle cx="158" cy="250" r="3.5" fill="#555"/>
+      <circle cx="204" cy="250" r="3.5" fill="#555"/>
+      <circle cx="296" cy="250" r="3.5" fill="#555"/>
+      <circle cx="342" cy="250" r="3.5" fill="#555"/>
+      <circle cx="388" cy="250" r="3.5" fill="#555"/>
+      <circle cx="434" cy="250" r="3.5" fill="#555"/>
+      <circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <!-- Row 7 y=296 -->
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="296" r="3.5" fill="#555"/>
+      <circle cx="112" cy="296" r="3.5" fill="#555"/>
+      <circle cx="158" cy="296" r="3.5" fill="#555"/>
+      <circle cx="204" cy="296" r="3.5" fill="#555"/>
+      <circle cx="296" cy="296" r="3.5" fill="#555"/>
+      <circle cx="342" cy="296" r="3.5" fill="#555"/>
+      <circle cx="388" cy="296" r="3.5" fill="#555"/>
+      <circle cx="434" cy="296" r="3.5" fill="#555"/>
+      <circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <!-- Row 8 y=342 -->
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="342" r="3.5" fill="#555"/>
+      <circle cx="112" cy="342" r="3.5" fill="#555"/>
+      <circle cx="158" cy="342" r="3.5" fill="#555"/>
+      <circle cx="204" cy="342" r="3.5" fill="#555"/>
+      <circle cx="296" cy="342" r="3.5" fill="#555"/>
+      <circle cx="342" cy="342" r="3.5" fill="#555"/>
+      <circle cx="388" cy="342" r="3.5" fill="#555"/>
+      <circle cx="434" cy="342" r="3.5" fill="#555"/>
+      <circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <!-- Row 9 y=388 -->
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/>
+      <circle cx="66"  cy="388" r="3.5" fill="#555"/>
+      <circle cx="112" cy="388" r="3.5" fill="#555"/>
+      <circle cx="158" cy="388" r="3.5" fill="#555"/>
+      <circle cx="204" cy="388" r="3.5" fill="#555"/>
+      <circle cx="296" cy="388" r="3.5" fill="#555"/>
+      <circle cx="342" cy="388" r="3.5" fill="#555"/>
+      <circle cx="388" cy="388" r="3.5" fill="#555"/>
+      <circle cx="434" cy="388" r="3.5" fill="#555"/>
+      <circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+  <!-- Grid 2 — identical dot layout, different panel number -->
+  <div class="grid-panel">
+    <div class="panel-number">#2</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+  <!-- Grid 3 -->
+  <div class="grid-panel">
+    <div class="panel-number">#3</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+  <!-- Grid 4 -->
+  <div class="grid-panel">
+    <div class="panel-number">#4</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+</div><!-- end page 1 -->
+
+<!-- ═══════════════════ PAGE 2 ═══════════════════ -->
+<div class="page">
+
+  <!-- Grid 5 -->
+  <div class="grid-panel">
+    <div class="panel-number">#5</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+  <!-- Grid 6 -->
+  <div class="grid-panel">
+    <div class="panel-number">#6</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+  <!-- Grid 7 -->
+  <div class="grid-panel">
+    <div class="panel-number">#7</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+  <!-- Grid 8 -->
+  <div class="grid-panel">
+    <div class="panel-number">#8</div>
+    <div class="grid-label">Mirror Grid</div>
+    <svg width="100%" viewBox="0 0 520 416" xmlns="http://www.w3.org/2000/svg">
+      <text x="135" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">← Draw here</text>
+      <text x="385" y="400" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#aaa" font-style="italic">Mirror here →</text>
+      <line x1="250" y1="8" x2="250" y2="392" stroke="#1a6bc0" stroke-width="3" stroke-linecap="round"/>
+      <text x="250" y="6" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#1a6bc0" font-weight="bold">MIRROR LINE</text>
+      <circle cx="20"  cy="20" r="3.5" fill="#555"/><circle cx="66"  cy="20" r="3.5" fill="#555"/><circle cx="112" cy="20" r="3.5" fill="#555"/><circle cx="158" cy="20" r="3.5" fill="#555"/><circle cx="204" cy="20" r="3.5" fill="#555"/><circle cx="296" cy="20" r="3.5" fill="#555"/><circle cx="342" cy="20" r="3.5" fill="#555"/><circle cx="388" cy="20" r="3.5" fill="#555"/><circle cx="434" cy="20" r="3.5" fill="#555"/><circle cx="480" cy="20" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="66" r="3.5" fill="#555"/><circle cx="66"  cy="66" r="3.5" fill="#555"/><circle cx="112" cy="66" r="3.5" fill="#555"/><circle cx="158" cy="66" r="3.5" fill="#555"/><circle cx="204" cy="66" r="3.5" fill="#555"/><circle cx="296" cy="66" r="3.5" fill="#555"/><circle cx="342" cy="66" r="3.5" fill="#555"/><circle cx="388" cy="66" r="3.5" fill="#555"/><circle cx="434" cy="66" r="3.5" fill="#555"/><circle cx="480" cy="66" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="112" r="3.5" fill="#555"/><circle cx="66"  cy="112" r="3.5" fill="#555"/><circle cx="112" cy="112" r="3.5" fill="#555"/><circle cx="158" cy="112" r="3.5" fill="#555"/><circle cx="204" cy="112" r="3.5" fill="#555"/><circle cx="296" cy="112" r="3.5" fill="#555"/><circle cx="342" cy="112" r="3.5" fill="#555"/><circle cx="388" cy="112" r="3.5" fill="#555"/><circle cx="434" cy="112" r="3.5" fill="#555"/><circle cx="480" cy="112" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="158" r="3.5" fill="#555"/><circle cx="66"  cy="158" r="3.5" fill="#555"/><circle cx="112" cy="158" r="3.5" fill="#555"/><circle cx="158" cy="158" r="3.5" fill="#555"/><circle cx="204" cy="158" r="3.5" fill="#555"/><circle cx="296" cy="158" r="3.5" fill="#555"/><circle cx="342" cy="158" r="3.5" fill="#555"/><circle cx="388" cy="158" r="3.5" fill="#555"/><circle cx="434" cy="158" r="3.5" fill="#555"/><circle cx="480" cy="158" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="204" r="3.5" fill="#555"/><circle cx="66"  cy="204" r="3.5" fill="#555"/><circle cx="112" cy="204" r="3.5" fill="#555"/><circle cx="158" cy="204" r="3.5" fill="#555"/><circle cx="204" cy="204" r="3.5" fill="#555"/><circle cx="296" cy="204" r="3.5" fill="#555"/><circle cx="342" cy="204" r="3.5" fill="#555"/><circle cx="388" cy="204" r="3.5" fill="#555"/><circle cx="434" cy="204" r="3.5" fill="#555"/><circle cx="480" cy="204" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="250" r="3.5" fill="#555"/><circle cx="66"  cy="250" r="3.5" fill="#555"/><circle cx="112" cy="250" r="3.5" fill="#555"/><circle cx="158" cy="250" r="3.5" fill="#555"/><circle cx="204" cy="250" r="3.5" fill="#555"/><circle cx="296" cy="250" r="3.5" fill="#555"/><circle cx="342" cy="250" r="3.5" fill="#555"/><circle cx="388" cy="250" r="3.5" fill="#555"/><circle cx="434" cy="250" r="3.5" fill="#555"/><circle cx="480" cy="250" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="296" r="3.5" fill="#555"/><circle cx="66"  cy="296" r="3.5" fill="#555"/><circle cx="112" cy="296" r="3.5" fill="#555"/><circle cx="158" cy="296" r="3.5" fill="#555"/><circle cx="204" cy="296" r="3.5" fill="#555"/><circle cx="296" cy="296" r="3.5" fill="#555"/><circle cx="342" cy="296" r="3.5" fill="#555"/><circle cx="388" cy="296" r="3.5" fill="#555"/><circle cx="434" cy="296" r="3.5" fill="#555"/><circle cx="480" cy="296" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="342" r="3.5" fill="#555"/><circle cx="66"  cy="342" r="3.5" fill="#555"/><circle cx="112" cy="342" r="3.5" fill="#555"/><circle cx="158" cy="342" r="3.5" fill="#555"/><circle cx="204" cy="342" r="3.5" fill="#555"/><circle cx="296" cy="342" r="3.5" fill="#555"/><circle cx="342" cy="342" r="3.5" fill="#555"/><circle cx="388" cy="342" r="3.5" fill="#555"/><circle cx="434" cy="342" r="3.5" fill="#555"/><circle cx="480" cy="342" r="3.5" fill="#555"/>
+      <circle cx="20"  cy="388" r="3.5" fill="#555"/><circle cx="66"  cy="388" r="3.5" fill="#555"/><circle cx="112" cy="388" r="3.5" fill="#555"/><circle cx="158" cy="388" r="3.5" fill="#555"/><circle cx="204" cy="388" r="3.5" fill="#555"/><circle cx="296" cy="388" r="3.5" fill="#555"/><circle cx="342" cy="388" r="3.5" fill="#555"/><circle cx="388" cy="388" r="3.5" fill="#555"/><circle cx="434" cy="388" r="3.5" fill="#555"/><circle cx="480" cy="388" r="3.5" fill="#555"/>
+    </svg>
+    <div class="grid-instruction">Draw on the LEFT. Mirror it on the RIGHT.</div>
+  </div>
+
+</div><!-- end page 2 -->
+
+</body>
+</html>

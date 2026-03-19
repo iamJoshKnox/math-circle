@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floor Plan Grid</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    width: 8.5in;
+    margin: 0 auto;
+  }
+
+  .page {
+    width: 8.5in;
+    height: 11in;
+    padding: 0.45in 0.5in 0.35in;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-title {
+    font-size: 18pt;
+    font-weight: bold;
+    color: #1a1a2e;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 3px;
+  }
+
+  .page-subtitle {
+    font-size: 8.5pt;
+    color: #777;
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .name-row {
+    display: flex;
+    gap: 18px;
+    width: 100%;
+    margin-bottom: 10px;
+    align-items: flex-end;
+  }
+
+  .name-row .lbl {
+    font-size: 8.5pt;
+    font-weight: bold;
+    color: #333;
+    padding-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .name-row .nl {
+    flex: 1;
+    border-bottom: 1.5px solid #555;
+    min-height: 16px;
+  }
+
+  .grid-container {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .grid-border {
+    border: 2.5px solid #1a1a2e;
+  }
+
+  .instructions {
+    width: 100%;
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .instr-item {
+    font-size: 7.5pt;
+    color: #555;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 3px 10px;
+  }
+
+  @media print {
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="page-title">Floor Plan Grid</div>
+  <div class="page-subtitle">Design a room or building layout — each square = 1 foot</div>
+
+  <div class="name-row">
+    <span class="lbl">Name:</span><div class="nl"></div>
+    <span class="lbl">Project:</span><div class="nl"></div>
+    <span class="lbl">Date:</span><div class="nl" style="max-width:1.2in;"></div>
+  </div>
+
+  <div class="grid-container">
+    <div class="grid-border">
+      <!-- 7 columns x 9 rows of 1-inch squares = 7in x 9in -->
+      <svg width="504" height="648" viewBox="0 0 504 648" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background -->
+        <rect x="0" y="0" width="504" height="648" fill="white"/>
+
+        <!-- Vertical grid lines (light gray, every 72px = 1 inch) -->
+        <!-- Columns: 0,72,144,216,288,360,432,504 -->
+        <g stroke="#c8d0d8" stroke-width="0.7">
+          <line x1="72" y1="0" x2="72" y2="648"/>
+          <line x1="144" y1="0" x2="144" y2="648"/>
+          <line x1="216" y1="0" x2="216" y2="648"/>
+          <line x1="288" y1="0" x2="288" y2="648"/>
+          <line x1="360" y1="0" x2="360" y2="648"/>
+          <line x1="432" y1="0" x2="432" y2="648"/>
+        </g>
+
+        <!-- Horizontal grid lines (light gray, every 72px) -->
+        <!-- Rows: 0,72,144,216,288,360,432,504,576,648 -->
+        <g stroke="#c8d0d8" stroke-width="0.7">
+          <line x1="0" y1="72" x2="504" y2="72"/>
+          <line x1="0" y1="144" x2="504" y2="144"/>
+          <line x1="0" y1="216" x2="504" y2="216"/>
+          <line x1="0" y1="288" x2="504" y2="288"/>
+          <line x1="0" y1="360" x2="504" y2="360"/>
+          <line x1="0" y1="432" x2="504" y2="432"/>
+          <line x1="0" y1="504" x2="504" y2="504"/>
+          <line x1="0" y1="576" x2="504" y2="576"/>
+        </g>
+
+        <!-- Bold border -->
+        <rect x="1" y="1" width="502" height="646" fill="none" stroke="#1a1a2e" stroke-width="2.5"/>
+
+        <!-- Column numbers at top -->
+        <g font-family="Arial" font-size="9" fill="#aaa" text-anchor="middle">
+          <text x="36" y="14">1</text>
+          <text x="108" y="14">2</text>
+          <text x="180" y="14">3</text>
+          <text x="252" y="14">4</text>
+          <text x="324" y="14">5</text>
+          <text x="396" y="14">6</text>
+          <text x="468" y="14">7</text>
+        </g>
+
+        <!-- Row numbers on left -->
+        <g font-family="Arial" font-size="9" fill="#aaa" text-anchor="middle" dominant-baseline="middle">
+          <text x="12" y="36">1</text>
+          <text x="12" y="108">2</text>
+          <text x="12" y="180">3</text>
+          <text x="12" y="252">4</text>
+          <text x="12" y="324">5</text>
+          <text x="12" y="396">6</text>
+          <text x="12" y="468">7</text>
+          <text x="12" y="540">8</text>
+          <text x="12" y="612">9</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <div class="instr-item">Each square = 1 foot</div>
+    <div class="instr-item">Grid: 7 squares wide × 9 squares tall</div>
+    <div class="instr-item">Total area: 7 ft × 9 ft = 63 sq ft</div>
+    <div class="instr-item">Use pencil — draw walls, doors, and furniture!</div>
+  </div>
+</div>
+</body>
+</html>

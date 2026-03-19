@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faces, Vertices &amp; Edges Recording Sheet – Lesson 7</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 10.8in;
+    padding: 0.4in 0.5in 0.35in;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 22pt;
+    font-weight: 900;
+    color: #4a148c;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 0.2in;
+  }
+
+  .name-line {
+    font-size: 10pt;
+    margin-bottom: 0.15in;
+  }
+
+  .name-line span {
+    display: inline-block;
+    min-width: 2.5in;
+    border-bottom: 1.5px solid #333;
+  }
+
+  table.recording {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0.2in;
+  }
+
+  table.recording th {
+    background: #4a148c;
+    color: #fff;
+    font-size: 11pt;
+    font-weight: bold;
+    padding: 8px 6px;
+    border: 2px solid #4a148c;
+    text-align: center;
+  }
+
+  table.recording th.shape-col {
+    width: 2in;
+    text-align: left;
+    padding-left: 12px;
+  }
+
+  table.recording th.formula-col {
+    background: #7b1fa2;
+    border-color: #7b1fa2;
+    width: 1.1in;
+  }
+
+  table.recording td {
+    border: 2px solid #ce93d8;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 16pt;
+    font-weight: bold;
+    height: 0.85in;
+    color: #222;
+  }
+
+  table.recording td.shape-cell {
+    text-align: left;
+    padding-left: 12px;
+    font-size: 11pt;
+    font-weight: normal;
+    color: #333;
+  }
+
+  table.recording td.shape-cell .shape-icon {
+    display: inline-block;
+    width: 0.45in;
+    text-align: center;
+    font-size: 18pt;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  table.recording td.formula-cell {
+    background: #f3e5f5;
+    border-color: #ce93d8;
+  }
+
+  table.recording tr.blank-row td {
+    border-style: dashed;
+  }
+
+  table.recording tr.blank-row td.shape-cell {
+    color: #aaa;
+    font-style: italic;
+    font-size: 9pt;
+  }
+
+  .discovery-box {
+    background: #f3e5f5;
+    border: 2.5px solid #7b1fa2;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: auto;
+  }
+
+  .discovery-box h2 {
+    font-size: 13pt;
+    color: #4a148c;
+    margin-bottom: 8px;
+  }
+
+  .discovery-box p {
+    font-size: 10pt;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .discovery-box .big-formula {
+    text-align: center;
+    font-size: 20pt;
+    font-weight: 900;
+    color: #4a148c;
+    letter-spacing: 2px;
+    margin: 10px 0;
+  }
+
+  .discovery-box .fill-blank {
+    display: inline-block;
+    min-width: 0.6in;
+    border-bottom: 2.5px solid #4a148c;
+    margin: 0 4px;
+  }
+
+  .tip {
+    font-size: 8.5pt;
+    color: #777;
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  @media print {
+    @page { size: letter portrait; margin: 0; }
+    body { margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Shape Detective Sheet</h1>
+  <div class="page-subtitle">
+    Lesson 7 – Topology &amp; Shapes &nbsp;|&nbsp;
+    Count the <strong>Faces</strong>, <strong>Vertices</strong>, and <strong>Edges</strong> of each 3D shape.
+  </div>
+
+  <div class="name-line">Name: <span></span></div>
+
+  <table class="recording">
+    <thead>
+      <tr>
+        <th class="shape-col">Shape</th>
+        <th>Faces (F)</th>
+        <th>Vertices (V)</th>
+        <th>Edges (E)</th>
+        <th class="formula-col">V &minus; E + F</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="shape-cell"><span class="shape-icon">&#9634;</span> Cube</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+      <tr>
+        <td class="shape-cell"><span class="shape-icon">&#9651;</span> Tetrahedron</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+      <tr>
+        <td class="shape-cell"><span class="shape-icon">&#9653;</span> Square Pyramid</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+      <tr>
+        <td class="shape-cell"><span class="shape-icon">&#9645;</span> Triangular Prism</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+      <tr>
+        <td class="shape-cell"><span class="shape-icon">&#9647;</span> Rectangular Prism</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+      <tr class="blank-row">
+        <td class="shape-cell">Your choice: ___________</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+      <tr class="blank-row">
+        <td class="shape-cell">Your choice: ___________</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="formula-cell"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="discovery-box">
+    <h2>The Big Discovery</h2>
+    <p>Look at the last column. What do you notice?</p>
+    <p>V &minus; E + F always equals <span class="fill-blank"></span></p>
+    <div class="big-formula">V &minus; E + F = <span class="fill-blank"></span></div>
+    <p>This is called <strong>Euler's Formula</strong>. A mathematician named Leonhard Euler discovered it about 300 years ago!</p>
+    <p>Can you think of a shape where it might NOT equal that number? Try it!</p>
+  </div>
+
+  <div class="tip">Tip: Mark each edge with a crayon dot as you count so you don't skip any!</div>
+</div>
+</body>
+</html>

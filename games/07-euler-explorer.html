@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euler Explorer - Math Circle Week 7</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  color: #333;
+}
+h1 {
+  color: white;
+  font-size: 2.2em;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin: 10px 0 5px;
+}
+.subtitle {
+  color: #e0d0ff;
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+.game-area {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.shape-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+.shape-btn {
+  padding: 10px 18px;
+  border: 3px solid #764ba2;
+  border-radius: 12px;
+  background: #f0e6ff;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #764ba2;
+}
+.shape-btn:hover { background: #d8c0ff; transform: scale(1.05); }
+.shape-btn.active { background: #764ba2; color: white; }
+.shape-btn.completed { background: #4CAF50; color: white; border-color: #388E3C; }
+.main-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+.shape-display {
+  flex: 1;
+  min-width: 300px;
+  max-width: 420px;
+  position: relative;
+}
+.shape-display canvas {
+  width: 100%;
+  border: 3px solid #e0d0ff;
+  border-radius: 15px;
+  background: #faf8ff;
+  cursor: pointer;
+}
+.info-panel {
+  flex: 1;
+  min-width: 260px;
+  max-width: 350px;
+}
+.shape-name {
+  font-size: 1.6em;
+  color: #764ba2;
+  text-align: center;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.shape-desc {
+  text-align: center;
+  color: #666;
+  margin-bottom: 15px;
+  font-size: 0.95em;
+}
+.highlight-info {
+  text-align: center;
+  min-height: 28px;
+  color: #764ba2;
+  font-weight: bold;
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8f4ff;
+  padding: 10px 15px;
+  border-radius: 12px;
+}
+.input-row label {
+  font-size: 1.1em;
+  font-weight: bold;
+  min-width: 140px;
+  color: #555;
+}
+.input-row input {
+  width: 60px;
+  height: 44px;
+  text-align: center;
+  font-size: 1.3em;
+  border: 3px solid #ccc;
+  border-radius: 10px;
+  font-weight: bold;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-row input:focus { border-color: #764ba2; }
+.input-row .status { font-size: 1.5em; min-width: 30px; text-align: center; }
+.check-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.check-btn:hover { transform: scale(1.03); box-shadow: 0 4px 15px rgba(118,75,162,0.4); }
+.formula-box {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fff8e1;
+  border: 3px solid #ffc107;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.2em;
+  display: none;
+}
+.formula-box.show { display: block; }
+.formula-box .formula {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #e65100;
+  margin: 5px 0;
+}
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.95em;
+  font-weight: bold;
+}
+.legend-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+}
+.discovery-box {
+  margin-top: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  font-size: 1.2em;
+  display: none;
+  animation: pop 0.5s ease;
+}
+.discovery-box.show { display: block; }
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.mode-btns {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.mode-btn {
+  padding: 8px 16px;
+  border: 2px solid #764ba2;
+  border-radius: 10px;
+  background: white;
+  font-size: 0.95em;
+  cursor: pointer;
+  font-weight: bold;
+  color: #764ba2;
+  transition: all 0.2s;
+}
+.mode-btn.active { background: #764ba2; color: white; }
+.mode-btn:hover { background: #e0d0ff; }
+.mode-btn.active:hover { background: #5a3580; }
+.results-table {
+  margin-top: 15px;
+  width: 100%;
+  border-collapse: collapse;
+  display: none;
+}
+.results-table.show { display: table; }
+.results-table th, .results-table td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 2px solid #e0d0ff;
+  font-size: 1em;
+}
+.results-table th { background: #764ba2; color: white; }
+.results-table td { background: #faf8ff; }
+.confetti { position: fixed; pointer-events: none; z-index: 1000; }
+</style>
+</head>
+<body>
+<h1>&#x1F30D; Euler Explorer</h1>
+<p class="subtitle">Count faces, vertices, and edges of 3D shapes!</p>
+
+<div class="game-area">
+  <div class="shape-selector" id="shapeSelector"></div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#FF6B6B;"></div> Faces</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4CAF50;"></div> Vertices</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2196F3;"></div> Edges</div>
+  </div>
+
+  <div class="mode-btns">
+    <button class="mode-btn active" onclick="setMode('faces')">Count Faces</button>
+    <button class="mode-btn" onclick="setMode('vertices')">Count Vertices</button>
+    <button class="mode-btn" onclick="setMode('edges')">Count Edges</button>
+  </div>
+
+  <div class="main-content">
+    <div class="shape-display">
+      <canvas id="shapeCanvas" width="420" height="380"></canvas>
+      <div class="highlight-info" id="highlightInfo">Click on the shape to count!</div>
+    </div>
+
+    <div class="info-panel">
+      <div class="shape-name" id="shapeName">Cube</div>
+      <div class="shape-desc" id="shapeDesc">A box shape with square faces</div>
+
+      <div class="input-group">
+        <div class="input-row">
+          <label>&#x1F7E5; Faces (F):</label>
+          <input type="number" id="inputF" min="0" max="99">
+          <span class="status" id="statusF"></span>
+        </div>
+        <div class="input-row">
+          <label>&#x1F7E2; Vertices (V):</label>
+          <input type="number" id="inputV" min="0" max="99">
+          <span class="status" id="statusV"></span>
+        </div>
+        <div class="input-row">
+          <label>&#x1F535; Edges (E):</label>
+          <input type="number" id="inputE" min="0" max="99">
+          <span class="status" id="statusE"></span>
+        </div>
+      </div>
+
+      <button class="check-btn" onclick="checkAnswers()">Check My Answers!</button>
+
+      <div class="formula-box" id="formulaBox">
+        <div>Euler's Formula:</div>
+        <div class="formula" id="formulaText">V - E + F = ?</div>
+        <div id="formulaResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <table class="results-table" id="resultsTable">
+    <thead>
+      <tr><th>Shape</th><th>V</th><th>E</th><th>F</th><th>V - E + F</th></tr>
+    </thead>
+    <tbody id="resultsBody"></tbody>
+  </table>
+
+  <div class="discovery-box" id="discoveryBox">
+    <div style="font-size:1.8em;">&#x1F389; Amazing Discovery! &#x1F389;</div>
+    <div style="margin-top:10px;">You found <strong>Euler's Formula</strong>!</div>
+    <div style="font-size:1.6em;margin:10px 0;"><strong>V - E + F = 2</strong></div>
+    <div>This works for ALL simple 3D shapes! Leonhard Euler discovered this almost 300 years ago!</div>
+  </div>
+</div>
+
+<script>
+const shapes = [
+  {
+    name: "Cube", desc: "A box shape with 6 square faces",
+    F: 6, V: 8, E: 12,
+    faces: [
+      // front
+      {pts: [[0.2,0.35],[0.6,0.35],[0.6,0.75],[0.2,0.75]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      // top
+      {pts: [[0.2,0.35],[0.6,0.35],[0.78,0.18],[0.38,0.18]], color: 'rgba(255,140,140,0.3)', hover: 'rgba(255,140,140,0.6)'},
+      // right
+      {pts: [[0.6,0.35],[0.78,0.18],[0.78,0.58],[0.6,0.75]], color: 'rgba(255,80,80,0.3)', hover: 'rgba(255,80,80,0.6)'},
+      // hidden faces for counting
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [[0.2,0.35],[0.6,0.35],[0.6,0.75],[0.2,0.75],[0.38,0.18],[0.78,0.18],[0.78,0.58],[0.38,0.58]],
+    visibleVertices: [[0.2,0.35],[0.6,0.35],[0.6,0.75],[0.2,0.75],[0.38,0.18],[0.78,0.18],[0.78,0.58]],
+    edges: [
+      [[0.2,0.35],[0.6,0.35]],[[0.6,0.35],[0.6,0.75]],[[0.6,0.75],[0.2,0.75]],[[0.2,0.75],[0.2,0.35]],
+      [[0.2,0.35],[0.38,0.18]],[[0.6,0.35],[0.78,0.18]],[[0.6,0.75],[0.78,0.58]],
+      [[0.38,0.18],[0.78,0.18]],[[0.78,0.18],[0.78,0.58]]
+    ],
+    hiddenEdges: [
+      [[0.2,0.75],[0.38,0.58]],[[0.38,0.58],[0.78,0.58]],[[0.38,0.58],[0.38,0.18]]
+    ]
+  },
+  {
+    name: "Tetrahedron", desc: "A pyramid with 4 triangle faces",
+    F: 4, V: 4, E: 6,
+    faces: [
+      {pts: [[0.5,0.15],[0.2,0.75],[0.65,0.75]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      {pts: [[0.5,0.15],[0.65,0.75],[0.8,0.45]], color: 'rgba(255,80,80,0.3)', hover: 'rgba(255,80,80,0.6)'},
+      {pts: [[0.65,0.75],[0.2,0.75],[0.8,0.45]], color: 'rgba(255,140,140,0.25)', hover: 'rgba(255,140,140,0.55)'},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [[0.5,0.15],[0.2,0.75],[0.65,0.75],[0.8,0.45]],
+    visibleVertices: [[0.5,0.15],[0.2,0.75],[0.65,0.75],[0.8,0.45]],
+    edges: [
+      [[0.5,0.15],[0.2,0.75]],[[0.5,0.15],[0.65,0.75]],[[0.5,0.15],[0.8,0.45]],
+      [[0.2,0.75],[0.65,0.75]],[[0.65,0.75],[0.8,0.45]]
+    ],
+    hiddenEdges: [[[0.2,0.75],[0.8,0.45]]]
+  },
+  {
+    name: "Square Pyramid", desc: "A pyramid with a square base and 4 triangle sides",
+    F: 5, V: 5, E: 8,
+    faces: [
+      {pts: [[0.5,0.15],[0.15,0.55],[0.5,0.7]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      {pts: [[0.5,0.15],[0.5,0.7],[0.85,0.55]], color: 'rgba(255,80,80,0.3)', hover: 'rgba(255,80,80,0.6)'},
+      {pts: [[0.15,0.55],[0.5,0.7],[0.85,0.55],[0.5,0.4]], color: 'rgba(255,140,140,0.25)', hover: 'rgba(255,140,140,0.55)'},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [[0.5,0.15],[0.15,0.55],[0.5,0.7],[0.85,0.55],[0.5,0.4]],
+    visibleVertices: [[0.5,0.15],[0.15,0.55],[0.5,0.7],[0.85,0.55],[0.5,0.4]],
+    edges: [
+      [[0.5,0.15],[0.15,0.55]],[[0.5,0.15],[0.5,0.7]],[[0.5,0.15],[0.85,0.55]],[[0.5,0.15],[0.5,0.4]],
+      [[0.15,0.55],[0.5,0.7]],[[0.5,0.7],[0.85,0.55]],[[0.85,0.55],[0.5,0.4]]
+    ],
+    hiddenEdges: [[[0.15,0.55],[0.5,0.4]]]
+  },
+  {
+    name: "Triangular Prism", desc: "Like a tent or a Toblerone box!",
+    F: 5, V: 6, E: 9,
+    faces: [
+      {pts: [[0.15,0.3],[0.15,0.75],[0.55,0.75],[0.55,0.3]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      {pts: [[0.15,0.3],[0.35,0.15],[0.55,0.3]], color: 'rgba(255,140,140,0.3)', hover: 'rgba(255,140,140,0.6)'},
+      {pts: [[0.55,0.3],[0.35,0.15],[0.75,0.15],[0.85,0.3]], color: 'rgba(255,80,80,0.25)', hover: 'rgba(255,80,80,0.55)'},
+      {pts: [[0.55,0.3],[0.85,0.3],[0.85,0.75],[0.55,0.75]], color: 'rgba(255,60,60,0.2)', hover: 'rgba(255,60,60,0.5)'},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [[0.15,0.3],[0.15,0.75],[0.55,0.75],[0.55,0.3],[0.35,0.15],[0.75,0.15],[0.85,0.3],[0.85,0.75]],
+    visibleVertices: [[0.15,0.3],[0.15,0.75],[0.55,0.75],[0.55,0.3],[0.35,0.15],[0.75,0.15],[0.85,0.3]],
+    edges: [
+      [[0.15,0.3],[0.15,0.75]],[[0.15,0.75],[0.55,0.75]],[[0.55,0.75],[0.55,0.3]],[[0.55,0.3],[0.15,0.3]],
+      [[0.15,0.3],[0.35,0.15]],[[0.35,0.15],[0.55,0.3]],
+      [[0.35,0.15],[0.75,0.15]],[[0.75,0.15],[0.85,0.3]],[[0.55,0.3],[0.85,0.3]]
+    ],
+    hiddenEdges: [[[0.55,0.75],[0.85,0.75]],[[0.85,0.3],[0.85,0.75]]]
+  },
+  {
+    name: "Pentagonal Prism", desc: "A prism with pentagon-shaped ends",
+    F: 7, V: 10, E: 15,
+    faces: [
+      // front pentagon
+      {pts: [[0.15,0.4],[0.25,0.2],[0.45,0.2],[0.55,0.4],[0.35,0.55]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      // top
+      {pts: [[0.25,0.2],[0.45,0.2],[0.75,0.2],[0.55,0.2]], color: 'rgba(255,140,140,0.2)', hover: 'rgba(255,140,140,0.5)'},
+      // right upper
+      {pts: [[0.45,0.2],[0.75,0.2],[0.85,0.4],[0.55,0.4]], color: 'rgba(255,80,80,0.25)', hover: 'rgba(255,80,80,0.55)'},
+      // right lower
+      {pts: [[0.55,0.4],[0.85,0.4],[0.65,0.55],[0.35,0.55]], color: 'rgba(255,60,60,0.2)', hover: 'rgba(255,60,60,0.5)'},
+      // top face
+      {pts: [[0.25,0.2],[0.45,0.2],[0.75,0.2],[0.55,0.2]], color: 'rgba(255,150,150,0.15)', hover: 'rgba(255,150,150,0.45)'},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [
+      [0.15,0.4],[0.25,0.2],[0.45,0.2],[0.55,0.4],[0.35,0.55],
+      [0.45,0.2],[0.75,0.2],[0.85,0.4],[0.65,0.55],[0.55,0.2]
+    ],
+    visibleVertices: [
+      [0.15,0.4],[0.25,0.2],[0.45,0.2],[0.55,0.4],[0.35,0.55],
+      [0.75,0.2],[0.85,0.4],[0.65,0.55]
+    ],
+    edges: [
+      [[0.15,0.4],[0.25,0.2]],[[0.25,0.2],[0.45,0.2]],[[0.45,0.2],[0.55,0.4]],[[0.55,0.4],[0.35,0.55]],[[0.35,0.55],[0.15,0.4]],
+      [[0.45,0.2],[0.75,0.2]],[[0.75,0.2],[0.85,0.4]],[[0.85,0.4],[0.65,0.55]],[[0.65,0.55],[0.35,0.55]],
+      [[0.25,0.2],[0.55,0.2]],[[0.55,0.4],[0.85,0.4]]
+    ],
+    hiddenEdges: [[[0.15,0.4],[0.45,0.4]],[[0.45,0.4],[0.75,0.2]]]
+  },
+  {
+    name: "Octahedron", desc: "8 triangle faces - like two pyramids glued together!",
+    F: 8, V: 6, E: 12,
+    faces: [
+      {pts: [[0.5,0.1],[0.15,0.45],[0.5,0.45]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      {pts: [[0.5,0.1],[0.5,0.45],[0.85,0.45]], color: 'rgba(255,80,80,0.3)', hover: 'rgba(255,80,80,0.6)'},
+      {pts: [[0.15,0.45],[0.5,0.45],[0.5,0.8]], color: 'rgba(255,140,140,0.3)', hover: 'rgba(255,140,140,0.6)'},
+      {pts: [[0.5,0.45],[0.85,0.45],[0.5,0.8]], color: 'rgba(255,60,60,0.25)', hover: 'rgba(255,60,60,0.55)'},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [[0.5,0.1],[0.15,0.45],[0.85,0.45],[0.5,0.8],[0.5,0.45],[0.5,0.45]],
+    visibleVertices: [[0.5,0.1],[0.15,0.45],[0.85,0.45],[0.5,0.8],[0.5,0.45]],
+    edges: [
+      [[0.5,0.1],[0.15,0.45]],[[0.5,0.1],[0.85,0.45]],[[0.5,0.1],[0.5,0.45]],
+      [[0.15,0.45],[0.5,0.45]],[[0.5,0.45],[0.85,0.45]],
+      [[0.15,0.45],[0.5,0.8]],[[0.85,0.45],[0.5,0.8]],[[0.5,0.45],[0.5,0.8]]
+    ],
+    hiddenEdges: [
+      [[0.5,0.1],[0.5,0.45]],[[0.15,0.45],[0.5,0.45]],[[0.5,0.45],[0.85,0.45]],[[0.5,0.45],[0.5,0.8]]
+    ]
+  },
+  {
+    name: "Hexagonal Prism", desc: "A prism with hexagon-shaped ends - like a pencil!",
+    F: 8, V: 12, E: 18,
+    faces: [
+      {pts: [[0.1,0.4],[0.2,0.22],[0.4,0.22],[0.5,0.4],[0.4,0.58],[0.2,0.58]], color: 'rgba(255,107,107,0.35)', hover: 'rgba(255,107,107,0.65)'},
+      {pts: [[0.2,0.22],[0.4,0.22],[0.7,0.22],[0.5,0.22]], color: 'rgba(255,140,140,0.2)', hover: 'rgba(255,140,140,0.5)'},
+      {pts: [[0.4,0.22],[0.7,0.22],[0.8,0.4],[0.5,0.4]], color: 'rgba(255,80,80,0.25)', hover: 'rgba(255,80,80,0.55)'},
+      {pts: [[0.5,0.4],[0.8,0.4],[0.7,0.58],[0.4,0.58]], color: 'rgba(255,60,60,0.2)', hover: 'rgba(255,60,60,0.5)'},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true},
+      {pts: [], color: '', hover: '', hidden: true}
+    ],
+    vertices: [
+      [0.1,0.4],[0.2,0.22],[0.4,0.22],[0.5,0.4],[0.4,0.58],[0.2,0.58],
+      [0.4,0.22],[0.7,0.22],[0.8,0.4],[0.7,0.58],[0.5,0.22],[0.5,0.58]
+    ],
+    visibleVertices: [
+      [0.1,0.4],[0.2,0.22],[0.4,0.22],[0.5,0.4],[0.4,0.58],[0.2,0.58],
+      [0.7,0.22],[0.8,0.4],[0.7,0.58]
+    ],
+    edges: [
+      [[0.1,0.4],[0.2,0.22]],[[0.2,0.22],[0.4,0.22]],[[0.4,0.22],[0.5,0.4]],
+      [[0.5,0.4],[0.4,0.58]],[[0.4,0.58],[0.2,0.58]],[[0.2,0.58],[0.1,0.4]],
+      [[0.4,0.22],[0.7,0.22]],[[0.7,0.22],[0.8,0.4]],[[0.8,0.4],[0.7,0.58]],
+      [[0.7,0.58],[0.4,0.58]],[[0.5,0.4],[0.8,0.4]]
+    ],
+    hiddenEdges: [
+      [[0.2,0.22],[0.5,0.22]],[[0.2,0.58],[0.5,0.58]],[[0.1,0.4],[0.4,0.4]]
+    ]
+  }
+];
+
+let currentShapeIdx = 0;
+let completedShapes = new Set();
+let currentMode = 'faces';
+let hoverFace = -1;
+let hoverVertex = -1;
+let hoverEdge = -1;
+const canvas = document.getElementById('shapeCanvas');
+const ctx = canvas.getContext('2d');
+
+function init() {
+  const sel = document.getElementById('shapeSelector');
+  shapes.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'shape-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = s.name;
+    btn.onclick = () => selectShape(i);
+    btn.id = 'sbtn' + i;
+    sel.appendChild(btn);
+  });
+  canvas.addEventListener('mousemove', onCanvasMove);
+  canvas.addEventListener('click', onCanvasClick);
+  canvas.addEventListener('mouseleave', () => { hoverFace = -1; hoverVertex = -1; hoverEdge = -1; drawShape(); });
+  selectShape(0);
+}
+
+function selectShape(idx) {
+  currentShapeIdx = idx;
+  document.querySelectorAll('.shape-btn').forEach((b,i) => {
+    b.className = 'shape-btn' + (i === idx ? ' active' : '') + (completedShapes.has(i) ? ' completed' : '');
+  });
+  const s = shapes[idx];
+  document.getElementById('shapeName').textContent = s.name;
+  document.getElementById('shapeDesc').textContent = s.desc;
+  document.getElementById('inputF').value = '';
+  document.getElementById('inputV').value = '';
+  document.getElementById('inputE').value = '';
+  document.getElementById('statusF').textContent = '';
+  document.getElementById('statusV').textContent = '';
+  document.getElementById('statusE').textContent = '';
+  document.getElementById('formulaBox').className = 'formula-box';
+  hoverFace = -1; hoverVertex = -1; hoverEdge = -1;
+  drawShape();
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.className = 'mode-btn' + (b.textContent.toLowerCase().includes(mode) ? ' active' : '');
+  });
+  drawShape();
+}
+
+function drawShape() {
+  const s = shapes[currentShapeIdx];
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw faces
+  s.faces.forEach((f, i) => {
+    if (f.hidden || f.pts.length === 0) return;
+    ctx.beginPath();
+    ctx.moveTo(f.pts[0][0]*W, f.pts[0][1]*H);
+    for (let j = 1; j < f.pts.length; j++) ctx.lineTo(f.pts[j][0]*W, f.pts[j][1]*H);
+    ctx.closePath();
+    if (currentMode === 'faces') {
+      ctx.fillStyle = (hoverFace === i) ? f.hover : f.color;
+    } else {
+      ctx.fillStyle = 'rgba(200,200,220,0.2)';
+    }
+    ctx.fill();
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  });
+
+  // Draw hidden edges (dashed)
+  if (s.hiddenEdges) {
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = '#bbb';
+    ctx.lineWidth = 1.5;
+    s.hiddenEdges.forEach(e => {
+      ctx.beginPath();
+      ctx.moveTo(e[0][0]*W, e[0][1]*H);
+      ctx.lineTo(e[1][0]*W, e[1][1]*H);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+
+  // Draw visible edges
+  s.edges.forEach((e, i) => {
+    ctx.beginPath();
+    ctx.moveTo(e[0][0]*W, e[0][1]*H);
+    ctx.lineTo(e[1][0]*W, e[1][1]*H);
+    if (currentMode === 'edges' && hoverEdge === i) {
+      ctx.strokeStyle = '#2196F3';
+      ctx.lineWidth = 5;
+    } else if (currentMode === 'edges') {
+      ctx.strokeStyle = '#2196F3';
+      ctx.lineWidth = 2.5;
+    } else {
+      ctx.strokeStyle = '#444';
+      ctx.lineWidth = 2;
+    }
+    ctx.stroke();
+  });
+
+  // Draw vertices
+  const verts = s.visibleVertices || s.vertices;
+  verts.forEach((v, i) => {
+    ctx.beginPath();
+    const r = (currentMode === 'vertices') ? ((hoverVertex === i) ? 10 : 7) : 4;
+    ctx.arc(v[0]*W, v[1]*H, r, 0, Math.PI*2);
+    if (currentMode === 'vertices') {
+      ctx.fillStyle = (hoverVertex === i) ? '#2E7D32' : '#4CAF50';
+    } else {
+      ctx.fillStyle = '#444';
+    }
+    ctx.fill();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // Labels
+  ctx.fillStyle = '#764ba2';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(s.name, W/2, H - 10);
+}
+
+function onCanvasMove(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+  const s = shapes[currentShapeIdx];
+  const W = canvas.width, H = canvas.height;
+
+  hoverFace = -1; hoverVertex = -1; hoverEdge = -1;
+
+  if (currentMode === 'vertices') {
+    const verts = s.visibleVertices || s.vertices;
+    verts.forEach((v, i) => {
+      const dx = v[0]*W - mx, dy = v[1]*H - my;
+      if (Math.sqrt(dx*dx+dy*dy) < 15) hoverVertex = i;
+    });
+    if (hoverVertex >= 0) document.getElementById('highlightInfo').textContent = 'Vertex ' + (hoverVertex+1) + ' - a corner point!';
+    else document.getElementById('highlightInfo').textContent = 'Hover over green dots to see vertices (corners)';
+  } else if (currentMode === 'edges') {
+    s.edges.forEach((edge, i) => {
+      const d = distToSegment(mx, my, edge[0][0]*W, edge[0][1]*H, edge[1][0]*W, edge[1][1]*H);
+      if (d < 12) hoverEdge = i;
+    });
+    if (hoverEdge >= 0) document.getElementById('highlightInfo').textContent = 'Edge ' + (hoverEdge+1) + ' - a line between two corners!';
+    else document.getElementById('highlightInfo').textContent = 'Hover over blue lines to see edges';
+  } else {
+    s.faces.forEach((f, i) => {
+      if (f.hidden || f.pts.length === 0) return;
+      if (pointInPoly(mx, my, f.pts.map(p => [p[0]*W, p[1]*H]))) hoverFace = i;
+    });
+    if (hoverFace >= 0) document.getElementById('highlightInfo').textContent = 'Face ' + (hoverFace+1) + ' - a flat surface!';
+    else document.getElementById('highlightInfo').textContent = 'Hover over the shape to see faces (flat surfaces)';
+  }
+  drawShape();
+}
+
+function onCanvasClick(e) {
+  // Just re-trigger hover for touch
+  onCanvasMove(e);
+}
+
+function distToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2-x1, dy = y2-y1;
+  const len2 = dx*dx + dy*dy;
+  if (len2 === 0) return Math.sqrt((px-x1)**2 + (py-y1)**2);
+  let t = ((px-x1)*dx + (py-y1)*dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  const cx = x1 + t*dx, cy = y1 + t*dy;
+  return Math.sqrt((px-cx)**2 + (py-cy)**2);
+}
+
+function pointInPoly(x, y, pts) {
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+
+function checkAnswers() {
+  const s = shapes[currentShapeIdx];
+  const fVal = parseInt(document.getElementById('inputF').value);
+  const vVal = parseInt(document.getElementById('inputV').value);
+  const eVal = parseInt(document.getElementById('inputE').value);
+
+  const fOk = fVal === s.F;
+  const vOk = vVal === s.V;
+  const eOk = eVal === s.E;
+
+  document.getElementById('statusF').textContent = fOk ? '\u2705' : '\u274C';
+  document.getElementById('statusV').textContent = vOk ? '\u2705' : '\u274C';
+  document.getElementById('statusE').textContent = eOk ? '\u2705' : '\u274C';
+
+  if (fOk && vOk && eOk) {
+    completedShapes.add(currentShapeIdx);
+    document.getElementById('sbtn' + currentShapeIdx).className = 'shape-btn active completed';
+
+    const euler = s.V - s.E + s.F;
+    const fb = document.getElementById('formulaBox');
+    fb.className = 'formula-box show';
+    document.getElementById('formulaText').textContent = s.V + ' - ' + s.E + ' + ' + s.F + ' = ' + euler;
+    document.getElementById('formulaResult').textContent = (euler === 2) ? 'It equals 2! \u2728' : '';
+
+    updateTable();
+
+    if (completedShapes.size >= 3) {
+      document.getElementById('resultsTable').className = 'results-table show';
+    }
+    if (completedShapes.size >= 4) {
+      setTimeout(() => {
+        document.getElementById('discoveryBox').className = 'discovery-box show';
+        launchConfetti();
+      }, 800);
+    }
+  }
+}
+
+function updateTable() {
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = '';
+  shapes.forEach((s, i) => {
+    if (!completedShapes.has(i)) return;
+    const tr = document.createElement('tr');
+    const euler = s.V - s.E + s.F;
+    tr.innerHTML = '<td><strong>' + s.name + '</strong></td><td>' + s.V + '</td><td>' + s.E + '</td><td>' + s.F + '</td><td style="font-weight:bold;color:#e65100;">' + euler + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function launchConfetti() {
+  for (let i = 0; i < 40; i++) {
+    const conf = document.createElement('div');
+    conf.className = 'confetti';
+    conf.style.left = Math.random() * 100 + 'vw';
+    conf.style.top = '-20px';
+    conf.style.width = '10px';
+    conf.style.height = '10px';
+    conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    conf.style.background = ['#FF6B6B','#4CAF50','#2196F3','#FFC107','#9C27B0','#FF9800'][Math.floor(Math.random()*6)];
+    document.body.appendChild(conf);
+    const dur = 1500 + Math.random() * 2000;
+    conf.animate([
+      { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+      { transform: 'translateY(' + (window.innerHeight + 40) + 'px) rotate(' + (Math.random()*720-360) + 'deg)', opacity: 0 }
+    ], { duration: dur, easing: 'ease-out' });
+    setTimeout(() => conf.remove(), dur);
+  }
+}
+
+init();
+</script>
+</body>
+</html>

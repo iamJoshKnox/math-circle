@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Roll Tally Sheet – Lesson 5</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 4.1in;
+    padding: 0.35in 0.5in 0.3in;
+    display: flex;
+    flex-direction: column;
+    gap: 0.18in;
+  }
+
+  .sheet-divider {
+    border: none;
+    border-top: 3px dashed #999;
+    margin: 0;
+  }
+
+  .sheet-title {
+    text-align: center;
+    font-size: 22pt;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: #1a1a6e;
+    line-height: 1.1;
+  }
+
+  .sheet-subtitle {
+    text-align: center;
+    font-size: 10pt;
+    color: #444;
+    font-style: italic;
+  }
+
+  .prediction-row {
+    font-size: 12pt;
+    border: 2px solid #1a1a6e;
+    border-radius: 6px;
+    padding: 6px 12px;
+    background: #f0f4ff;
+  }
+
+  .prediction-row .blank {
+    display: inline-block;
+    min-width: 1.2in;
+    border-bottom: 2px solid #1a1a6e;
+    vertical-align: bottom;
+    margin: 0 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11pt;
+  }
+
+  thead th {
+    background: #1a1a6e;
+    color: #fff;
+    padding: 6px 8px;
+    text-align: center;
+    font-size: 11pt;
+    border: 1px solid #0d0d50;
+  }
+
+  tbody td {
+    border: 1.5px solid #555;
+    padding: 0;
+    height: 0.32in;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .sum-cell {
+    font-weight: bold;
+    font-size: 13pt;
+    width: 0.55in;
+    background: #eef0ff;
+  }
+
+  .tally-cell {
+    /* wide, empty for tally marks */
+  }
+
+  .count-cell {
+    width: 1.1in;
+  }
+
+  .footer-row {
+    display: flex;
+    gap: 0.2in;
+    flex-wrap: wrap;
+    font-size: 11pt;
+  }
+
+  .footer-item {
+    border-bottom: 2px solid #333;
+    padding-bottom: 1px;
+    min-width: 1.8in;
+    white-space: nowrap;
+  }
+
+  .reflection {
+    font-size: 10.5pt;
+    border: 1.5px solid #888;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background: #fafafa;
+  }
+
+  .reflection-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .reflection-line {
+    border-bottom: 1.5px solid #aaa;
+    height: 0.22in;
+    margin-bottom: 3px;
+  }
+
+  /* ---- PRINT ---- */
+  @media print {
+    @page { size: letter; margin: 0; }
+    body { margin: 0; }
+    .sheet-divider { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== SHEET 1 ========== -->
+<div class="page">
+  <div class="sheet-title">🎲 Dice Roll Tally Sheet</div>
+  <div class="sheet-subtitle">Lesson 5 – Probability &amp; Dice &nbsp;|&nbsp; Name: _________________________________ &nbsp;|&nbsp; Date: _____________</div>
+
+  <div class="prediction-row">
+    My prediction: The sum <span class="blank"></span> will appear most often!
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sum</th>
+        <th>Tally Marks</th>
+        <th>Total Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="sum-cell">2</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">3</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">4</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">5</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">6</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">7</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">8</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">9</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">10</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">11</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">12</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-row">
+    <span>Total rolls: <span class="footer-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>Which sum appeared most? <span class="footer-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>Which appeared least? <span class="footer-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+  </div>
+
+  <div class="reflection">
+    <span class="reflection-label">Were you surprised? Why or why not?</span>
+    <div class="reflection-line"></div>
+    <div class="reflection-line"></div>
+  </div>
+</div>
+
+<hr class="sheet-divider">
+
+<!-- ========== SHEET 2 ========== -->
+<div class="page">
+  <div class="sheet-title">🎲 Dice Roll Tally Sheet</div>
+  <div class="sheet-subtitle">Lesson 5 – Probability &amp; Dice &nbsp;|&nbsp; Name: _________________________________ &nbsp;|&nbsp; Date: _____________</div>
+
+  <div class="prediction-row">
+    My prediction: The sum <span class="blank"></span> will appear most often!
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sum</th>
+        <th>Tally Marks</th>
+        <th>Total Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="sum-cell">2</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">3</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">4</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">5</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">6</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">7</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">8</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">9</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">10</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">11</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+      <tr><td class="sum-cell">12</td><td class="tally-cell"></td><td class="count-cell"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer-row">
+    <span>Total rolls: <span class="footer-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>Which sum appeared most? <span class="footer-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+    <span>Which appeared least? <span class="footer-item">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>
+  </div>
+
+  <div class="reflection">
+    <span class="reflection-label">Were you surprised? Why or why not?</span>
+    <div class="reflection-line"></div>
+    <div class="reflection-line"></div>
+  </div>
+</div>
+
+</body>
+</html>

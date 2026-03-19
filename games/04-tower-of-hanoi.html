@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tower of Hanoi</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  user-select: none;
+  overflow-x: hidden;
+}
+h1 {
+  font-size: 2.2rem;
+  margin: 16px 0 4px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.info-bar {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin: 8px 0 12px;
+  font-size: 1.15rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.info-bar span { background: rgba(255,255,255,0.12); padding: 6px 16px; border-radius: 12px; }
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+button {
+  font-size: 1.1rem;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.1s, box-shadow 0.15s;
+  touch-action: manipulation;
+}
+button:active { transform: scale(0.95); }
+.btn-reset { background: #e74c3c; color: #fff; }
+.btn-disk { background: #3498db; color: #fff; }
+.btn-disk.active { background: #f39c12; box-shadow: 0 0 12px #f39c12; }
+
+.game-area {
+  position: relative;
+  width: 95vw;
+  max-width: 900px;
+  height: 420px;
+  margin: 0 auto;
+}
+.base {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+  height: 18px;
+  background: #8B5E3C;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.peg-zone {
+  position: absolute;
+  bottom: 18px;
+  width: 30%;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 12px;
+}
+.peg-zone:hover, .peg-zone.highlight {
+  background: rgba(255,255,255,0.07);
+}
+.peg-zone.invalid-flash {
+  background: rgba(231, 76, 60, 0.25);
+}
+#peg0 { left: 5%; }
+#peg1 { left: 35%; }
+#peg2 { left: 65%; }
+.peg-rod {
+  position: absolute;
+  bottom: 0;
+  width: 12px;
+  height: 250px;
+  background: linear-gradient(to right, #a0722b, #c9944a, #a0722b);
+  border-radius: 6px 6px 0 0;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+}
+.disk-stack {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.disk {
+  height: 36px;
+  border-radius: 18px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.25);
+  cursor: grab;
+  transition: transform 0.15s, box-shadow 0.15s;
+  touch-action: none;
+}
+.disk:first-child {
+  /* top disk */
+}
+.disk.lifting {
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.25);
+}
+.disk.selected {
+  animation: pulse 0.6s ease-in-out infinite alternate;
+}
+@keyframes pulse {
+  from { transform: translateY(0) scale(1); box-shadow: 0 3px 8px rgba(0,0,0,0.35); }
+  to { transform: translateY(-8px) scale(1.06); box-shadow: 0 12px 24px rgba(0,0,0,0.4); }
+}
+
+.victory-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.victory-overlay.show { display: flex; }
+.victory-box {
+  background: linear-gradient(135deg, #f39c12, #e74c3c, #9b59b6);
+  padding: 40px 60px;
+  border-radius: 24px;
+  text-align: center;
+  animation: victoryPop 0.5s ease;
+}
+@keyframes victoryPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.victory-box h2 { font-size: 2.5rem; margin-bottom: 12px; }
+.victory-box p { font-size: 1.3rem; margin: 6px 0; }
+.victory-box button { margin-top: 18px; background: #fff; color: #333; font-size: 1.2rem; padding: 12px 30px; }
+
+.confetti { position: fixed; z-index: 101; pointer-events: none; }
+
+.message {
+  min-height: 28px;
+  font-size: 1.1rem;
+  color: #f1c40f;
+  margin: 4px 0;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<h1>Tower of Hanoi</h1>
+<div class="info-bar">
+  <span>Moves: <strong id="moveCount">0</strong></span>
+  <span>Minimum: <strong id="minMoves">7</strong></span>
+  <span>Disks: <strong id="diskCountLabel">3</strong></span>
+</div>
+<div class="controls">
+  <button class="btn-disk" onclick="setDisks(3)">3 Disks</button>
+  <button class="btn-disk" onclick="setDisks(4)">4 Disks</button>
+  <button class="btn-disk" onclick="setDisks(5)">5 Disks</button>
+  <button class="btn-reset" onclick="resetGame()">Reset</button>
+</div>
+<div class="message" id="message">Tap a peg to pick up the top disk, then tap another peg to place it!</div>
+<div class="game-area" id="gameArea">
+  <div class="peg-zone" id="peg0" onclick="pegClick(0)">
+    <div class="peg-rod"></div>
+    <div class="disk-stack" id="stack0"></div>
+  </div>
+  <div class="peg-zone" id="peg1" onclick="pegClick(1)">
+    <div class="peg-rod"></div>
+    <div class="disk-stack" id="stack1"></div>
+  </div>
+  <div class="peg-zone" id="peg2" onclick="pegClick(2)">
+    <div class="peg-rod"></div>
+    <div class="disk-stack" id="stack2"></div>
+  </div>
+  <div class="base"></div>
+</div>
+
+<div class="victory-overlay" id="victoryOverlay">
+  <div class="victory-box">
+    <h2>You Did It!</h2>
+    <p id="victoryMsg"></p>
+    <p id="victoryOptimal"></p>
+    <button onclick="resetGame(); document.getElementById('victoryOverlay').classList.remove('show');">Play Again</button>
+  </div>
+</div>
+
+<canvas class="confetti" id="confettiCanvas"></canvas>
+
+<script>
+const COLORS = [
+  '#e74c3c', '#f39c12', '#2ecc71', '#3498db', '#9b59b6',
+  '#1abc9c', '#e67e22', '#ec407a'
+];
+const MAX_DISK_WIDTH_PCT = 85;
+const MIN_DISK_WIDTH_PCT = 28;
+
+let numDisks = 3;
+let pegs = [[], [], []];
+let selectedPeg = -1;
+let moves = 0;
+let gameWon = false;
+
+function setDisks(n) {
+  numDisks = n;
+  document.querySelectorAll('.btn-disk').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  resetGame();
+}
+
+function resetGame() {
+  pegs = [[], [], []];
+  selectedPeg = -1;
+  moves = 0;
+  gameWon = false;
+  for (let i = numDisks; i >= 1; i--) pegs[0].push(i);
+  document.getElementById('moveCount').textContent = '0';
+  document.getElementById('minMoves').textContent = (Math.pow(2, numDisks) - 1);
+  document.getElementById('diskCountLabel').textContent = numDisks;
+  document.getElementById('message').textContent = 'Tap a peg to pick up the top disk, then tap another peg to place it!';
+  document.getElementById('victoryOverlay').classList.remove('show');
+  stopConfetti();
+  renderPegs();
+}
+
+function diskWidth(size) {
+  const range = MAX_DISK_WIDTH_PCT - MIN_DISK_WIDTH_PCT;
+  return MIN_DISK_WIDTH_PCT + (size - 1) / (numDisks - 1 || 1) * range;
+}
+
+function renderPegs() {
+  for (let p = 0; p < 3; p++) {
+    const stack = document.getElementById('stack' + p);
+    stack.innerHTML = '';
+    pegs[p].forEach((diskSize, idx) => {
+      const div = document.createElement('div');
+      div.className = 'disk';
+      if (selectedPeg === p && idx === pegs[p].length - 1) div.classList.add('selected');
+      div.style.width = diskWidth(diskSize) + '%';
+      div.style.background = `linear-gradient(145deg, ${COLORS[diskSize - 1]}, ${shadeColor(COLORS[diskSize - 1], -25)})`;
+      div.textContent = diskSize;
+      stack.appendChild(div);
+    });
+    const zone = document.getElementById('peg' + p);
+    zone.classList.toggle('highlight', selectedPeg >= 0 && selectedPeg !== p);
+  }
+}
+
+function shadeColor(color, percent) {
+  let num = parseInt(color.slice(1), 16);
+  let r = Math.min(255, Math.max(0, (num >> 16) + percent));
+  let g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + percent));
+  let b = Math.min(255, Math.max(0, (num & 0xff) + percent));
+  return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+}
+
+function pegClick(p) {
+  if (gameWon) return;
+  const msg = document.getElementById('message');
+
+  if (selectedPeg < 0) {
+    if (pegs[p].length === 0) {
+      msg.textContent = 'That peg is empty! Pick one with disks.';
+      return;
+    }
+    selectedPeg = p;
+    msg.textContent = 'Now tap another peg to move the disk!';
+    renderPegs();
+    return;
+  }
+
+  if (selectedPeg === p) {
+    selectedPeg = -1;
+    msg.textContent = 'Cancelled. Tap a peg to pick up a disk.';
+    renderPegs();
+    return;
+  }
+
+  const movingDisk = pegs[selectedPeg][pegs[selectedPeg].length - 1];
+  const targetTop = pegs[p].length > 0 ? pegs[p][pegs[p].length - 1] : Infinity;
+
+  if (movingDisk > targetTop) {
+    const zone = document.getElementById('peg' + p);
+    zone.classList.add('invalid-flash');
+    setTimeout(() => zone.classList.remove('invalid-flash'), 400);
+    msg.textContent = "Can't place a bigger disk on a smaller one!";
+    selectedPeg = -1;
+    renderPegs();
+    return;
+  }
+
+  pegs[p].push(pegs[selectedPeg].pop());
+  moves++;
+  document.getElementById('moveCount').textContent = moves;
+  selectedPeg = -1;
+  msg.textContent = 'Great move!';
+  renderPegs();
+
+  if (pegs[2].length === numDisks) {
+    gameWon = true;
+    const min = Math.pow(2, numDisks) - 1;
+    document.getElementById('victoryMsg').textContent = `You solved it in ${moves} moves!`;
+    document.getElementById('victoryOptimal').textContent =
+      moves === min ? 'That\'s the minimum -- perfect!' : `The minimum is ${min} moves. Can you do better?`;
+    setTimeout(() => {
+      document.getElementById('victoryOverlay').classList.add('show');
+      startConfetti();
+    }, 300);
+  }
+}
+
+/* --- Confetti --- */
+const canvas = document.getElementById('confettiCanvas');
+const ctx = canvas.getContext('2d');
+let confettiPieces = [], confettiAnim = null;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function startConfetti() {
+  confettiPieces = [];
+  for (let i = 0; i < 120; i++) {
+    confettiPieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      w: 8 + Math.random() * 10,
+      h: 6 + Math.random() * 8,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      vy: 2 + Math.random() * 4,
+      vx: (Math.random() - 0.5) * 3,
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 8
+    });
+  }
+  animateConfetti();
+}
+
+function animateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiPieces.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.rot += p.vr;
+    if (p.y > canvas.height + 20) { p.y = -20; p.x = Math.random() * canvas.width; }
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * Math.PI / 180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+    ctx.restore();
+  });
+  confettiAnim = requestAnimationFrame(animateConfetti);
+}
+
+function stopConfetti() {
+  if (confettiAnim) cancelAnimationFrame(confettiAnim);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiPieces = [];
+}
+
+resetGame();
+</script>
+</body>
+</html>

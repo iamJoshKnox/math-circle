@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four Color Map Challenge – Lesson 7</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 10.8in;
+    padding: 0.35in 0.4in 0.3in;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 22pt;
+    font-weight: 900;
+    color: #b71c1c;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 0.15in;
+  }
+
+  .rule-box {
+    background: #fff3e0;
+    border: 2px solid #ff9800;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 9.5pt;
+    color: #333;
+    text-align: center;
+    margin-bottom: 0.18in;
+    line-height: 1.5;
+  }
+
+  .maps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25in;
+    flex: 1;
+  }
+
+  .map-card {
+    border: 2.5px solid #b71c1c;
+    border-radius: 10px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .map-label {
+    font-size: 10pt;
+    font-weight: bold;
+    color: #b71c1c;
+    margin-bottom: 4px;
+  }
+
+  .map-difficulty {
+    font-size: 7.5pt;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .map-svg-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .colors-used {
+    font-size: 8pt;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .colors-used span {
+    display: inline-block;
+    min-width: 0.3in;
+    border-bottom: 1.5px solid #555;
+    margin-left: 4px;
+  }
+
+  /* Page 2 styles */
+  .map-large {
+    border: 2.5px solid #b71c1c;
+    border-radius: 12px;
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .draw-area {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3in;
+  }
+
+  .draw-prompt {
+    font-size: 11pt;
+    color: #bbb;
+    text-align: center;
+    font-style: italic;
+  }
+
+  @media print {
+    @page { size: letter portrait; margin: 0; }
+    body { margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: Four pre-drawn maps -->
+<div class="page">
+  <h1>Four Color Map Challenge</h1>
+  <div class="page-subtitle">
+    Lesson 7 – Topology &amp; Shapes &nbsp;|&nbsp;
+    Color each map so no two touching regions share a color.
+  </div>
+  <div class="rule-box">
+    <strong>The Rule:</strong> Regions that share a <em>border</em> (not just a corner point) must be different colors.<br>
+    <strong>The Challenge:</strong> Use as FEW colors as possible. Can you do it with just <strong>4</strong>?
+  </div>
+
+  <div class="maps-grid">
+
+    <!-- Map 1: Simple 6-region island -->
+    <div class="map-card">
+      <div class="map-label">Map 1 — Coral Island</div>
+      <div class="map-difficulty">6 regions (warm-up)</div>
+      <div class="map-svg-container">
+        <svg width="280" height="260" viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Island outline -->
+          <path d="M40,130 Q30,70 80,40 Q140,10 200,35 Q260,60 255,120 Q250,180 210,220 Q160,255 100,240 Q50,220 40,130 Z"
+                fill="#fff" stroke="#b71c1c" stroke-width="2.5"/>
+          <!-- Internal borders -->
+          <line x1="80" y1="40" x2="140" y2="160" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="200" y1="35" x2="140" y2="160" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="100" y1="240" x2="140" y2="160" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="210" y1="220" x2="140" y2="160" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="40" y1="130" x2="140" y2="160" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Region labels -->
+          <text x="90" y="85" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">A</text>
+          <text x="175" y="75" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">B</text>
+          <text x="220" y="150" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">C</text>
+          <text x="175" y="215" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">D</text>
+          <text x="95" y="200" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">E</text>
+          <text x="70" y="140" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">F</text>
+        </svg>
+      </div>
+      <div class="colors-used">Colors used: <span></span></div>
+    </div>
+
+    <!-- Map 2: 7-region continent -->
+    <div class="map-card">
+      <div class="map-label">Map 2 — Dragon Land</div>
+      <div class="map-difficulty">7 regions</div>
+      <div class="map-svg-container">
+        <svg width="280" height="260" viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer shape -->
+          <path d="M30,100 Q20,40 90,25 Q160,10 230,30 Q270,50 265,110 Q260,170 230,210 Q190,250 130,245 Q70,240 40,200 Q20,160 30,100 Z"
+                fill="#fff" stroke="#b71c1c" stroke-width="2.5"/>
+          <!-- Horizontal splits -->
+          <path d="M30,100 Q100,110 150,95 Q200,80 265,110" fill="none" stroke="#b71c1c" stroke-width="2"/>
+          <path d="M40,200 Q110,180 170,190 Q230,200 230,210" fill="none" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Vertical splits -->
+          <path d="M120,25 Q115,80 120,95 Q125,130 130,190 Q132,220 130,245" fill="none" stroke="#b71c1c" stroke-width="2"/>
+          <path d="M230,30 Q210,70 210,110 Q210,160 230,210" fill="none" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Region labels -->
+          <text x="70" y="65" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">A</text>
+          <text x="170" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">B</text>
+          <text x="248" y="70" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">C</text>
+          <text x="70" y="150" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">D</text>
+          <text x="170" y="145" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">E</text>
+          <text x="248" y="165" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">F</text>
+          <text x="100" y="225" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">G</text>
+        </svg>
+      </div>
+      <div class="colors-used">Colors used: <span></span></div>
+    </div>
+
+    <!-- Map 3: 8-region tricky -->
+    <div class="map-card">
+      <div class="map-label">Map 3 — Wizard's Realm</div>
+      <div class="map-difficulty">8 regions (tricky!)</div>
+      <div class="map-svg-container">
+        <svg width="280" height="260" viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer rounded rectangle -->
+          <rect x="20" y="15" width="240" height="230" rx="20" ry="20"
+                fill="#fff" stroke="#b71c1c" stroke-width="2.5"/>
+          <!-- Cross pattern with offset -->
+          <line x1="100" y1="15" x2="100" y2="245" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="190" y1="15" x2="190" y2="245" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="20" y1="90" x2="260" y2="90" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="20" y1="170" x2="260" y2="170" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Diagonal to add complexity -->
+          <line x1="100" y1="90" x2="190" y2="170" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Region labels -->
+          <text x="58" y="58" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">A</text>
+          <text x="145" y="58" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">B</text>
+          <text x="225" y="58" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">C</text>
+          <text x="58" y="135" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">D</text>
+          <text x="130" y="122" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">E</text>
+          <text x="165" y="150" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">F</text>
+          <text x="225" y="135" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">G</text>
+          <text x="58" y="215" text-anchor="middle" font-size="14" font-weight="bold" fill="#999">H</text>
+        </svg>
+      </div>
+      <div class="colors-used">Colors used: <span></span></div>
+    </div>
+
+    <!-- Map 4: 9-region hard -->
+    <div class="map-card">
+      <div class="map-label">Map 4 — Treasure Isles</div>
+      <div class="map-difficulty">9 regions (expert!)</div>
+      <div class="map-svg-container">
+        <svg width="280" height="260" viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer blob -->
+          <path d="M35,120 Q25,50 80,25 Q130,5 180,20 Q240,40 260,100 Q275,160 245,210 Q210,250 150,250 Q90,250 50,215 Q25,185 35,120 Z"
+                fill="#fff" stroke="#b71c1c" stroke-width="2.5"/>
+          <!-- Radial from center -->
+          <line x1="150" y1="130" x2="80" y2="25" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="150" y1="130" x2="180" y2="20" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="150" y1="130" x2="260" y2="100" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="150" y1="130" x2="245" y2="210" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="150" y1="130" x2="150" y2="250" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="150" y1="130" x2="50" y2="215" stroke="#b71c1c" stroke-width="2"/>
+          <line x1="150" y1="130" x2="35" y2="120" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Inner ring -->
+          <circle cx="150" cy="130" r="38" fill="#fff" stroke="#b71c1c" stroke-width="2"/>
+          <!-- Region labels -->
+          <text x="150" y="135" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">center</text>
+          <text x="85" y="70" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">A</text>
+          <text x="155" y="50" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">B</text>
+          <text x="225" y="75" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">C</text>
+          <text x="240" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">D</text>
+          <text x="200" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">E</text>
+          <text x="115" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">F</text>
+          <text x="60" y="175" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">G</text>
+          <text x="60" y="110" text-anchor="middle" font-size="13" font-weight="bold" fill="#999">H</text>
+        </svg>
+      </div>
+      <div class="colors-used">Colors used: <span></span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 2: Design Your Own -->
+<div class="page">
+  <h1>Design Your Own Map</h1>
+  <div class="page-subtitle">
+    Draw a map with at least 8 regions. Then trade with a partner — can they color it with just 4 colors?
+  </div>
+
+  <div class="map-large" style="margin-bottom: 0.2in;">
+    <div class="map-label" style="font-size: 12pt; margin-bottom: 8px;">My Map: _________________________ (give it a name!)</div>
+    <div class="draw-area">
+      <div class="draw-prompt">Draw your map here — make sure every region is fully enclosed!</div>
+    </div>
+    <div class="colors-used" style="margin-top: 8px;">Number of regions: <span></span> &nbsp;&nbsp; Fewest colors needed: <span></span></div>
+  </div>
+
+  <div class="map-large">
+    <div class="map-label" style="font-size: 12pt; margin-bottom: 8px;">Partner's Map — Can I four-color it?</div>
+    <div class="draw-area">
+      <div class="draw-prompt">Your partner draws their map here. You color it!</div>
+    </div>
+    <div class="colors-used" style="margin-top: 8px;">Number of regions: <span></span> &nbsp;&nbsp; Colors I used: <span></span></div>
+  </div>
+</div>
+
+</body>
+</html>

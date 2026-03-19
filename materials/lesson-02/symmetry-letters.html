@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symmetry Letter Cards – Lesson 2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  /* Each page holds 2 letter cards stacked vertically */
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.35in 0.5in;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2in;
+    page-break-after: always;
+  }
+
+  .letter-card {
+    flex: 1;
+    border: 2px solid #bbb;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2in 0.3in 0.18in;
+    position: relative;
+    background: #fff;
+  }
+
+  .card-title {
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    font-size: 8pt;
+    color: #bbb;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* The big letter is rendered as SVG text to guarantee consistent huge size */
+  .letter-svg {
+    display: block;
+  }
+
+  .checkbox-row {
+    display: flex;
+    gap: 0.45in;
+    margin-top: 0.18in;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13pt;
+    color: #333;
+    font-family: Arial, sans-serif;
+  }
+
+  .checkbox-box {
+    width: 24px;
+    height: 24px;
+    border: 2.5px solid #444;
+    border-radius: 3px;
+    display: inline-block;
+    flex-shrink: 0;
+    background: #fff;
+  }
+
+  .letter-label {
+    font-size: 9pt;
+    color: #999;
+    margin-top: 0.1in;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Subtle guide line hints — very light so they don't distract */
+  .sym-hint {
+    font-size: 8pt;
+    color: #ccc;
+    margin-top: 4px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      padding: 0.35in 0.5in;
+      page-break-after: always;
+    }
+    .letter-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!--
+  10 letters across 5 pages, 2 per page:
+  Page 1: A, B
+  Page 2: D, H
+  Page 3: M, T
+  Page 4: S, Z
+  Page 5: J, E
+-->
+
+<!-- ═══ PAGE 1 ═══ -->
+<div class="page">
+
+  <!-- Letter A -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <!-- Vertical guide line (very faint) -->
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <!-- Horizontal guide line -->
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <!-- The letter -->
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a"
+            letter-spacing="-4">A</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+  <!-- Letter B -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">B</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ PAGE 2 ═══ -->
+<div class="page">
+
+  <!-- Letter D -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">D</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+  <!-- Letter H -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">H</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ PAGE 3 ═══ -->
+<div class="page">
+
+  <!-- Letter M -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">M</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+  <!-- Letter T -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">T</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ PAGE 4 ═══ -->
+<div class="page">
+
+  <!-- Letter S -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">S</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+  <!-- Letter Z -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">Z</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ PAGE 5 ═══ -->
+<div class="page">
+
+  <!-- Letter J -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">J</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+  <!-- Letter E -->
+  <div class="letter-card">
+    <div class="card-title">Symmetry Explorer</div>
+    <svg class="letter-svg" width="340" height="260" viewBox="0 0 340 260">
+      <line x1="170" y1="10" x2="170" y2="230" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <line x1="20" y1="130" x2="320" y2="130" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6,5"/>
+      <text x="170" y="220" text-anchor="middle"
+            font-family="Arial Black, Arial, sans-serif"
+            font-weight="900"
+            font-size="230"
+            fill="#1a1a1a">E</text>
+    </svg>
+    <div class="letter-label">Hold a mirror along the dashed lines — does each half match?</div>
+    <div class="checkbox-row">
+      <label class="checkbox-item"><span class="checkbox-box"></span> Vertical symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> Horizontal symmetry</label>
+      <label class="checkbox-item"><span class="checkbox-box"></span> No symmetry</label>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

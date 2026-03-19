@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number Tiles 1–9 – Lesson 6</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial Black', 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 10.8in;
+    padding: 0.3in 0.35in 0.25in;
+    display: flex;
+    flex-direction: column;
+    gap: 0.08in;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 19pt;
+    font-weight: 900;
+    color: #1a5c1a;
+    margin-bottom: 2px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    font-size: 9.5pt;
+    color: #555;
+    margin-bottom: 0.1in;
+  }
+
+  /* 8 sets, each set is one row of 9 tiles */
+  .tile-set-row {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  /* Each tile */
+  .tile {
+    width: 0.88in;
+    height: 0.88in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36pt;
+    font-weight: 900;
+    border: 2px dashed #777;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* Cut line between sets */
+  .set-cut {
+    border-top: 2.5px dashed #aaa;
+    margin: 0 0.1in;
+  }
+
+  /* 8 different subtle tints */
+  .set-1 .tile { background: #fff9e6; color: #7a4a00; border-color: #c8a000; }
+  .set-2 .tile { background: #e8f5e9; color: #1a5c1a; border-color: #4caf50; }
+  .set-3 .tile { background: #e3f2fd; color: #0d3d7a; border-color: #2196f3; }
+  .set-4 .tile { background: #fce4ec; color: #880e4f; border-color: #e91e63; }
+  .set-5 .tile { background: #f3e5f5; color: #4a0072; border-color: #9c27b0; }
+  .set-6 .tile { background: #fff3e0; color: #bf360c; border-color: #ff9800; }
+  .set-7 .tile { background: #e0f7fa; color: #006064; border-color: #00bcd4; }
+  .set-8 .tile { background: #f1f8e9; color: #33691e; border-color: #8bc34a; }
+
+  .set-label {
+    font-size: 7pt;
+    text-align: center;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1px;
+  }
+
+  .cut-instruction {
+    text-align: center;
+    font-size: 9pt;
+    color: #888;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* scissors symbol at start of set rows */
+  .scissors {
+    font-size: 13pt;
+    margin-right: 4px;
+    align-self: center;
+    color: #aaa;
+  }
+
+  @media print {
+    @page { size: letter portrait; margin: 0; }
+    body { margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Number Tiles: 1 – 9</h1>
+  <div class="page-subtitle">
+    Lesson 6 – Magic Squares &amp; Number Patterns &nbsp;|&nbsp;
+    Cut out each set of tiles. Use them to arrange magic squares on your desk!
+  </div>
+
+  <!-- Set 1 -->
+  <div class="set-label">Set 1</div>
+  <div class="tile-set-row set-1">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 2 -->
+  <div class="set-label">Set 2</div>
+  <div class="tile-set-row set-2">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 3 -->
+  <div class="set-label">Set 3</div>
+  <div class="tile-set-row set-3">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 4 -->
+  <div class="set-label">Set 4</div>
+  <div class="tile-set-row set-4">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 5 -->
+  <div class="set-label">Set 5</div>
+  <div class="tile-set-row set-5">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 6 -->
+  <div class="set-label">Set 6</div>
+  <div class="tile-set-row set-6">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 7 -->
+  <div class="set-label">Set 7</div>
+  <div class="tile-set-row set-7">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="set-cut"></div>
+
+  <!-- Set 8 -->
+  <div class="set-label">Set 8</div>
+  <div class="tile-set-row set-8">
+    <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>
+    <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>
+    <div class="tile">7</div><div class="tile">8</div><div class="tile">9</div>
+  </div>
+
+  <div class="cut-instruction">&#9986; Cut along the dashed lines. Each row is one complete set for one student.</div>
+</div>
+</body>
+</html>

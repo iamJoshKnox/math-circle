@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Square Workshop – Lesson 6</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 10.8in;
+    padding: 0.35in 0.4in 0.3in;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24pt;
+    font-weight: 900;
+    color: #1a5c1a;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 0.18in;
+  }
+
+  /* 2 rows × 3 cols = 6 grids */
+  .grid-area {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0.22in 0.28in;
+    flex: 1;
+  }
+
+  .square-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .square-number {
+    font-size: 9pt;
+    color: #888;
+    font-weight: bold;
+    align-self: flex-start;
+    padding-left: 4px;
+  }
+
+  /* Outer wrapper with sum annotations */
+  .square-wrapper {
+    position: relative;
+    /* grid is centered; leave room for edge-sum labels */
+    margin: 0 0.28in;
+  }
+
+  table.magic-grid {
+    border-collapse: collapse;
+    border: 3.5px solid #1a5c1a;
+  }
+
+  table.magic-grid td {
+    width: 1.2in;
+    height: 1.2in;
+    border: 2px solid #1a5c1a;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 22pt;
+    font-weight: bold;
+    color: #222;
+  }
+
+  .sum-label {
+    font-size: 9.5pt;
+    color: #1a5c1a;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;
+  }
+
+  .sum-spaces {
+    font-size: 8.5pt;
+    color: #555;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 3px;
+  }
+
+  .sum-space-item {
+    white-space: nowrap;
+  }
+
+  .blank-sm {
+    display: inline-block;
+    min-width: 0.4in;
+    border-bottom: 1.5px solid #555;
+    vertical-align: bottom;
+  }
+
+  @media print {
+    @page { size: letter portrait; margin: 0; }
+    body { margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Magic Square Workshop</h1>
+  <div class="page-subtitle">
+    Lesson 6 – Magic Squares &amp; Number Patterns &nbsp;|&nbsp;
+    Place the numbers 1–9 so every row, column, and diagonal adds to <strong>15</strong>.
+  </div>
+
+  <div class="grid-area">
+
+    <!-- Square 1 -->
+    <div class="square-container">
+      <div class="square-number">Try #1</div>
+      <div class="square-wrapper">
+        <table class="magic-grid">
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div class="sum-label">Target sum: 15</div>
+      <div class="sum-spaces">
+        <span class="sum-space-item">Row sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Col sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Diagonals: <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+      </div>
+    </div>
+
+    <!-- Square 2 -->
+    <div class="square-container">
+      <div class="square-number">Try #2</div>
+      <div class="square-wrapper">
+        <table class="magic-grid">
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div class="sum-label">Target sum: 15</div>
+      <div class="sum-spaces">
+        <span class="sum-space-item">Row sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Col sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Diagonals: <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+      </div>
+    </div>
+
+    <!-- Square 3 -->
+    <div class="square-container">
+      <div class="square-number">Try #3</div>
+      <div class="square-wrapper">
+        <table class="magic-grid">
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div class="sum-label">Target sum: 15</div>
+      <div class="sum-spaces">
+        <span class="sum-space-item">Row sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Col sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Diagonals: <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+      </div>
+    </div>
+
+    <!-- Square 4 -->
+    <div class="square-container">
+      <div class="square-number">Try #4</div>
+      <div class="square-wrapper">
+        <table class="magic-grid">
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div class="sum-label">Target sum: 15</div>
+      <div class="sum-spaces">
+        <span class="sum-space-item">Row sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Col sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Diagonals: <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+      </div>
+    </div>
+
+    <!-- Square 5 -->
+    <div class="square-container">
+      <div class="square-number">Try #5</div>
+      <div class="square-wrapper">
+        <table class="magic-grid">
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+          <tr><td></td><td></td><td></td></tr>
+        </table>
+      </div>
+      <div class="sum-label">Target sum: 15</div>
+      <div class="sum-spaces">
+        <span class="sum-space-item">Row sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Col sums: <span class="blank-sm"></span> <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+        <span class="sum-space-item">Diagonals: <span class="blank-sm"></span> <span class="blank-sm"></span></span>
+      </div>
+    </div>
+
+    <!-- Square 6 – SOLUTION CHALLENGE -->
+    <div class="square-container">
+      <div class="square-number">Solution! &#9733;</div>
+      <div class="square-wrapper">
+        <table class="magic-grid" style="border-color:#c00;">
+          <tr>
+            <td style="color:#c00;">2</td>
+            <td style="color:#c00;">7</td>
+            <td style="color:#c00;">6</td>
+          </tr>
+          <tr>
+            <td style="color:#c00;">9</td>
+            <td style="color:#c00;">5</td>
+            <td style="color:#c00;">1</td>
+          </tr>
+          <tr>
+            <td style="color:#c00;">4</td>
+            <td style="color:#c00;">3</td>
+            <td style="color:#c00;">8</td>
+          </tr>
+        </table>
+      </div>
+      <div class="sum-label" style="color:#c00;">Every row, column &amp; diagonal = 15!</div>
+      <div class="sum-spaces" style="color:#c00; font-weight:bold;">Can you find a different arrangement?</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

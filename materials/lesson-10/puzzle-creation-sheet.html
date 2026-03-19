@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle Creation Sheet – Lesson 10</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 10.8in;
+    padding: 0.4in 0.5in 0.35in;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24pt;
+    font-weight: 900;
+    color: #e65100;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 0.18in;
+  }
+
+  .name-line {
+    font-size: 11pt;
+    margin-bottom: 0.15in;
+    display: flex;
+    gap: 0.3in;
+  }
+
+  .name-line .field {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .name-line .field span {
+    display: inline-block;
+    min-width: 2in;
+    border-bottom: 1.5px solid #333;
+  }
+
+  .section {
+    border: 2.5px solid #ff9800;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 0.16in;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section-label {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 6px;
+  }
+
+  .section-hint {
+    font-size: 8.5pt;
+    color: #888;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .work-area {
+    border: 1.5px dashed #ddd;
+    border-radius: 8px;
+    flex: 1;
+    min-height: 2.2in;
+    background: #fafafa;
+  }
+
+  .section.puzzle-area {
+    flex: 1;
+  }
+
+  .section.puzzle-area .work-area {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .section.answer-area {
+    flex: 0.5;
+  }
+
+  .section.answer-area .work-area {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .difficulty-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.12in;
+    font-size: 10pt;
+  }
+
+  .difficulty-row .label {
+    font-weight: bold;
+    color: #e65100;
+  }
+
+  .difficulty-row .option {
+    border: 2px solid #ffcc80;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 9pt;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .idea-box {
+    background: #fff3e0;
+    border: 1.5px solid #ffcc80;
+    border-radius: 8px;
+    padding: 8px 14px;
+    margin-bottom: 0.12in;
+  }
+
+  .idea-box .idea-title {
+    font-size: 9pt;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 4px;
+  }
+
+  .idea-box ul {
+    font-size: 8.5pt;
+    color: #555;
+    padding-left: 16px;
+    line-height: 1.6;
+    columns: 2;
+    column-gap: 0.3in;
+  }
+
+  .fold-line {
+    border-top: 2px dashed #ccc;
+    margin: 0.05in 0;
+    position: relative;
+  }
+
+  .fold-line::after {
+    content: '\\2702  fold here to hide the answer';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    padding: 0 10px;
+    font-size: 7pt;
+    color: #aaa;
+  }
+
+  @media print {
+    @page { size: letter portrait; margin: 0; }
+    body { margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Create Your Own Puzzle!</h1>
+  <div class="page-subtitle">
+    Lesson 10 – Math Circle Celebration &nbsp;|&nbsp;
+    Design a math puzzle for the Math Circle Museum.
+  </div>
+
+  <div class="name-line">
+    <div class="field">Puzzle Master: <span></span></div>
+    <div class="field">Date: <span></span></div>
+  </div>
+
+  <div class="idea-box">
+    <div class="idea-title">Need an idea? Try one of these:</div>
+    <ul>
+      <li>A magic square with some numbers missing</li>
+      <li>A secret coded message to decode</li>
+      <li>A block structure to build from clues</li>
+      <li>A map coloring challenge</li>
+      <li>An "odd one out" set you designed</li>
+      <li>A logic riddle or trick question</li>
+      <li>A Nim game with special rules</li>
+      <li>A tricky symmetry drawing</li>
+    </ul>
+  </div>
+
+  <div class="difficulty-row">
+    <span class="label">How hard is it?</span>
+    <span class="option">Easy</span>
+    <span class="option">Medium</span>
+    <span class="option">Hard</span>
+    <span class="option">Super Hard</span>
+    <span style="font-size:8pt; color:#999;">(circle one)</span>
+  </div>
+
+  <div class="section puzzle-area">
+    <div class="section-label">My Puzzle</div>
+    <div class="section-hint">Write or draw your puzzle here. Make sure someone else can understand it!</div>
+    <div class="work-area"></div>
+  </div>
+
+  <div class="fold-line"></div>
+
+  <div class="section answer-area">
+    <div class="section-label">The Answer</div>
+    <div class="section-hint">Write the solution here. Fold this part under so it stays secret!</div>
+    <div class="work-area"></div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Cards — Math Circle Lesson 3</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+    background: #fff;
+  }
+
+  .page {
+    width: 8.5in;
+    height: 11in;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+    padding: 0.3in;
+    gap: 0.2in;
+  }
+
+  .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #333;
+    border-radius: 24px;
+    padding: 0.2in;
+    gap: 0.15in;
+  }
+
+  .card-name {
+    font-size: 72pt;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  /* Gobr — round green */
+  .card-gobr { background: #e8fbe8; border-color: #2e8b2e; }
+  .card-gobr .card-name { color: #1a5c1a; }
+
+  /* Stoon — tall purple */
+  .card-stoon { background: #f0e8ff; border-color: #6b2fa0; }
+  .card-stoon .card-name { color: #4a1a70; }
+
+  /* Zix — spiky orange */
+  .card-zix { background: #fff3e0; border-color: #d4600a; }
+  .card-zix .card-name { color: #8c3a00; }
+
+  /* Wug — fluffy blue */
+  .card-wug { background: #e3f2fd; border-color: #1565c0; }
+  .card-wug .card-name { color: #0d3b7a; }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      margin: 0;
+      padding: 0.3in;
+    }
+    @page { size: 8.5in 11in; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: Gobr -->
+<div class="page">
+  <div class="card card-gobr">
+    <svg width="320" height="280" viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body: round green blob -->
+      <ellipse cx="160" cy="160" rx="130" ry="120" fill="#4caf50" />
+      <!-- Belly highlight -->
+      <ellipse cx="160" cy="175" rx="80" ry="65" fill="#81c784" opacity="0.5"/>
+      <!-- Left eye white -->
+      <ellipse cx="115" cy="130" rx="30" ry="34" fill="white"/>
+      <!-- Right eye white -->
+      <ellipse cx="205" cy="130" rx="30" ry="34" fill="white"/>
+      <!-- Left pupil -->
+      <circle cx="120" cy="133" r="16" fill="#1b5e20"/>
+      <!-- Right pupil -->
+      <circle cx="210" cy="133" r="16" fill="#1b5e20"/>
+      <!-- Left eye shine -->
+      <circle cx="126" cy="125" r="6" fill="white"/>
+      <!-- Right eye shine -->
+      <circle cx="216" cy="125" r="6" fill="white"/>
+      <!-- Smile -->
+      <path d="M 120 185 Q 160 215 200 185" stroke="#1b5e20" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- Small teeth -->
+      <rect x="145" y="185" width="14" height="12" rx="3" fill="white"/>
+      <rect x="162" y="185" width="14" height="12" rx="3" fill="white"/>
+      <!-- Tiny arms -->
+      <ellipse cx="32" cy="170" rx="22" ry="14" fill="#4caf50" transform="rotate(-20,32,170)"/>
+      <ellipse cx="288" cy="170" rx="22" ry="14" fill="#4caf50" transform="rotate(20,288,170)"/>
+      <!-- Feet -->
+      <ellipse cx="120" cy="272" rx="38" ry="16" fill="#388e3c"/>
+      <ellipse cx="200" cy="272" rx="38" ry="16" fill="#388e3c"/>
+    </svg>
+    <div class="card-name">Gobr</div>
+  </div>
+</div>
+
+<!-- PAGE 2: Stoon -->
+<div class="page">
+  <div class="card card-stoon">
+    <svg width="220" height="300" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body: tall purple -->
+      <rect x="55" y="60" width="110" height="200" rx="40" fill="#9c27b0"/>
+      <!-- Head: rounded top -->
+      <ellipse cx="110" cy="70" rx="60" ry="55" fill="#9c27b0"/>
+      <!-- Belly -->
+      <ellipse cx="110" cy="175" rx="45" ry="70" fill="#ce93d8" opacity="0.45"/>
+      <!-- Left eye white (small eyes!) -->
+      <ellipse cx="88" cy="62" rx="16" ry="17" fill="white"/>
+      <!-- Right eye white -->
+      <ellipse cx="132" cy="62" rx="16" ry="17" fill="white"/>
+      <!-- Left pupil small -->
+      <circle cx="91" cy="64" r="8" fill="#4a148c"/>
+      <!-- Right pupil small -->
+      <circle cx="135" cy="64" r="8" fill="#4a148c"/>
+      <!-- Shine -->
+      <circle cx="94" cy="60" r="3" fill="white"/>
+      <circle cx="138" cy="60" r="3" fill="white"/>
+      <!-- Tiny mouth -->
+      <path d="M 100 88 Q 110 96 120 88" stroke="#4a148c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- Tiny arms -->
+      <ellipse cx="30" cy="155" rx="24" ry="12" fill="#9c27b0" transform="rotate(-10,30,155)"/>
+      <ellipse cx="190" cy="155" rx="24" ry="12" fill="#9c27b0" transform="rotate(10,190,155)"/>
+      <!-- Feet -->
+      <ellipse cx="85" cy="293" rx="32" ry="14" fill="#6a1b9a"/>
+      <ellipse cx="135" cy="293" rx="32" ry="14" fill="#6a1b9a"/>
+    </svg>
+    <div class="card-name">Stoon</div>
+  </div>
+</div>
+
+<!-- PAGE 3: Zix -->
+<div class="page">
+  <div class="card card-zix">
+    <svg width="320" height="290" viewBox="0 0 320 290" xmlns="http://www.w3.org/2000/svg">
+      <!-- Spiky body -->
+      <!-- Spikes radiating out -->
+      <polygon points="160,10 175,55 165,55" fill="#ff7043"/>
+      <polygon points="220,25 210,68 200,58" fill="#ff7043"/>
+      <polygon points="270,60 240,88 232,76" fill="#ff7043"/>
+      <polygon points="300,115 262,118 264,106" fill="#ff7043"/>
+      <polygon points="295,175 258,162 262,150" fill="#ff7043"/>
+      <polygon points="100,10 105,55 115,55" fill="#ff7043"/>
+      <polygon points="40,25 50,68 60,58" fill="#ff7043"/>
+      <polygon points="8,85 42,100 38,88" fill="#ff7043"/>
+      <polygon points="15,155 52,150 50,138" fill="#ff7043"/>
+      <!-- Main body: spiky orange blob -->
+      <ellipse cx="160" cy="155" rx="115" ry="105" fill="#ff7043"/>
+      <!-- Belly -->
+      <ellipse cx="160" cy="168" rx="70" ry="60" fill="#ffab91" opacity="0.5"/>
+      <!-- Eyes — angularly set -->
+      <ellipse cx="128" cy="135" rx="24" ry="26" fill="white"/>
+      <ellipse cx="192" cy="135" rx="24" ry="26" fill="white"/>
+      <!-- Pupils with angry slant -->
+      <ellipse cx="132" cy="138" rx="13" ry="14" fill="#bf360c"/>
+      <ellipse cx="196" cy="138" rx="13" ry="14" fill="#bf360c"/>
+      <!-- Shine -->
+      <circle cx="137" cy="132" r="5" fill="white"/>
+      <circle cx="201" cy="132" r="5" fill="white"/>
+      <!-- Eyebrows (angled for spunky look) -->
+      <line x1="112" y1="112" x2="146" y2="118" stroke="#bf360c" stroke-width="5" stroke-linecap="round"/>
+      <line x1="208" y1="112" x2="174" y2="118" stroke="#bf360c" stroke-width="5" stroke-linecap="round"/>
+      <!-- Grin -->
+      <path d="M 125 175 Q 160 200 195 175" stroke="#bf360c" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- Tiny teeth -->
+      <rect x="145" y="175" width="12" height="10" rx="2" fill="white"/>
+      <rect x="160" y="175" width="12" height="10" rx="2" fill="white"/>
+      <!-- Feet -->
+      <ellipse cx="120" cy="275" rx="36" ry="14" fill="#e64a19"/>
+      <ellipse cx="200" cy="275" rx="36" ry="14" fill="#e64a19"/>
+    </svg>
+    <div class="card-name">Zix</div>
+  </div>
+</div>
+
+<!-- PAGE 4: Wug -->
+<div class="page">
+  <div class="card card-wug">
+    <svg width="330" height="295" viewBox="0 0 330 295" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fluffy bumps (cloud-like silhouette) -->
+      <circle cx="100" cy="155" r="60" fill="#42a5f5"/>
+      <circle cx="165" cy="130" r="72" fill="#42a5f5"/>
+      <circle cx="230" cy="155" r="60" fill="#42a5f5"/>
+      <circle cx="80" cy="190" r="52" fill="#42a5f5"/>
+      <circle cx="250" cy="190" r="52" fill="#42a5f5"/>
+      <circle cx="165" cy="210" r="65" fill="#42a5f5"/>
+      <!-- Fluffy top bumps (head) -->
+      <circle cx="130" cy="110" r="45" fill="#42a5f5"/>
+      <circle cx="200" cy="110" r="45" fill="#42a5f5"/>
+      <circle cx="165" cy="90" r="50" fill="#42a5f5"/>
+      <!-- Inner lighter fluff -->
+      <ellipse cx="165" cy="180" rx="90" ry="80" fill="#90caf9" opacity="0.45"/>
+      <!-- Eyes — big cute -->
+      <ellipse cx="140" cy="140" rx="26" ry="28" fill="white"/>
+      <ellipse cx="190" cy="140" rx="26" ry="28" fill="white"/>
+      <!-- Pupils -->
+      <circle cx="144" cy="143" r="15" fill="#0d47a1"/>
+      <circle cx="194" cy="143" r="15" fill="#0d47a1"/>
+      <!-- Shine -->
+      <circle cx="150" cy="136" r="6" fill="white"/>
+      <circle cx="200" cy="136" r="6" fill="white"/>
+      <!-- Happy mouth -->
+      <path d="M 140 172 Q 165 195 190 172" stroke="#0d47a1" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- Rosy cheeks -->
+      <ellipse cx="118" cy="168" rx="18" ry="12" fill="#ef9a9a" opacity="0.55"/>
+      <ellipse cx="212" cy="168" rx="18" ry="12" fill="#ef9a9a" opacity="0.55"/>
+      <!-- Tiny arms/paws -->
+      <circle cx="44" cy="195" r="22" fill="#42a5f5"/>
+      <circle cx="286" cy="195" r="22" fill="#42a5f5"/>
+      <!-- Feet blobs -->
+      <ellipse cx="125" cy="283" rx="40" ry="16" fill="#1565c0"/>
+      <ellipse cx="205" cy="283" rx="40" ry="16" fill="#1565c0"/>
+    </svg>
+    <div class="card-name">Wug</div>
+  </div>
+</div>
+
+</body>
+</html>

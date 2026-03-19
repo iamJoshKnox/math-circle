@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odd One Out!</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  user-select: none;
+}
+h1 {
+  color: #fff;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin-bottom: 5px;
+}
+.subtitle {
+  color: #e0d0ff;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+.score-bar {
+  display: flex;
+  gap: 30px;
+  color: #fff;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  background: rgba(255,255,255,0.15);
+  padding: 8px 25px;
+  border-radius: 20px;
+}
+.prompt {
+  color: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  min-height: 40px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+.items-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  max-width: 800px;
+}
+.item-card {
+  width: 150px;
+  height: 150px;
+  background: #fff;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  border: 4px solid transparent;
+  position: relative;
+}
+.item-card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+.item-card.selected-correct {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+  animation: bounce 0.5s;
+}
+.item-card.selected-wrong {
+  border-color: #ff9800;
+  background: #fff3e0;
+  animation: shake 0.4s;
+}
+.item-card.also-valid {
+  border-color: #2196F3;
+  background: #e3f2fd;
+}
+.item-card .shape-display {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+.item-card .label {
+  font-size: 1rem;
+  margin-top: 5px;
+  color: #555;
+  font-weight: 600;
+}
+@keyframes bounce {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+.feedback {
+  color: #fff;
+  font-size: 1.4rem;
+  text-align: center;
+  min-height: 50px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  max-width: 650px;
+  line-height: 1.4;
+}
+.reason-box {
+  background: rgba(255,255,255,0.2);
+  border-radius: 15px;
+  padding: 15px 25px;
+  color: #fff;
+  font-size: 1.15rem;
+  max-width: 650px;
+  text-align: center;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  display: none;
+}
+.btn {
+  padding: 14px 40px;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.1s, box-shadow 0.1s;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+.btn:hover { transform: scale(1.05); }
+.btn-next {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: #fff;
+  display: none;
+}
+.btn-restart {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: #333;
+  display: none;
+}
+.star { display: inline-block; animation: starPop 0.5s ease; }
+@keyframes starPop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+.end-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+.end-screen h2 { color: #fff; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+.end-screen .final-score { color: #ffd54f; font-size: 2rem; }
+</style>
+</head>
+<body>
+<h1>Odd One Out!</h1>
+<p class="subtitle">Which one doesn't belong? (Sometimes more than one answer works!)</p>
+<div class="score-bar">
+  <span>Round: <span id="roundNum">1</span> / <span id="totalRounds">12</span></span>
+  <span>Score: <span id="score">0</span></span>
+</div>
+<div class="prompt" id="prompt"></div>
+<div class="items-container" id="items"></div>
+<div class="feedback" id="feedback"></div>
+<div class="reason-box" id="reasonBox"></div>
+<button class="btn btn-next" id="nextBtn" onclick="nextRound()">Next Round</button>
+
+<div class="end-screen" id="endScreen">
+  <h2 id="endTitle"></h2>
+  <div class="final-score" id="finalScore"></div>
+  <button class="btn btn-restart" id="restartBtn" onclick="restart()" style="display:inline-block">Play Again!</button>
+</div>
+
+<script>
+const puzzles = [
+  {
+    prompt: "Which shape is different?",
+    items: [
+      { display: "🔵", label: "Circle" },
+      { display: "🔵", label: "Circle" },
+      { display: "🔵", label: "Circle" },
+      { display: "🟥", label: "Square" },
+      { display: "🔵", label: "Circle" }
+    ],
+    valid: [3],
+    reasons: ["The red square is the only square -- all the others are circles!", "It's also the only RED shape."]
+  },
+  {
+    prompt: "Which number doesn't belong?",
+    items: [
+      { display: "2", label: "Two", isNum: true },
+      { display: "4", label: "Four", isNum: true },
+      { display: "7", label: "Seven", isNum: true },
+      { display: "8", label: "Eight", isNum: true },
+      { display: "6", label: "Six", isNum: true }
+    ],
+    valid: [2],
+    reasons: ["7 is the only ODD number -- 2, 4, 6, and 8 are all even!"]
+  },
+  {
+    prompt: "Which one doesn't belong?",
+    items: [
+      { display: "🍎", label: "Apple" },
+      { display: "🍌", label: "Banana" },
+      { display: "🍕", label: "Pizza" },
+      { display: "🍇", label: "Grapes" }
+    ],
+    valid: [2],
+    reasons: ["Pizza is not a fruit! Apple, banana, and grapes are all fruits."]
+  },
+  {
+    prompt: "Find the one that doesn't fit!",
+    items: [
+      { display: "🐱", label: "Cat" },
+      { display: "🐶", label: "Dog" },
+      { display: "🐟", label: "Fish" },
+      { display: "🐰", label: "Rabbit" }
+    ],
+    valid: [2],
+    reasons: ["Fish lives in water, not on land like the others!", "You could also say fish has no legs!"]
+  },
+  {
+    prompt: "Which one is different from the rest?",
+    items: [
+      { display: "🟡", label: "Yellow" },
+      { display: "🟡", label: "Yellow" },
+      { display: "🟢", label: "Green" },
+      { display: "🟡", label: "Yellow" },
+      { display: "🟡", label: "Yellow" }
+    ],
+    valid: [2],
+    reasons: ["The green circle is the only one that isn't yellow!"]
+  },
+  {
+    prompt: "Which one doesn't belong?",
+    items: [
+      { display: "10", label: "Ten", isNum: true },
+      { display: "20", label: "Twenty", isNum: true },
+      { display: "35", label: "Thirty-five", isNum: true },
+      { display: "40", label: "Forty", isNum: true },
+      { display: "50", label: "Fifty", isNum: true }
+    ],
+    valid: [2],
+    reasons: ["35 doesn't end in zero like the others!", "35 is also the only one that isn't a multiple of 10."]
+  },
+  {
+    prompt: "Which creature is the odd one out?",
+    items: [
+      { display: "🦅", label: "Eagle" },
+      { display: "🐦", label: "Sparrow" },
+      { display: "🦇", label: "Bat" },
+      { display: "🦜", label: "Parrot" }
+    ],
+    valid: [2],
+    reasons: ["A bat is NOT a bird -- it's a mammal! But it does fly like the others.", "You could ALSO say bat is the only one active at night!"]
+  },
+  {
+    prompt: "Which shape doesn't belong?",
+    items: [
+      { display: "⬜", label: "White Square" },
+      { display: "🔶", label: "Orange Diamond" },
+      { display: "⭐", label: "Star" },
+      { display: "🔷", label: "Blue Diamond" }
+    ],
+    valid: [0, 2],
+    reasons: ["The star has 5 points -- the others all have 4 sides!", "But you could also pick the white square -- it's the only one with no color!", "More than one answer can be right!"]
+  },
+  {
+    prompt: "Which number doesn't fit the pattern?",
+    items: [
+      { display: "1", label: "One", isNum: true },
+      { display: "3", label: "Three", isNum: true },
+      { display: "5", label: "Five", isNum: true },
+      { display: "8", label: "Eight", isNum: true },
+      { display: "9", label: "Nine", isNum: true }
+    ],
+    valid: [3],
+    reasons: ["8 is the only EVEN number here -- all the others are odd!"]
+  },
+  {
+    prompt: "Which one doesn't belong?",
+    items: [
+      { display: "🚗", label: "Car" },
+      { display: "🚌", label: "Bus" },
+      { display: "🚁", label: "Helicopter" },
+      { display: "🏍️", label: "Motorcycle" }
+    ],
+    valid: [2],
+    reasons: ["The helicopter flies in the air! The others drive on roads.", "But you could also say motorcycle is different because it only has 2 wheels!"]
+  },
+  {
+    prompt: "Which one is different?",
+    items: [
+      { display: "A", label: "A", isNum: true },
+      { display: "E", label: "E", isNum: true },
+      { display: "B", label: "B", isNum: true },
+      { display: "I", label: "I", isNum: true },
+      { display: "O", label: "O", isNum: true }
+    ],
+    valid: [2],
+    reasons: ["B is a consonant -- A, E, I, and O are all vowels!"]
+  },
+  {
+    prompt: "Which one doesn't belong?",
+    items: [
+      { display: "🌞", label: "Sun" },
+      { display: "🌙", label: "Moon" },
+      { display: "💡", label: "Light Bulb" },
+      { display: "⭐", label: "Star" }
+    ],
+    valid: [2],
+    reasons: ["The light bulb is made by people! Sun, moon, and stars are all in the sky naturally.", "But you could say the moon is different -- it doesn't make its own light!"]
+  }
+];
+
+let currentRound = 0;
+let score = 0;
+let answered = false;
+
+const encouragements = [
+  "Great thinking! 🌟",
+  "You're so smart! ⭐",
+  "Wonderful job! 🎉",
+  "Amazing! Keep going! 💪",
+  "Brilliant choice! 🧠",
+  "You're a superstar! ✨",
+  "Fantastic! 🎊",
+  "Way to go! 🏆"
+];
+const tryAgainMessages = [
+  "Hmm, that could work too! But try another one.",
+  "Interesting pick! See if there's a better answer.",
+  "Good thought! Try looking again."
+];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderRound() {
+  answered = false;
+  const p = puzzles[currentRound];
+  document.getElementById('roundNum').textContent = currentRound + 1;
+  document.getElementById('totalRounds').textContent = puzzles.length;
+  document.getElementById('prompt').textContent = p.prompt;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('reasonBox').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const container = document.getElementById('items');
+  container.innerHTML = '';
+
+  p.items.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.dataset.index = idx;
+
+    const disp = document.createElement('div');
+    disp.className = 'shape-display';
+    if (item.isNum) {
+      disp.style.fontSize = '3rem';
+      disp.style.fontWeight = 'bold';
+      disp.style.color = ['#e91e63','#9c27b0','#2196f3','#ff9800','#4caf50'][idx % 5];
+    }
+    disp.textContent = item.display;
+    card.appendChild(disp);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'label';
+    lbl.textContent = item.label;
+    card.appendChild(lbl);
+
+    card.addEventListener('click', () => handleClick(idx, card));
+    container.appendChild(card);
+  });
+}
+
+function handleClick(idx, card) {
+  if (answered) return;
+  const p = puzzles[currentRound];
+
+  if (p.valid.includes(idx)) {
+    answered = true;
+    score++;
+    document.getElementById('score').textContent = score;
+    card.classList.add('selected-correct');
+
+    const enc = encouragements[Math.floor(Math.random() * encouragements.length)];
+    document.getElementById('feedback').innerHTML = enc;
+
+    // highlight other valid answers
+    if (p.valid.length > 1) {
+      const allCards = document.querySelectorAll('.item-card');
+      p.valid.forEach(vi => {
+        if (vi !== idx) allCards[vi].classList.add('also-valid');
+      });
+    }
+
+    const box = document.getElementById('reasonBox');
+    box.innerHTML = p.reasons.join('<br><br>');
+    box.style.display = 'block';
+    document.getElementById('nextBtn').style.display = 'inline-block';
+  } else {
+    card.classList.add('selected-wrong');
+    const msg = tryAgainMessages[Math.floor(Math.random() * tryAgainMessages.length)];
+    document.getElementById('feedback').textContent = msg;
+    setTimeout(() => card.classList.remove('selected-wrong'), 500);
+  }
+}
+
+function nextRound() {
+  currentRound++;
+  if (currentRound >= puzzles.length) {
+    showEnd();
+    return;
+  }
+  renderRound();
+}
+
+function showEnd() {
+  document.getElementById('items').innerHTML = '';
+  document.getElementById('prompt').textContent = '';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('reasonBox').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+
+  const end = document.getElementById('endScreen');
+  end.style.display = 'flex';
+
+  const pct = Math.round(score / puzzles.length * 100);
+  let title = "Amazing Job!";
+  if (pct < 50) title = "Good Try!";
+  else if (pct < 80) title = "Well Done!";
+
+  document.getElementById('endTitle').textContent = title;
+  document.getElementById('finalScore').innerHTML =
+    `You got ${score} out of ${puzzles.length}! ` +
+    '<span class="star">⭐</span>'.repeat(Math.min(score, 5));
+}
+
+function restart() {
+  currentRound = 0;
+  score = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('endScreen').style.display = 'none';
+  renderRound();
+}
+
+renderRound();
+</script>
+</body>
+</html>

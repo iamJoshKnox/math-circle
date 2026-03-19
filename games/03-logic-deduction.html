@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logic Creatures!</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  user-select: none;
+}
+h1 {
+  color: #fff;
+  font-size: 2.4rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin-bottom: 3px;
+}
+.subtitle {
+  color: #ffd0e8;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+.top-bar {
+  display: flex;
+  gap: 25px;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.15);
+  padding: 7px 22px;
+  border-radius: 20px;
+}
+.puzzle-title {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.clue-box {
+  background: rgba(255,255,255,0.92);
+  border-radius: 18px;
+  padding: 18px 25px;
+  max-width: 650px;
+  width: 100%;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+.clue-box h3 {
+  color: #9c27b0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+.clue {
+  font-size: 1.15rem;
+  color: #333;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e0e0e0;
+  line-height: 1.5;
+}
+.clue:last-child { border-bottom: none; }
+.clue .clue-num {
+  display: inline-block;
+  background: #e91e63;
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  line-height: 26px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-right: 8px;
+}
+.question-box {
+  background: rgba(255,255,255,0.92);
+  border-radius: 18px;
+  padding: 18px 25px;
+  max-width: 650px;
+  width: 100%;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+.question-box h3 {
+  color: #e91e63;
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+}
+.assign-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.role-label {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #555;
+  min-width: 130px;
+}
+.choice-btn {
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  border: 3px solid #ddd;
+  border-radius: 15px;
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.15s;
+  font-weight: 600;
+  color: #555;
+}
+.choice-btn:hover {
+  border-color: #e91e63;
+  background: #fce4ec;
+}
+.choice-btn.selected {
+  border-color: #9c27b0;
+  background: #f3e5f5;
+  color: #9c27b0;
+}
+.choice-btn.correct {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.choice-btn.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+  color: #c62828;
+}
+.choice-btn.disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.feedback {
+  color: #fff;
+  font-size: 1.4rem;
+  text-align: center;
+  min-height: 40px;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+  margin-bottom: 10px;
+}
+.btn-row { display: flex; gap: 15px; justify-content: center; margin-bottom: 10px; }
+.btn {
+  padding: 12px 35px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.1s;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+.btn:hover { transform: scale(1.05); }
+.btn-check { background: linear-gradient(135deg, #ffd93d, #ff6b6b); color: #fff; }
+.btn-next { background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: #333; display: none; }
+.btn-restart { background: linear-gradient(135deg, #43e97b, #38f9d7); color: #333; }
+.end-screen { display: none; flex-direction: column; align-items: center; gap: 15px; }
+.end-screen h2 { color: #fff; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+.creature-intro {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.creature-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 10px 18px;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  min-width: 90px;
+}
+.creature-card .emoji { font-size: 2.2rem; }
+.creature-card .name { font-weight: bold; color: #9c27b0; font-size: 1.1rem; margin-top: 3px; }
+</style>
+</head>
+<body>
+<h1>Logic Creatures!</h1>
+<p class="subtitle">Read the clues and figure out who is who!</p>
+<div class="top-bar">
+  <span>Puzzle: <span id="puzzleNum">1</span> / <span id="totalPuzzles">8</span></span>
+  <span>Score: <span id="score">0</span></span>
+</div>
+
+<div id="gameArea">
+  <div class="puzzle-title" id="puzzleTitle"></div>
+  <div class="creature-intro" id="creatures"></div>
+  <div class="clue-box" id="clueBox"><h3>Clues:</h3><div id="clues"></div></div>
+  <div class="question-box" id="questionBox"><h3>Who is who?</h3><div id="assignments"></div></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="btn-row">
+    <button class="btn btn-check" id="checkBtn" onclick="checkAnswer()">Check Answer!</button>
+    <button class="btn btn-next" id="nextBtn" onclick="nextPuzzle()">Next Puzzle</button>
+  </div>
+</div>
+
+<div class="end-screen" id="endScreen">
+  <h2>You solved them all!</h2>
+  <div style="color:#ffd54f;font-size:2rem" id="finalScore"></div>
+  <button class="btn btn-restart" onclick="restart()">Play Again!</button>
+</div>
+
+<script>
+const puzzles = [
+  {
+    title: "The Tallest Creature",
+    creatures: [{name:"Gobr",emoji:"👾"},{name:"Stoon",emoji:"👽"},{name:"Plim",emoji:"🤖"}],
+    clues: [
+      "Gobr is taller than Stoon.",
+      "Plim is taller than Gobr.",
+      "The <b>tallest</b> creature wins the prize!"
+    ],
+    roles: ["Tallest"],
+    answer: {Tallest:"Plim"}
+  },
+  {
+    title: "Who Lives Where?",
+    creatures: [{name:"Zix",emoji:"🐲"},{name:"Moop",emoji:"🦊"},{name:"Tark",emoji:"🐸"}],
+    clues: [
+      "Zix does NOT live in the cave.",
+      "Moop lives in the tree.",
+      "One creature lives in the cave, one in the tree, and one in the pond."
+    ],
+    roles: ["Lives in the cave","Lives in the tree","Lives in the pond"],
+    answer: {"Lives in the cave":"Tark","Lives in the tree":"Moop","Lives in the pond":"Zix"}
+  },
+  {
+    title: "The Booter",
+    creatures: [{name:"Wug",emoji:"👹"},{name:"Blik",emoji:"👻"},{name:"Narg",emoji:"🎃"}],
+    clues: [
+      "The <b>booter</b> has the most legs.",
+      "Wug has 2 legs.",
+      "Blik has 4 legs.",
+      "Narg has 6 legs."
+    ],
+    roles: ["The booter"],
+    answer: {"The booter":"Narg"}
+  },
+  {
+    title: "Favorite Colors",
+    creatures: [{name:"Flub",emoji:"🧸"},{name:"Dree",emoji:"🐙"},{name:"Pex",emoji:"🦋"}],
+    clues: [
+      "Flub does NOT like red.",
+      "Dree does NOT like blue.",
+      "Pex likes green.",
+      "Each creature likes a different color: red, blue, or green."
+    ],
+    roles: ["Likes red","Likes blue","Likes green"],
+    answer: {"Likes red":"Dree","Likes blue":"Flub","Likes green":"Pex"}
+  },
+  {
+    title: "Who Ate the Cookie?",
+    creatures: [{name:"Zorp",emoji:"👿"},{name:"Quib",emoji:"🤡"},{name:"Lunt",emoji:"🧛"},{name:"Feep",emoji:"🧞"}],
+    clues: [
+      "The cookie thief has pointy ears.",
+      "Zorp and Quib do NOT have pointy ears.",
+      "Lunt was sleeping when the cookie vanished.",
+      "Only one creature ate the cookie."
+    ],
+    roles: ["Ate the cookie"],
+    answer: {"Ate the cookie":"Feep"}
+  },
+  {
+    title: "Race Finish Order",
+    creatures: [{name:"Blip",emoji:"🚀"},{name:"Grun",emoji:"🛸"},{name:"Yop",emoji:"🛩️"}],
+    clues: [
+      "Grun did NOT finish last.",
+      "Blip finished after Grun.",
+      "Yop finished after Blip.",
+      "Each creature finished in a different place: 1st, 2nd, or 3rd."
+    ],
+    roles: ["1st place","2nd place","3rd place"],
+    answer: {"1st place":"Grun","2nd place":"Blip","3rd place":"Yop"}
+  },
+  {
+    title: "The Three Hats",
+    creatures: [{name:"Snig",emoji:"🎅"},{name:"Boff",emoji:"🧙"},{name:"Tumm",emoji:"🤠"}],
+    clues: [
+      "There are three hats: one red, one blue, one yellow.",
+      "Snig says: \"My hat is NOT blue.\"",
+      "Boff says: \"My hat is NOT blue and NOT red.\"",
+      "Each creature wears a different hat."
+    ],
+    roles: ["Red hat","Blue hat","Yellow hat"],
+    answer: {"Red hat":"Snig","Blue hat":"Tumm","Yellow hat":"Boff"}
+  },
+  {
+    title: "Pets and Owners",
+    creatures: [{name:"Frax",emoji:"🧝"},{name:"Dool",emoji:"🧚"},{name:"Venn",emoji:"🧜"},{name:"Kip",emoji:"🧙"}],
+    clues: [
+      "Each creature has a different pet: a cat, a dog, a fish, or a bird.",
+      "Frax is allergic to fur (so no cat or dog).",
+      "Dool's pet can fly.",
+      "Venn's pet says \"woof!\"",
+      "Kip does NOT have a fish."
+    ],
+    roles: ["Has the cat","Has the dog","Has the fish","Has the bird"],
+    answer: {"Has the cat":"Kip","Has the dog":"Venn","Has the fish":"Frax","Has the bird":"Dool"}
+  }
+];
+
+let currentPuzzle = 0;
+let score = 0;
+let selections = {};
+let answered = false;
+
+function renderPuzzle() {
+  answered = false;
+  selections = {};
+  const p = puzzles[currentPuzzle];
+  document.getElementById('puzzleNum').textContent = currentPuzzle + 1;
+  document.getElementById('totalPuzzles').textContent = puzzles.length;
+  document.getElementById('puzzleTitle').textContent = p.title;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('checkBtn').style.display = '';
+
+  // Creatures display
+  const cc = document.getElementById('creatures');
+  cc.innerHTML = '';
+  p.creatures.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'creature-card';
+    card.innerHTML = `<div class="emoji">${c.emoji}</div><div class="name">${c.name}</div>`;
+    cc.appendChild(card);
+  });
+
+  // Clues
+  const cl = document.getElementById('clues');
+  cl.innerHTML = '';
+  p.clues.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'clue';
+    d.innerHTML = `<span class="clue-num">${i+1}</span> ${c}`;
+    cl.appendChild(d);
+  });
+
+  // Assignment rows
+  const asg = document.getElementById('assignments');
+  asg.innerHTML = '';
+  p.roles.forEach(role => {
+    const row = document.createElement('div');
+    row.className = 'assign-row';
+    const label = document.createElement('span');
+    label.className = 'role-label';
+    label.textContent = role + ':';
+    row.appendChild(label);
+
+    p.creatures.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = c.emoji + ' ' + c.name;
+      btn.dataset.role = role;
+      btn.dataset.creature = c.name;
+      btn.addEventListener('click', () => selectChoice(role, c.name, btn));
+      row.appendChild(btn);
+    });
+    asg.appendChild(row);
+  });
+}
+
+function selectChoice(role, creature, btn) {
+  if (answered) return;
+  // Deselect previous for this role
+  const row = btn.parentElement;
+  row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selections[role] = creature;
+}
+
+function checkAnswer() {
+  if (answered) return;
+  const p = puzzles[currentPuzzle];
+
+  // Check all roles assigned
+  for (const role of p.roles) {
+    if (!selections[role]) {
+      document.getElementById('feedback').textContent = "Pick an answer for each row first!";
+      return;
+    }
+  }
+
+  let allCorrect = true;
+  const allBtns = document.querySelectorAll('.choice-btn');
+
+  p.roles.forEach(role => {
+    allBtns.forEach(btn => {
+      if (btn.dataset.role === role) {
+        btn.classList.add('disabled');
+        if (btn.dataset.creature === p.answer[role]) {
+          btn.classList.add('correct');
+        }
+        if (btn.classList.contains('selected') && btn.dataset.creature !== p.answer[role]) {
+          btn.classList.add('wrong');
+          allCorrect = false;
+        }
+      }
+    });
+  });
+
+  answered = true;
+  if (allCorrect) {
+    score++;
+    document.getElementById('score').textContent = score;
+    const msgs = ["You figured it out! 🧠","Logic master! ⭐","Brilliant deduction! 🌟","Amazing thinking! 🎉"];
+    document.getElementById('feedback').textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  } else {
+    document.getElementById('feedback').textContent = "Not quite! The green ones show the right answers. Keep thinking! 💪";
+  }
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'inline-block';
+}
+
+function nextPuzzle() {
+  currentPuzzle++;
+  if (currentPuzzle >= puzzles.length) {
+    showEnd();
+    return;
+  }
+  renderPuzzle();
+}
+
+function showEnd() {
+  document.getElementById('gameArea').style.display = 'none';
+  const end = document.getElementById('endScreen');
+  end.style.display = 'flex';
+  document.getElementById('finalScore').textContent =
+    `You got ${score} out of ${puzzles.length} correct! ${'⭐'.repeat(Math.min(score, 8))}`;
+}
+
+function restart() {
+  currentPuzzle = 0;
+  score = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('gameArea').style.display = '';
+  renderPuzzle();
+}
+
+renderPuzzle();
+</script>
+</body>
+</html>

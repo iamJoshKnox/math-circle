@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Roller</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 50%, #2d4059 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  user-select: none;
+  padding-bottom: 20px;
+}
+h1 { font-size: 2.2rem; margin: 14px 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+
+.top-section {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+/* Dice */
+.dice-area {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0;
+}
+.die {
+  width: 110px;
+  height: 110px;
+  background: #fff;
+  border-radius: 18px;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 14px;
+  gap: 2px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.1s;
+}
+.die.rolling {
+  animation: dieShake 0.08s linear infinite;
+}
+@keyframes dieShake {
+  0% { transform: rotate(-8deg) scale(1.05); }
+  25% { transform: rotate(6deg) scale(0.97); }
+  50% { transform: rotate(-5deg) scale(1.03); }
+  75% { transform: rotate(7deg) scale(0.98); }
+  100% { transform: rotate(-8deg) scale(1.05); }
+}
+.dot {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: transparent;
+}
+.dot.show { background: #1a1a2e; }
+
+.plus-sign {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #f39c12;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.sum-display {
+  font-size: 2rem;
+  margin: 4px 0;
+  min-height: 40px;
+}
+.sum-display strong {
+  font-size: 2.8rem;
+  color: #f1c40f;
+}
+
+/* Prediction */
+.prediction-bar {
+  background: rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 12px 20px;
+  margin: 6px 0 8px;
+  text-align: center;
+  max-width: 600px;
+}
+.prediction-bar p { margin-bottom: 8px; font-size: 1.05rem; }
+.pred-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pred-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pred-btn.chosen {
+  background: #f39c12;
+  border-color: #f39c12;
+  transform: scale(1.15);
+}
+.pred-btn:hover { border-color: #f39c12; }
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+button {
+  font-size: 1.1rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.1s;
+  touch-action: manipulation;
+}
+button:active { transform: scale(0.95); }
+.btn-roll { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; font-size: 1.3rem; padding: 14px 32px; }
+.btn-multi { background: #3498db; color: #fff; }
+.btn-reset { background: #7f8c8d; color: #fff; }
+
+.roll-count { font-size: 1.1rem; color: #bbb; margin: 4px 0; }
+
+/* Chart */
+.chart-section {
+  width: 92vw;
+  max-width: 700px;
+  margin: 10px auto 0;
+}
+.chart-title {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+  color: #ddd;
+}
+.chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  height: 260px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 16px 12px 8px;
+  position: relative;
+}
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 54px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  transition: height 0.4s ease;
+  min-height: 0;
+  position: relative;
+}
+.bar-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  min-height: 18px;
+}
+.bar-label {
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ddd;
+}
+.bar-label.predicted { color: #f1c40f; text-decoration: underline; }
+
+</style>
+</head>
+<body>
+<h1>Dice Roller</h1>
+
+<div class="prediction-bar" id="predictionBar">
+  <p>Which sum do you think will appear the MOST? Make your prediction!</p>
+  <div class="pred-buttons" id="predButtons"></div>
+</div>
+
+<div class="dice-area">
+  <div class="die" id="die1"></div>
+  <div class="plus-sign">+</div>
+  <div class="die" id="die2"></div>
+</div>
+
+<div class="sum-display" id="sumDisplay">Tap <strong>Roll!</strong> to start</div>
+
+<div class="controls">
+  <button class="btn-roll" id="btnRoll" onclick="rollDice(1)">Roll!</button>
+  <button class="btn-multi" onclick="rollDice(10)">Roll 10x</button>
+  <button class="btn-multi" onclick="rollDice(100)">Roll 100x</button>
+  <button class="btn-multi" onclick="rollDice(1000)">Roll 1000x</button>
+  <button class="btn-reset" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="roll-count">Total rolls: <strong id="totalRolls">0</strong></div>
+
+<div class="chart-section">
+  <div class="chart-title">How many times has each sum appeared?</div>
+  <div class="chart" id="chart"></div>
+</div>
+
+<script>
+const BAR_COLORS = [
+  '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c',
+  '#3498db','#9b59b6','#3498db','#1abc9c','#2ecc71','#f1c40f'
+];
+
+// dot positions for faces 1-6 on 3x3 grid (0-indexed)
+const DOT_MAP = {
+  1: [4],
+  2: [2, 6],
+  3: [2, 4, 6],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8]
+};
+
+let counts = {};
+let totalRolls = 0;
+let prediction = null;
+let isRolling = false;
+
+function init() {
+  for (let i = 2; i <= 12; i++) counts[i] = 0;
+  buildPredictionButtons();
+  renderDie('die1', 1);
+  renderDie('die2', 1);
+  renderChart();
+}
+
+function buildPredictionButtons() {
+  const cont = document.getElementById('predButtons');
+  cont.innerHTML = '';
+  for (let i = 2; i <= 12; i++) {
+    const b = document.createElement('button');
+    b.className = 'pred-btn';
+    b.textContent = i;
+    b.onclick = () => {
+      prediction = i;
+      document.querySelectorAll('.pred-btn').forEach(x => x.classList.remove('chosen'));
+      b.classList.add('chosen');
+      renderChart();
+    };
+    cont.appendChild(b);
+  }
+}
+
+function renderDie(id, value) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  for (let i = 0; i < 9; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (DOT_MAP[value].includes(i) ? ' show' : '');
+    el.appendChild(dot);
+  }
+}
+
+function rollOnce() {
+  const d1 = Math.floor(Math.random() * 6) + 1;
+  const d2 = Math.floor(Math.random() * 6) + 1;
+  const sum = d1 + d2;
+  counts[sum]++;
+  totalRolls++;
+  return { d1, d2, sum };
+}
+
+async function rollDice(times) {
+  if (isRolling) return;
+  isRolling = true;
+
+  if (times === 1) {
+    // Animate single roll
+    const die1El = document.getElementById('die1');
+    const die2El = document.getElementById('die2');
+    die1El.classList.add('rolling');
+    die2El.classList.add('rolling');
+
+    // Quick visual flicker
+    for (let f = 0; f < 8; f++) {
+      renderDie('die1', Math.floor(Math.random() * 6) + 1);
+      renderDie('die2', Math.floor(Math.random() * 6) + 1);
+      await sleep(60);
+    }
+
+    die1El.classList.remove('rolling');
+    die2El.classList.remove('rolling');
+
+    const result = rollOnce();
+    renderDie('die1', result.d1);
+    renderDie('die2', result.d2);
+    document.getElementById('sumDisplay').innerHTML =
+      `${result.d1} + ${result.d2} = <strong>${result.sum}</strong>`;
+  } else {
+    // Bulk roll with flashing dice animation
+    const die1El = document.getElementById('die1');
+    const die2El = document.getElementById('die2');
+    die1El.classList.add('rolling');
+    die2El.classList.add('rolling');
+
+    // Do all the actual rolls up front
+    let lastResult;
+    for (let i = 0; i < times; i++) lastResult = rollOnce();
+
+    // Flash random dice faces rapidly to simulate many rolls
+    const flashes = 15;
+    for (let f = 0; f < flashes; f++) {
+      renderDie('die1', Math.floor(Math.random() * 6) + 1);
+      renderDie('die2', Math.floor(Math.random() * 6) + 1);
+      // Update chart partway through for a "filling in" effect
+      if (f === Math.floor(flashes / 3) || f === Math.floor(2 * flashes / 3)) {
+        renderChart();
+      }
+      await sleep(50 + f * 4);
+    }
+
+    die1El.classList.remove('rolling');
+    die2El.classList.remove('rolling');
+    renderDie('die1', lastResult.d1);
+    renderDie('die2', lastResult.d2);
+    document.getElementById('sumDisplay').innerHTML =
+      `Rolled ${times} times! Last: ${lastResult.d1} + ${lastResult.d2} = <strong>${lastResult.sum}</strong>`;
+  }
+
+  document.getElementById('totalRolls').textContent = totalRolls;
+  renderChart();
+  isRolling = false;
+}
+
+function renderChart() {
+  const chart = document.getElementById('chart');
+  chart.innerHTML = '';
+  const maxCount = Math.max(1, ...Object.values(counts));
+
+  for (let s = 2; s <= 12; s++) {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+
+    const countLabel = document.createElement('div');
+    countLabel.className = 'bar-count';
+    countLabel.textContent = counts[s] > 0 ? counts[s] : '';
+
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const heightPct = (counts[s] / maxCount) * 100;
+    bar.style.height = Math.max(counts[s] > 0 ? 4 : 0, heightPct) + '%';
+    bar.style.background = BAR_COLORS[s - 2];
+    if (prediction === s) {
+      bar.style.boxShadow = '0 0 12px ' + BAR_COLORS[s - 2];
+    }
+
+    const label = document.createElement('div');
+    label.className = 'bar-label' + (prediction === s ? ' predicted' : '');
+    label.textContent = s;
+
+    col.appendChild(countLabel);
+    col.appendChild(bar);
+    col.appendChild(label);
+    chart.appendChild(col);
+  }
+}
+
+function resetAll() {
+  for (let i = 2; i <= 12; i++) counts[i] = 0;
+  totalRolls = 0;
+  prediction = null;
+  document.querySelectorAll('.pred-btn').forEach(x => x.classList.remove('chosen'));
+  document.getElementById('totalRolls').textContent = '0';
+  document.getElementById('sumDisplay').innerHTML = 'Tap <strong>Roll!</strong> to start';
+  renderDie('die1', 1);
+  renderDie('die2', 1);
+  renderChart();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+init();
+</script>
+</body>
+</html>

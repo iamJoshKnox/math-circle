@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odd One Out Cards – Lesson 1</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #fff;
+    color: #222;
+  }
+
+  /* Each printed page holds 2 cards */
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.4in 0.5in;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35in;
+    page-break-after: always;
+  }
+
+  .card {
+    width: 100%;
+    height: 4.85in;
+    border: 2.5px dashed #555;
+    border-radius: 10px;
+    padding: 0.25in 0.3in 0.2in;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    margin-bottom: 0.12in;
+  }
+
+  .card-number {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-prompt {
+    font-size: 14pt;
+    font-weight: bold;
+    color: #222;
+  }
+
+  .items-row {
+    display: flex;
+    flex: 1;
+    gap: 0.2in;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .item-box {
+    flex: 1;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.12in 0.08in 0.1in;
+    height: 3.4in;
+    cursor: pointer;
+  }
+
+  .item-label {
+    font-size: 11pt;
+    margin-top: 0.1in;
+    color: #444;
+    text-align: center;
+    min-height: 1.2em;
+  }
+
+  .cut-tip {
+    position: absolute;
+    bottom: 6px;
+    right: 12px;
+    font-size: 8pt;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .hint-bar {
+    margin-top: 0.1in;
+    font-size: 9pt;
+    color: #888;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .answer-line {
+    display: flex;
+    gap: 1.5in;
+    margin-top: 0.08in;
+    justify-content: center;
+  }
+
+  .answer-blank {
+    font-size: 9pt;
+    color: #aaa;
+    border-bottom: 1px solid #ccc;
+    width: 2.5in;
+    text-align: center;
+    padding-bottom: 2px;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      padding: 0.4in 0.5in;
+      page-break-after: always;
+      gap: 0.35in;
+    }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ PAGE 1 ═══════════════════ -->
+<div class="page">
+
+  <!-- CARD 1: Three circles and a square -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 1</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="#a8d8f0" stroke="#2a7db5" stroke-width="3"/>
+        </svg>
+        <div class="item-label">A</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="#a8d8f0" stroke="#2a7db5" stroke-width="3"/>
+        </svg>
+        <div class="item-label">B</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <rect x="10" y="10" width="90" height="90" fill="#ffd6a5" stroke="#d07010" stroke-width="3" rx="3"/>
+        </svg>
+        <div class="item-label">C</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="#a8d8f0" stroke="#2a7db5" stroke-width="3"/>
+        </svg>
+        <div class="item-label">D</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: shape · corners · sides · which one is alone</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+  <!-- CARD 2: Three red items, one blue -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 2</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="55,8 100,90 10,90" fill="#e84040" stroke="#b00000" stroke-width="3"/>
+        </svg>
+        <div class="item-label">A</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <rect x="12" y="22" width="86" height="66" fill="#e84040" stroke="#b00000" stroke-width="3" rx="4"/>
+        </svg>
+        <div class="item-label">B</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="#4070e8" stroke="#1040b0" stroke-width="3"/>
+        </svg>
+        <div class="item-label">C</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="55,8 68,42 105,42 76,63 87,97 55,76 23,97 34,63 5,42 42,42" fill="#e84040" stroke="#b00000" stroke-width="3"/>
+        </svg>
+        <div class="item-label">D</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: color · shape · number of sides · which is unique</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+</div><!-- end page 1 -->
+
+<!-- ═══════════════════ PAGE 2 ═══════════════════ -->
+<div class="page">
+
+  <!-- CARD 3: 2, 4, 7, 8 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 3</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="80" text-anchor="middle" font-size="88" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">2</text>
+        </svg>
+        <div class="item-label">A</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="80" text-anchor="middle" font-size="88" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">4</text>
+        </svg>
+        <div class="item-label">B</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="80" text-anchor="middle" font-size="88" font-family="Georgia,serif" font-weight="bold" fill="#c03030">7</text>
+        </svg>
+        <div class="item-label">C</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="80" text-anchor="middle" font-size="88" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">8</text>
+        </svg>
+        <div class="item-label">D</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: odd/even · less than 5 · multiples · which number stands alone</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+  <!-- CARD 4: Three big shapes, one tiny -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 4</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <rect x="8" y="8" width="94" height="94" fill="#b8e8b0" stroke="#3a9030" stroke-width="3" rx="4"/>
+        </svg>
+        <div class="item-label">A</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="48" fill="#b8e8b0" stroke="#3a9030" stroke-width="3"/>
+        </svg>
+        <div class="item-label">B</div>
+      </div>
+
+      <div class="item-box">
+        <!-- tiny shape -->
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="55,44 63,56 75,56 66,64 69,77 55,69 41,77 44,64 35,56 47,56" fill="#b8e8b0" stroke="#3a9030" stroke-width="2"/>
+        </svg>
+        <div class="item-label">C</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="55,6 102,95 8,95" fill="#b8e8b0" stroke="#3a9030" stroke-width="3"/>
+        </svg>
+        <div class="item-label">D</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: size · shape type · which is different in more than one way</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+</div><!-- end page 2 -->
+
+<!-- ═══════════════════ PAGE 3 ═══════════════════ -->
+<div class="page">
+
+  <!-- CARD 5: Cat, dog, fish, car -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 5</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <!-- Cat -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- body -->
+          <ellipse cx="55" cy="72" rx="32" ry="26" fill="#e8c87a" stroke="#a07020" stroke-width="2"/>
+          <!-- head -->
+          <circle cx="55" cy="42" r="22" fill="#e8c87a" stroke="#a07020" stroke-width="2"/>
+          <!-- ears -->
+          <polygon points="38,26 33,10 48,22" fill="#e8c87a" stroke="#a07020" stroke-width="1.5"/>
+          <polygon points="72,26 77,10 62,22" fill="#e8c87a" stroke="#a07020" stroke-width="1.5"/>
+          <!-- eyes -->
+          <ellipse cx="48" cy="40" rx="4" ry="5" fill="#222"/>
+          <ellipse cx="62" cy="40" rx="4" ry="5" fill="#222"/>
+          <!-- nose -->
+          <polygon points="55,47 52,50 58,50" fill="#e07070"/>
+          <!-- whiskers -->
+          <line x1="30" y1="48" x2="52" y2="49" stroke="#888" stroke-width="1"/>
+          <line x1="30" y1="52" x2="52" y2="51" stroke="#888" stroke-width="1"/>
+          <line x1="80" y1="48" x2="58" y2="49" stroke="#888" stroke-width="1"/>
+          <line x1="80" y1="52" x2="58" y2="51" stroke="#888" stroke-width="1"/>
+          <!-- tail -->
+          <path d="M 83,78 Q 100,60 95,45" fill="none" stroke="#a07020" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="item-label">Cat</div>
+      </div>
+
+      <!-- Dog -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- body -->
+          <ellipse cx="55" cy="74" rx="34" ry="24" fill="#d4a860" stroke="#8a6020" stroke-width="2"/>
+          <!-- head -->
+          <circle cx="55" cy="44" r="22" fill="#d4a860" stroke="#8a6020" stroke-width="2"/>
+          <!-- floppy ears -->
+          <ellipse cx="35" cy="42" rx="10" ry="18" fill="#c09040" stroke="#8a6020" stroke-width="1.5" transform="rotate(-10,35,42)"/>
+          <ellipse cx="75" cy="42" rx="10" ry="18" fill="#c09040" stroke="#8a6020" stroke-width="1.5" transform="rotate(10,75,42)"/>
+          <!-- eyes -->
+          <circle cx="48" cy="40" r="4" fill="#222"/>
+          <circle cx="62" cy="40" r="4" fill="#222"/>
+          <!-- nose -->
+          <ellipse cx="55" cy="50" rx="6" ry="4" fill="#333"/>
+          <!-- tail -->
+          <path d="M 87,72 Q 105,55 98,42" fill="none" stroke="#8a6020" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="item-label">Dog</div>
+      </div>
+
+      <!-- Fish -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- body -->
+          <ellipse cx="52" cy="55" rx="35" ry="22" fill="#70b8e8" stroke="#2070a0" stroke-width="2"/>
+          <!-- tail -->
+          <polygon points="90,55 108,38 108,72" fill="#70b8e8" stroke="#2070a0" stroke-width="2"/>
+          <!-- eye -->
+          <circle cx="28" cy="50" r="5" fill="#fff" stroke="#2070a0" stroke-width="1.5"/>
+          <circle cx="27" cy="50" r="2.5" fill="#222"/>
+          <!-- fin -->
+          <path d="M 50,35 Q 60,25 68,35" fill="#5090c8" stroke="#2070a0" stroke-width="1.5"/>
+          <!-- scales -->
+          <path d="M 55,48 Q 58,43 63,48" fill="none" stroke="#2070a0" stroke-width="1"/>
+          <path d="M 63,52 Q 66,47 71,52" fill="none" stroke="#2070a0" stroke-width="1"/>
+          <path d="M 47,54 Q 50,49 55,54" fill="none" stroke="#2070a0" stroke-width="1"/>
+        </svg>
+        <div class="item-label">Fish</div>
+      </div>
+
+      <!-- Car -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- body bottom -->
+          <rect x="8" y="60" width="94" height="30" rx="5" fill="#e85050" stroke="#a01010" stroke-width="2"/>
+          <!-- body top/cabin -->
+          <path d="M 25,60 L 32,38 L 78,38 L 85,60 Z" fill="#e85050" stroke="#a01010" stroke-width="2"/>
+          <!-- windows -->
+          <path d="M 34,58 L 39,43 L 55,43 L 55,58 Z" fill="#cce8ff" stroke="#a01010" stroke-width="1.5"/>
+          <path d="M 57,58 L 57,43 L 71,43 L 76,58 Z" fill="#cce8ff" stroke="#a01010" stroke-width="1.5"/>
+          <!-- wheels -->
+          <circle cx="28" cy="92" r="12" fill="#333" stroke="#111" stroke-width="2"/>
+          <circle cx="28" cy="92" r="5" fill="#888"/>
+          <circle cx="82" cy="92" r="12" fill="#333" stroke="#111" stroke-width="2"/>
+          <circle cx="82" cy="92" r="5" fill="#888"/>
+          <!-- headlight -->
+          <circle cx="99" cy="72" r="5" fill="#ffe878" stroke="#a07010" stroke-width="1.5"/>
+        </svg>
+        <div class="item-label">Car</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: living/non-living · legs · pets · where it lives</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+  <!-- CARD 6: Triangle, pentagon, hexagon, circle -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 6</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="55,8 102,95 8,95" fill="#ffd6f5" stroke="#c030a0" stroke-width="3"/>
+        </svg>
+        <div class="item-label">Triangle</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- regular pentagon -->
+          <polygon points="55,7 101,40 84,95 26,95 9,40" fill="#ffd6f5" stroke="#c030a0" stroke-width="3"/>
+        </svg>
+        <div class="item-label">Pentagon</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- regular hexagon -->
+          <polygon points="55,8 100,31.5 100,78.5 55,102 10,78.5 10,31.5" fill="#ffd6f5" stroke="#c030a0" stroke-width="3"/>
+        </svg>
+        <div class="item-label">Hexagon</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="#ffd6f5" stroke="#c030a0" stroke-width="3"/>
+        </svg>
+        <div class="item-label">Circle</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: straight sides · corners · curves · number of sides</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+</div><!-- end page 3 -->
+
+<!-- ═══════════════════ PAGE 4 ═══════════════════ -->
+<div class="page">
+
+  <!-- CARD 7: 10, 20, 35, 40 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 7</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="72" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">10</text>
+        </svg>
+        <div class="item-label">A</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="72" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">20</text>
+        </svg>
+        <div class="item-label">B</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="72" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#c03030">35</text>
+        </svg>
+        <div class="item-label">C</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="72" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">40</text>
+        </svg>
+        <div class="item-label">D</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: multiples of 10 · multiples of 5 · digits · even/odd</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+  <!-- CARD 8: Symmetry -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 8</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <!-- Heart (symmetric) -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <path d="M55,85 C55,85 12,58 12,35 C12,22 22,14 33,14 C42,14 50,20 55,27 C60,20 68,14 77,14 C88,14 98,22 98,35 C98,58 55,85 55,85Z" fill="#ff8098" stroke="#c03050" stroke-width="2"/>
+          <!-- symmetry line hint -->
+          <line x1="55" y1="14" x2="55" y2="85" stroke="#c03050" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        </svg>
+        <div class="item-label">Heart ♥</div>
+      </div>
+
+      <!-- Square (symmetric) -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <rect x="12" y="12" width="86" height="86" fill="#ffe0a0" stroke="#b07020" stroke-width="3" rx="3"/>
+          <line x1="55" y1="12" x2="55" y2="98" stroke="#b07020" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        </svg>
+        <div class="item-label">Square</div>
+      </div>
+
+      <!-- Scalene triangle (no symmetry) -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="15,90 75,15 100,90" fill="#c8f0c8" stroke="#30a030" stroke-width="3"/>
+        </svg>
+        <div class="item-label">Triangle</div>
+      </div>
+
+      <!-- Regular Star (symmetric) -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <polygon points="55,8 65,40 100,40 72,60 82,94 55,74 28,94 38,60 10,40 45,40" fill="#ffe878" stroke="#b09010" stroke-width="2"/>
+          <line x1="55" y1="8" x2="55" y2="94" stroke="#b09010" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        </svg>
+        <div class="item-label">Star</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: symmetry lines · fold-in-half · which side matches · mirror image</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+</div><!-- end page 4 -->
+
+<!-- ═══════════════════ PAGE 5 ═══════════════════ -->
+<div class="page">
+
+  <!-- CARD 9: Apple, banana, carrot, grape -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 9</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <!-- Apple -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- apple body -->
+          <path d="M55,25 C35,25 18,42 18,62 C18,82 35,98 55,98 C75,98 92,82 92,62 C92,42 75,25 55,25Z" fill="#e83030" stroke="#900000" stroke-width="2"/>
+          <!-- stem -->
+          <line x1="55" y1="25" x2="58" y2="12" stroke="#5a3010" stroke-width="3" stroke-linecap="round"/>
+          <!-- leaf -->
+          <path d="M58,18 Q68,10 72,20 Q64,22 58,18Z" fill="#40a030" stroke="#207010" stroke-width="1"/>
+          <!-- shine -->
+          <ellipse cx="38" cy="42" rx="7" ry="10" fill="rgba(255,255,255,0.35)" transform="rotate(-20,38,42)"/>
+        </svg>
+        <div class="item-label">Apple</div>
+      </div>
+
+      <!-- Banana -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <path d="M25,80 Q28,30 55,18 Q80,10 88,30 Q92,45 75,55 Q55,62 40,72 Q32,78 25,80Z" fill="#ffe020" stroke="#b09000" stroke-width="2"/>
+          <!-- tip -->
+          <path d="M25,80 Q22,85 24,90" fill="none" stroke="#806000" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M88,30 Q94,28 96,32" fill="none" stroke="#806000" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- ridge line -->
+          <path d="M30,75 Q35,40 58,24" fill="none" stroke="#b09000" stroke-width="1.5" opacity="0.5"/>
+        </svg>
+        <div class="item-label">Banana</div>
+      </div>
+
+      <!-- Carrot -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- carrot body -->
+          <path d="M44,20 L66,20 L60,95 L50,95 Z" fill="#ff8020" stroke="#c04000" stroke-width="2" rx="4"/>
+          <!-- top greens -->
+          <path d="M50,22 Q40,5 35,12 Q42,18 50,22Z" fill="#30b030" stroke="#207010" stroke-width="1"/>
+          <path d="M55,20 Q55,3 50,8 Q52,15 55,20Z" fill="#30b030" stroke="#207010" stroke-width="1"/>
+          <path d="M60,22 Q70,5 75,12 Q68,18 60,22Z" fill="#30b030" stroke="#207010" stroke-width="1"/>
+          <!-- rings -->
+          <line x1="46" y1="40" x2="64" y2="40" stroke="#c04000" stroke-width="1" opacity="0.5"/>
+          <line x1="47" y1="58" x2="63" y2="58" stroke="#c04000" stroke-width="1" opacity="0.5"/>
+          <line x1="49" y1="76" x2="61" y2="76" stroke="#c04000" stroke-width="1" opacity="0.5"/>
+        </svg>
+        <div class="item-label">Carrot</div>
+      </div>
+
+      <!-- Grape bunch -->
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <!-- stem -->
+          <line x1="55" y1="12" x2="55" y2="28" stroke="#5a3010" stroke-width="2.5"/>
+          <!-- leaf -->
+          <path d="M55,15 Q65,8 70,18 Q62,20 55,15Z" fill="#40a030" stroke="#207010" stroke-width="1"/>
+          <!-- grapes -->
+          <circle cx="42" cy="40" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="58" cy="38" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="74" cy="40" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="35" cy="56" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="51" cy="54" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="67" cy="56" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="43" cy="72" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="59" cy="72" r="11" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <circle cx="51" cy="88" r="10" fill="#8040c8" stroke="#5010a0" stroke-width="1.5"/>
+          <!-- shine dots -->
+          <circle cx="46" cy="36" r="3" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="62" cy="34" r="3" fill="rgba(255,255,255,0.4)"/>
+        </svg>
+        <div class="item-label">Grapes</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: fruit/vegetable · color · grows underground · shape</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+  <!-- CARD 10: 1, 4, 9, 15 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-number">Card 10</span>
+      <span class="card-prompt">Which one doesn't belong? Why?</span>
+    </div>
+    <div class="items-row">
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="72" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">1</text>
+          <!-- 1x1 dot array -->
+          <circle cx="55" cy="90" r="5" fill="#2a5db0" opacity="0.5"/>
+        </svg>
+        <div class="item-label">A = 1</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="64" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">4</text>
+          <!-- 2x2 dot array -->
+          <circle cx="44" cy="90" r="5" fill="#2a5db0" opacity="0.5"/>
+          <circle cx="56" cy="90" r="5" fill="#2a5db0" opacity="0.5"/>
+          <circle cx="44" cy="102" r="5" fill="#2a5db0" opacity="0.5"/>
+          <circle cx="56" cy="102" r="5" fill="#2a5db0" opacity="0.5"/>
+        </svg>
+        <div class="item-label">B = 4</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="64" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#2a5db0">9</text>
+          <!-- 3x3 dot array -->
+          <circle cx="40" cy="90" r="4" fill="#2a5db0" opacity="0.5"/>
+          <circle cx="52" cy="90" r="4" fill="#2a5db0" opacity="0.5"/>
+          <circle cx="64" cy="90" r="4" fill="#2a5db0" opacity="0.5"/>
+        </svg>
+        <div class="item-label">C = 9</div>
+      </div>
+
+      <div class="item-box">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <text x="55" y="72" text-anchor="middle" font-size="70" font-family="Georgia,serif" font-weight="bold" fill="#c03030">15</text>
+        </svg>
+        <div class="item-label">D = 15</div>
+      </div>
+
+    </div>
+    <div class="hint-bar">Think about: perfect squares (1×1, 2×2, 3×3…) · odd/even · factors · which can make a square grid</div>
+    <div class="answer-line">
+      <div class="answer-blank">My answer: ___</div>
+      <div class="answer-blank">Because: _____________</div>
+    </div>
+    <div class="cut-tip">✂ cut on dashed line</div>
+  </div>
+
+</div><!-- end page 5 -->
+
+</body>
+</html>

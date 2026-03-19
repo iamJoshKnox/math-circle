@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riddle Cards — Math Circle Lesson 3</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+    background: #fff;
+  }
+
+  .page {
+    width: 8.5in;
+    height: 11in;
+    display: flex;
+    flex-direction: column;
+    padding: 0.3in 0.4in;
+    gap: 0.1in;
+    page-break-after: always;
+  }
+
+  .card-row {
+    flex: 1;
+    display: flex;
+    gap: 0.1in;
+    position: relative;
+  }
+
+  /* Dashed cut lines */
+  .card-row::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px dashed #bbb;
+    pointer-events: none;
+    border-radius: 18px;
+  }
+
+  .card {
+    flex: 1;
+    border-radius: 16px;
+    padding: 0.2in 0.22in;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Vertical dashed divider between the two cards on a row */
+  .card:first-child::after {
+    content: '';
+    position: absolute;
+    right: -0.05in;
+    top: 10%;
+    height: 80%;
+    border-right: 2px dashed #bbb;
+  }
+
+  .card-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-num {
+    font-size: 13pt;
+    font-weight: 900;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .card-tag {
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.7;
+  }
+
+  .riddle-text {
+    font-size: 15pt;
+    font-weight: 700;
+    line-height: 1.35;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .answer-area {
+    margin-top: 6px;
+  }
+
+  .answer-label {
+    font-size: 9.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    opacity: 0.65;
+    margin-bottom: 6px;
+  }
+
+  .answer-line {
+    border-bottom: 2px solid currentColor;
+    opacity: 0.3;
+    margin-bottom: 8px;
+    height: 28px;
+  }
+
+  /* Color schemes — alternating per card */
+  .r1  { background: #fff9c4; color: #f57f17; }  .r1  .card-num { background: #f9a825; }
+  .r2  { background: #fce4ec; color: #c62828; }  .r2  .card-num { background: #e53935; }
+  .r3  { background: #e8f5e9; color: #1b5e20; }  .r3  .card-num { background: #43a047; }
+  .r4  { background: #e3f2fd; color: #0d47a1; }  .r4  .card-num { background: #1e88e5; }
+  .r5  { background: #f3e5f5; color: #4a148c; }  .r5  .card-num { background: #8e24aa; }
+  .r6  { background: #fff3e0; color: #bf360c; }  .r6  .card-num { background: #ef6c00; }
+  .r7  { background: #e0f7fa; color: #006064; }  .r7  .card-num { background: #00838f; }
+  .r8  { background: #fbe9e7; color: #bf360c; }  .r8  .card-num { background: #f4511e; }
+  .r9  { background: #ede7f6; color: #311b92; }  .r9  .card-num { background: #5e35b1; }
+  .r10 { background: #e8eaf6; color: #1a237e; }  .r10 .card-num { background: #3949ab; }
+
+  @media print {
+    body { background: #fff; }
+    .page {
+      width: 8.5in;
+      height: 11in;
+      margin: 0;
+    }
+    @page { size: 8.5in 11in; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 — Riddles 1 & 2 / 3 & 4 / 5 & 6 -->
+<div class="page">
+
+  <div class="card-row">
+    <!-- Riddle 1 -->
+    <div class="card r1">
+      <div class="card-badge">
+        <div class="card-num">1</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">I have hands but can't clap. What am I?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+    <!-- Riddle 2 -->
+    <div class="card r2">
+      <div class="card-badge">
+        <div class="card-num">2</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">I'm odd. Take away one letter and I become even. What number am I?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-row">
+    <!-- Riddle 3 -->
+    <div class="card r3">
+      <div class="card-badge">
+        <div class="card-num">3</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">If you have 3 apples and take away 2, how many do YOU have?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+    <!-- Riddle 4 -->
+    <div class="card r4">
+      <div class="card-badge">
+        <div class="card-num">4</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">What has 4 legs in the morning, 2 at noon, and 3 at night?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-row">
+    <!-- Riddle 5 -->
+    <div class="card r5">
+      <div class="card-badge">
+        <div class="card-num">5</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">I am between 1 and 10. I am odd. I am more than 5. I am not 9. What am I?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+    <!-- Riddle 6 -->
+    <div class="card r6">
+      <div class="card-badge">
+        <div class="card-num">6</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">Two fathers and two sons go fishing. They each catch one fish — 3 fish total. How?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page 1 -->
+
+
+<!-- PAGE 2 — Riddles 7–10 -->
+<div class="page">
+
+  <div class="card-row">
+    <!-- Riddle 7 -->
+    <div class="card r7">
+      <div class="card-badge">
+        <div class="card-num">7</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">What weighs more: a pound of feathers or a pound of bricks?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+    <!-- Riddle 8 -->
+    <div class="card r8">
+      <div class="card-badge">
+        <div class="card-num">8</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">I have cities but no houses, forests but no trees, water but no fish. What am I?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-row">
+    <!-- Riddle 9 -->
+    <div class="card r9">
+      <div class="card-badge">
+        <div class="card-num">9</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">If there are 3 cookies and you take 2, how many cookies do you have?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+    <!-- Riddle 10 -->
+    <div class="card r10">
+      <div class="card-badge">
+        <div class="card-num">10</div>
+        <div class="card-tag">Riddle</div>
+      </div>
+      <div class="riddle-text">What number do you get when you multiply ALL the numbers on a phone's number pad?</div>
+      <div class="answer-area">
+        <div class="answer-label">My answer:</div>
+        <div class="answer-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Answer Key row — bonus page filler -->
+  <div class="card-row" style="flex: 0.7;">
+    <div class="card" style="background:#f5f5f5; color:#333; flex:1; justify-content:center;">
+      <div style="font-size:13pt; font-weight:900; text-transform:uppercase; letter-spacing:2px; margin-bottom:10px; color:#555;">Answer Key</div>
+      <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 6px 18px; font-size:11pt; font-weight:700; color:#444;">
+        <span>1. Clock</span>
+        <span>2. Seven</span>
+        <span>3. Two</span>
+        <span>4. Person</span>
+        <span>5. Seven</span>
+        <span>6. Three generations</span>
+        <span>7. Same!</span>
+        <span>8. A map</span>
+        <span>9. Two</span>
+        <span>10. Zero</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page 2 -->
+
+</body>
+</html>

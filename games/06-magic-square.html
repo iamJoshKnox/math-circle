@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Square</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  user-select: none;
+  padding: 10px 10px 30px;
+}
+h1 { font-size: 2.2rem; margin: 10px 0 4px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+.subtitle { font-size: 1.1rem; color: #bbb; margin-bottom: 10px; text-align: center; }
+.target { font-size: 1.2rem; color: #f1c40f; margin-bottom: 10px; }
+.target strong { font-size: 1.5rem; }
+
+.game-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Grid */
+.grid-wrapper { display: flex; flex-direction: column; align-items: center; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.cell {
+  width: 100px;
+  height: 100px;
+  background: rgba(255,255,255,0.1);
+  border: 3px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.cell:hover { background: rgba(255,255,255,0.18); }
+.cell.selected { border-color: #f39c12; box-shadow: 0 0 16px rgba(243,156,18,0.5); background: rgba(243,156,18,0.15); }
+.cell.filled { color: #fff; }
+.cell.hint { color: #1abc9c; }
+.cell.locked { cursor: default; }
+
+/* Sum labels */
+.sums-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.sum-label {
+  width: 100px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+.sums-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+.sums-col .sum-label {
+  height: 100px;
+  width: auto;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sum-label.correct { background: rgba(46,204,113,0.35); color: #2ecc71; }
+.sum-label.incorrect { background: rgba(231,76,60,0.2); color: #e74c3c; }
+.sum-label.empty { color: #888; }
+
+.diag-sums {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+  justify-content: center;
+}
+.diag-label {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+.diag-label.correct { background: rgba(46,204,113,0.35); color: #2ecc71; }
+.diag-label.incorrect { background: rgba(231,76,60,0.2); color: #e74c3c; }
+.diag-label.empty { color: #888; }
+
+/* Number bank */
+.bank-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.bank-title { font-size: 1.1rem; color: #bbb; margin-bottom: 8px; }
+.number-bank {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.bank-num {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.bank-num:hover { border-color: #3498db; background: rgba(52,152,219,0.2); }
+.bank-num.used {
+  opacity: 0.2;
+  cursor: default;
+  pointer-events: none;
+}
+.bank-num.selected {
+  border-color: #f39c12;
+  background: rgba(243,156,18,0.3);
+  transform: scale(1.1);
+  box-shadow: 0 0 14px rgba(243,156,18,0.5);
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+button {
+  font-size: 1.1rem;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.1s;
+  touch-action: manipulation;
+}
+button:active { transform: scale(0.95); }
+.btn-hint { background: #9b59b6; color: #fff; }
+.btn-reset { background: #e74c3c; color: #fff; }
+.btn-clear { background: #7f8c8d; color: #fff; }
+
+.message {
+  min-height: 30px;
+  font-size: 1.1rem;
+  color: #f1c40f;
+  margin: 8px 0;
+  text-align: center;
+}
+
+/* Victory */
+.victory-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 100;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.victory-overlay.show { display: flex; }
+.victory-box {
+  background: linear-gradient(135deg, #f39c12, #e74c3c, #9b59b6);
+  padding: 40px 60px;
+  border-radius: 24px;
+  text-align: center;
+  animation: victoryPop 0.5s ease;
+}
+@keyframes victoryPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.victory-box h2 { font-size: 2.5rem; margin-bottom: 12px; }
+.victory-box p { font-size: 1.3rem; margin: 6px 0; }
+.victory-box button { margin-top: 18px; background: #fff; color: #333; font-size: 1.2rem; padding: 12px 30px; }
+
+canvas.confetti { position: fixed; inset: 0; z-index: 101; pointer-events: none; }
+
+@media (max-width: 600px) {
+  .cell { width: 80px; height: 80px; font-size: 2rem; }
+  .sum-label { width: 80px; }
+  .sums-col .sum-label { height: 80px; }
+  .bank-num { width: 56px; height: 56px; font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+<h1>Magic Square</h1>
+<div class="subtitle">Place numbers 1-9 so every row, column, and diagonal adds up to 15!</div>
+<div class="target">Target sum: <strong>15</strong></div>
+<div class="message" id="message">Tap a number, then tap a cell to place it!</div>
+
+<div class="game-layout">
+  <div class="grid-wrapper">
+    <div class="sums-row" id="colSums"></div>
+    <div style="display:flex; gap:6px;">
+      <div class="grid" id="grid"></div>
+      <div class="sums-col" id="rowSums"></div>
+    </div>
+    <div class="diag-sums" id="diagSums"></div>
+  </div>
+  <div class="bank-area">
+    <div class="bank-title">Numbers</div>
+    <div class="number-bank" id="bank"></div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-hint" onclick="giveHint()">Hint</button>
+  <button class="btn-clear" onclick="clearBoard()">Clear</button>
+  <button class="btn-reset" onclick="resetGame()">Reset</button>
+</div>
+
+<div class="victory-overlay" id="victoryOverlay">
+  <div class="victory-box">
+    <h2>Magic!</h2>
+    <p>You completed the magic square!</p>
+    <p>Every row, column, and diagonal sums to 15!</p>
+    <button onclick="resetGame()">Play Again</button>
+  </div>
+</div>
+
+<canvas class="confetti" id="confettiCanvas"></canvas>
+
+<script>
+// The unique 3x3 magic square (up to rotation/reflection)
+const SOLUTION = [
+  [2, 7, 6],
+  [9, 5, 1],
+  [4, 3, 8]
+];
+
+let grid = [[0,0,0],[0,0,0],[0,0,0]];
+let locked = [[false,false,false],[false,false,false],[false,false,false]]; // hint-locked
+let selectedNum = null;
+let selectedCell = null;
+let won = false;
+
+function init() {
+  renderBank();
+  renderGrid();
+  renderSums();
+}
+
+function renderBank() {
+  const bank = document.getElementById('bank');
+  bank.innerHTML = '';
+  for (let n = 1; n <= 9; n++) {
+    const el = document.createElement('div');
+    el.className = 'bank-num';
+    el.textContent = n;
+    const used = isUsed(n);
+    if (used) el.classList.add('used');
+    if (selectedNum === n && !used) el.classList.add('selected');
+    el.onclick = () => {
+      if (won) return;
+      if (used) return;
+      if (selectedNum === n) { selectedNum = null; }
+      else { selectedNum = n; selectedCell = null; }
+      renderBank();
+      renderGrid();
+    };
+    bank.appendChild(el);
+  }
+}
+
+function isUsed(n) {
+  for (let r = 0; r < 3; r++)
+    for (let c = 0; c < 3; c++)
+      if (grid[r][c] === n) return true;
+  return false;
+}
+
+function renderGrid() {
+  const gridEl = document.getElementById('grid');
+  gridEl.innerHTML = '';
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      if (grid[r][c] !== 0) {
+        cell.textContent = grid[r][c];
+        cell.classList.add('filled');
+        if (locked[r][c]) cell.classList.add('hint');
+      }
+      if (selectedCell && selectedCell[0] === r && selectedCell[1] === c) {
+        cell.classList.add('selected');
+      }
+      cell.onclick = () => cellClick(r, c);
+      gridEl.appendChild(cell);
+    }
+  }
+}
+
+function cellClick(r, c) {
+  if (won) return;
+  if (locked[r][c]) return;
+  const msg = document.getElementById('message');
+
+  if (selectedNum !== null) {
+    // Place number
+    // If cell already has a number, free it first
+    grid[r][c] = selectedNum;
+    selectedNum = null;
+    selectedCell = null;
+    msg.textContent = 'Great! Keep going!';
+    renderAll();
+    checkWin();
+    return;
+  }
+
+  // If cell has a number, pick it up
+  if (grid[r][c] !== 0) {
+    selectedNum = grid[r][c];
+    grid[r][c] = 0;
+    selectedCell = null;
+    msg.textContent = `Picked up ${selectedNum}. Tap a cell to place it, or tap another number.`;
+    renderAll();
+    return;
+  }
+
+  // Empty cell tapped with no number selected
+  selectedCell = [r, c];
+  msg.textContent = 'Now tap a number to place here!';
+  renderAll();
+}
+
+function renderAll() {
+  renderBank();
+  renderGrid();
+  renderSums();
+}
+
+function renderSums() {
+  // Row sums
+  const rowSumsEl = document.getElementById('rowSums');
+  rowSumsEl.innerHTML = '';
+  for (let r = 0; r < 3; r++) {
+    const label = document.createElement('div');
+    label.className = 'sum-label';
+    const sum = grid[r][0] + grid[r][1] + grid[r][2];
+    const full = grid[r][0] && grid[r][1] && grid[r][2];
+    label.textContent = full ? `= ${sum}` : (sum > 0 ? `(${sum})` : '');
+    if (full) label.classList.add(sum === 15 ? 'correct' : 'incorrect');
+    else label.classList.add('empty');
+    rowSumsEl.appendChild(label);
+  }
+
+  // Col sums
+  const colSumsEl = document.getElementById('colSums');
+  colSumsEl.innerHTML = '';
+  for (let c = 0; c < 3; c++) {
+    const label = document.createElement('div');
+    label.className = 'sum-label';
+    const sum = grid[0][c] + grid[1][c] + grid[2][c];
+    const full = grid[0][c] && grid[1][c] && grid[2][c];
+    label.textContent = full ? `= ${sum}` : (sum > 0 ? `(${sum})` : '');
+    if (full) label.classList.add(sum === 15 ? 'correct' : 'incorrect');
+    else label.classList.add('empty');
+    colSumsEl.appendChild(label);
+  }
+
+  // Diagonal sums
+  const diagEl = document.getElementById('diagSums');
+  diagEl.innerHTML = '';
+  const d1 = grid[0][0] + grid[1][1] + grid[2][2];
+  const d1full = grid[0][0] && grid[1][1] && grid[2][2];
+  const d2 = grid[0][2] + grid[1][1] + grid[2][0];
+  const d2full = grid[0][2] && grid[1][1] && grid[2][0];
+
+  const dl1 = document.createElement('div');
+  dl1.className = 'diag-label';
+  dl1.textContent = d1full ? `\\ = ${d1}` : (d1 > 0 ? `\\ (${d1})` : '\\ --');
+  if (d1full) dl1.classList.add(d1 === 15 ? 'correct' : 'incorrect');
+  else dl1.classList.add('empty');
+
+  const dl2 = document.createElement('div');
+  dl2.className = 'diag-label';
+  dl2.textContent = d2full ? `/ = ${d2}` : (d2 > 0 ? `/ (${d2})` : '/ --');
+  if (d2full) dl2.classList.add(d2 === 15 ? 'correct' : 'incorrect');
+  else dl2.classList.add('empty');
+
+  diagEl.appendChild(dl1);
+  diagEl.appendChild(dl2);
+}
+
+function checkWin() {
+  // All cells must be filled
+  for (let r = 0; r < 3; r++)
+    for (let c = 0; c < 3; c++)
+      if (grid[r][c] === 0) return;
+
+  // Check rows, cols, diags
+  for (let r = 0; r < 3; r++) {
+    if (grid[r][0] + grid[r][1] + grid[r][2] !== 15) return;
+  }
+  for (let c = 0; c < 3; c++) {
+    if (grid[0][c] + grid[1][c] + grid[2][c] !== 15) return;
+  }
+  if (grid[0][0] + grid[1][1] + grid[2][2] !== 15) return;
+  if (grid[0][2] + grid[1][1] + grid[2][0] !== 15) return;
+
+  won = true;
+  setTimeout(() => {
+    document.getElementById('victoryOverlay').classList.add('show');
+    startConfetti();
+  }, 400);
+}
+
+function giveHint() {
+  if (won) return;
+  const msg = document.getElementById('message');
+  // Find a random empty or incorrectly filled cell and reveal solution
+  let candidates = [];
+  for (let r = 0; r < 3; r++)
+    for (let c = 0; c < 3; c++)
+      if (!locked[r][c] && grid[r][c] !== SOLUTION[r][c])
+        candidates.push([r, c]);
+
+  if (candidates.length === 0) {
+    msg.textContent = 'No more hints needed!';
+    return;
+  }
+
+  const [r, c] = candidates[Math.floor(Math.random() * candidates.length)];
+  // Remove the old number from grid if present
+  const oldVal = grid[r][c];
+  grid[r][c] = SOLUTION[r][c];
+  locked[r][c] = true;
+  selectedNum = null;
+  selectedCell = null;
+  msg.textContent = `Hint: ${SOLUTION[r][c]} goes in row ${r + 1}, column ${c + 1}!`;
+  renderAll();
+  checkWin();
+}
+
+function clearBoard() {
+  if (won) return;
+  for (let r = 0; r < 3; r++)
+    for (let c = 0; c < 3; c++) {
+      if (!locked[r][c]) grid[r][c] = 0;
+    }
+  selectedNum = null;
+  selectedCell = null;
+  document.getElementById('message').textContent = 'Board cleared (hints stay). Try again!';
+  renderAll();
+}
+
+function resetGame() {
+  grid = [[0,0,0],[0,0,0],[0,0,0]];
+  locked = [[false,false,false],[false,false,false],[false,false,false]];
+  selectedNum = null;
+  selectedCell = null;
+  won = false;
+  document.getElementById('victoryOverlay').classList.remove('show');
+  document.getElementById('message').textContent = 'Tap a number, then tap a cell to place it!';
+  stopConfetti();
+  renderAll();
+}
+
+/* --- Confetti --- */
+const canvas = document.getElementById('confettiCanvas');
+const ctx = canvas.getContext('2d');
+let confettiPieces = [], confettiAnim = null;
+const COLORS = ['#e74c3c','#f39c12','#2ecc71','#3498db','#9b59b6','#1abc9c','#e67e22','#ec407a'];
+
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function startConfetti() {
+  confettiPieces = [];
+  for (let i = 0; i < 120; i++) {
+    confettiPieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * -canvas.height,
+      w: 8 + Math.random() * 10,
+      h: 6 + Math.random() * 8,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      vy: 2 + Math.random() * 4,
+      vx: (Math.random() - 0.5) * 3,
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 8
+    });
+  }
+  animateConfetti();
+}
+function animateConfetti() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiPieces.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+    if (p.y > canvas.height + 20) { p.y = -20; p.x = Math.random() * canvas.width; }
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot * Math.PI / 180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    ctx.restore();
+  });
+  confettiAnim = requestAnimationFrame(animateConfetti);
+}
+function stopConfetti() {
+  if (confettiAnim) cancelAnimationFrame(confettiAnim);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  confettiPieces = [];
+}
+
+init();
+</script>
+</body>
+</html>

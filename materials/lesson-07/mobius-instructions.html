@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobius Band Lab Instructions – Lesson 7</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #111;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 10.8in;
+    padding: 0.4in 0.5in 0.3in;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24pt;
+    font-weight: 900;
+    color: #0d47a1;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    font-size: 10pt;
+    color: #555;
+    margin-bottom: 0.2in;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.14in;
+    flex: 1;
+  }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    border: 2px solid #bbdefb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: #fff;
+  }
+
+  .step-number {
+    background: #0d47a1;
+    color: #fff;
+    font-size: 16pt;
+    font-weight: 900;
+    width: 0.45in;
+    height: 0.45in;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-content h2 {
+    font-size: 12pt;
+    color: #0d47a1;
+    margin-bottom: 3px;
+  }
+
+  .step-content p {
+    font-size: 9.5pt;
+    color: #333;
+    line-height: 1.5;
+  }
+
+  .step-content .predict {
+    background: #fff8e1;
+    border: 1.5px solid #ffe082;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 6px;
+    font-size: 9pt;
+    color: #5d4037;
+  }
+
+  .step-content .predict strong {
+    color: #e65100;
+  }
+
+  .step-content .result-line {
+    font-size: 9pt;
+    color: #555;
+    margin-top: 4px;
+  }
+
+  .step-content .result-line span {
+    display: inline-block;
+    min-width: 2in;
+    border-bottom: 1.5px solid #999;
+  }
+
+  .step-visual {
+    width: 1.3in;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wow-box {
+    background: #e3f2fd;
+    border: 2.5px solid #0d47a1;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: auto;
+    text-align: center;
+  }
+
+  .wow-box h2 {
+    font-size: 14pt;
+    color: #0d47a1;
+    margin-bottom: 6px;
+  }
+
+  .wow-box p {
+    font-size: 9.5pt;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  @media print {
+    @page { size: letter portrait; margin: 0; }
+    body { margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Mobius Band Lab</h1>
+  <div class="page-subtitle">
+    Lesson 7 – Topology &amp; Shapes &nbsp;|&nbsp;
+    Follow each step. <strong>Predict before you try!</strong>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h2>Make a Regular Loop</h2>
+        <p>Take a paper strip. Curl it into a loop (like a bracelet) and tape the ends together. No twisting!</p>
+        <p>Draw a line down the middle all the way around. How many sides does it have?</p>
+        <div class="result-line">Number of sides: <span></span></div>
+      </div>
+      <div class="step-visual">
+        <svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="45" cy="30" rx="38" ry="22" fill="none" stroke="#0d47a1" stroke-width="2.5"/>
+          <text x="45" y="35" text-anchor="middle" font-size="8" fill="#999">regular loop</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h2>Make a Mobius Band</h2>
+        <p>Take a NEW strip. Before taping, give one end a <strong>half twist</strong> (flip it over once). Then tape the ends together.</p>
+        <p>Draw a line down the middle all the way around. What happens?</p>
+        <div class="result-line">Number of sides: <span></span></div>
+        <div class="result-line">What surprised you? <span></span></div>
+      </div>
+      <div class="step-visual">
+        <svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10,35 Q25,10 45,30 Q65,50 80,25" fill="none" stroke="#0d47a1" stroke-width="2.5"/>
+          <path d="M10,35 Q25,55 45,30 Q65,5 80,25" fill="none" stroke="#0d47a1" stroke-width="2.5" stroke-dasharray="4,3"/>
+          <text x="45" y="55" text-anchor="middle" font-size="7" fill="#999">half twist!</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h2>Cut It Down the Middle</h2>
+        <p>Take your Mobius band. Cut along the line you drew — right down the center.</p>
+        <div class="predict">
+          <strong>PREDICT first!</strong> What do you think will happen? (Circle one)<br>
+          Two separate loops &nbsp;&nbsp;|&nbsp;&nbsp; One big loop &nbsp;&nbsp;|&nbsp;&nbsp; Falls apart &nbsp;&nbsp;|&nbsp;&nbsp; Something else
+        </div>
+        <div class="result-line" style="margin-top:8px;">What actually happened: <span></span></div>
+      </div>
+      <div class="step-visual">
+        <svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+          <text x="45" y="25" text-anchor="middle" font-size="24">&#9986;</text>
+          <text x="45" y="50" text-anchor="middle" font-size="7" fill="#999">cut the middle!</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h2>Cut the Big Loop Again</h2>
+        <p>Take whatever you got from Step 3. Cut THAT down the middle too.</p>
+        <div class="predict">
+          <strong>PREDICT first!</strong> What will happen this time?
+        </div>
+        <div class="result-line" style="margin-top:8px;">What actually happened: <span></span></div>
+      </div>
+      <div class="step-visual">
+        <svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+          <text x="45" y="30" text-anchor="middle" font-size="28">?!</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number" style="background:#c62828;">&#9733;</div>
+      <div class="step-content">
+        <h2>Bonus: The One-Third Cut</h2>
+        <p>Make a NEW Mobius band. This time, cut it <strong>one-third</strong> of the way from the edge (not down the middle).</p>
+        <div class="predict">
+          <strong>PREDICT first!</strong> Will you get the same thing as cutting down the middle?
+        </div>
+        <div class="result-line" style="margin-top:8px;">What actually happened: <span></span></div>
+      </div>
+      <div class="step-visual">
+        <svg width="90" height="60" viewBox="0 0 90 60" xmlns="http://www.w3.org/2000/svg">
+          <text x="45" y="20" text-anchor="middle" font-size="9" fill="#c62828" font-weight="bold">EXPERT</text>
+          <text x="45" y="35" text-anchor="middle" font-size="9" fill="#c62828" font-weight="bold">MODE</text>
+          <text x="45" y="52" text-anchor="middle" font-size="7" fill="#999">cut at &#8531; width</text>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wow-box">
+    <h2>The Big Question</h2>
+    <p>A regular loop has <strong>2 sides</strong> (inside and outside) and <strong>2 edges</strong> (top and bottom).<br>
+    A Mobius band has <strong>1 side</strong> and <strong>1 edge</strong>. How is that even possible?<br>
+    Mathematicians call this <strong>topology</strong> — the math of twisting, bending, and stretching!</p>
+  </div>
+
+</div>
+</body>
+</html>
