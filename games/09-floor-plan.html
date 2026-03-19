@@ -172,9 +172,40 @@ h1 {
   font-size: 0.95em;
 }
 .confetti { position: fixed; pointer-events: none; z-index: 1000; }
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(74,124,35,0.6);
+  color: #d4e8b0;
+}
+.back-link:hover { opacity: 1; }
+.peek-btn { background: linear-gradient(135deg, #ffc107, #ff9800); color: #333; }
+.reset-progress-btn {
+  background: none;
+  border: 1px solid #ccc;
+  color: #999;
+  font-size: 0.8em;
+  padding: 4px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.reset-progress-btn:hover { color: #e53935; border-color: #e53935; }
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>&#x1F3E0; Floor Plan Designer</h1>
 <p class="subtitle">Look at the room and recreate it as a top-down floor plan!</p>
 
@@ -203,9 +234,11 @@ h1 {
     <button class="action-btn remove-btn" onclick="removeMode()">&#x1F5D1; Remove</button>
     <button class="action-btn clear-btn" onclick="clearGrid()">&#x267B; Clear All</button>
     <button class="action-btn check-btn" onclick="checkAnswer()">&#x2705; Check Answer</button>
+    <button class="action-btn peek-btn" id="peekBtn" onclick="peekAnswer()">&#x1F440; Peek</button>
   </div>
 
   <div class="result-box" id="resultBox"></div>
+  <button class="reset-progress-btn" onclick="resetProgress()">Reset Progress</button>
 </div>
 
 <script>
@@ -311,6 +344,36 @@ let isRotated = false;
 let isRemoveMode = false;
 let dragPiece = null;
 let dragOffsetX = 0, dragOffsetY = 0;
+let isPeeking = false;
+let peekOpacity = 0;
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('mathCircle_09_progress');
+    if (saved) {
+      const highest = parseInt(saved);
+      if (!isNaN(highest)) {
+        for (let i = 0; i <= highest && i < levels.length; i++) {
+          completedLevels.add(i);
+        }
+      }
+    }
+  } catch(e) {}
+}
+
+function saveProgress() {
+  try {
+    const highest = Math.max(...completedLevels);
+    localStorage.setItem('mathCircle_09_progress', String(highest));
+  } catch(e) {}
+}
+
+function resetProgress() {
+  completedLevels.clear();
+  isPeeking = false;
+  try { localStorage.removeItem('mathCircle_09_progress'); } catch(e) {}
+  selectLevel(0);
+}
 
 const gridCanvas = document.getElementById('gridCanvas');
 const gridCtx = gridCanvas.getContext('2d');
@@ -318,11 +381,12 @@ const roomCanvas = document.getElementById('room3d');
 const roomCtx = roomCanvas.getContext('2d');
 
 function init() {
+  loadProgress();
   const sel = document.getElementById('levelSelector');
   levels.forEach((l, i) => {
     const btn = document.createElement('button');
-    btn.className = 'level-btn';
-    btn.textContent = 'Level ' + (i + 1);
+    btn.className = 'level-btn' + (completedLevels.has(i) ? ' completed' : '');
+    btn.textContent = 'Level ' + (i + 1) + (completedLevels.has(i) ? ' \u2705' : '');
     btn.onclick = () => selectLevel(i);
     btn.id = 'lvl' + i;
     sel.appendChild(btn);
@@ -331,7 +395,13 @@ function init() {
   gridCanvas.addEventListener('click', onGridClick);
   gridCanvas.addEventListener('mousemove', onGridMove);
 
-  selectLevel(0);
+  // Start at highest completed + 1 (or 0)
+  let startIdx = 0;
+  if (completedLevels.size > 0) {
+    const highest = Math.max(...completedLevels);
+    startIdx = Math.min(highest + 1, levels.length - 1);
+  }
+  selectLevel(startIdx);
 }
 
 function selectLevel(idx) {
@@ -341,8 +411,10 @@ function selectLevel(idx) {
   isRemoveMode = false;
   isRotated = false;
 
+  isPeeking = false;
   document.querySelectorAll('.level-btn').forEach((b, i) => {
     b.className = 'level-btn' + (i === idx ? ' active' : '') + (completedLevels.has(i) ? ' completed' : '');
+    b.textContent = 'Level ' + (i + 1) + (completedLevels.has(i) ? ' \u2705' : '');
   });
 
   document.getElementById('instructions').textContent = levels[idx].name + ' - Place the furniture to match the 3D view!';
@@ -635,6 +707,29 @@ function drawGrid() {
     }
   }
 
+  // Peek ghost outlines
+  if (isPeeking && peekOpacity > 0) {
+    const level = levels[currentLevel];
+    level.furniture.forEach(f => {
+      const ft = furnitureTypes[f.type];
+      c.strokeStyle = ft.color;
+      c.lineWidth = 3;
+      c.globalAlpha = peekOpacity;
+      c.setLineDash([6, 4]);
+      c.strokeRect(f.x * cellW + 4, f.y * cellH + 4, f.w * cellW - 8, f.h * cellH - 8);
+      c.setLineDash([]);
+      c.fillStyle = ft.color;
+      c.globalAlpha = peekOpacity * 0.25;
+      c.fillRect(f.x * cellW + 4, f.y * cellH + 4, f.w * cellW - 8, f.h * cellH - 8);
+      c.globalAlpha = peekOpacity;
+      c.fillStyle = ft.color;
+      c.font = 'bold 11px sans-serif';
+      c.textAlign = 'center';
+      c.fillText(ft.name, f.x * cellW + f.w * cellW / 2, f.y * cellH + f.h * cellH / 2 + 4);
+      c.globalAlpha = 1;
+    });
+  }
+
   // Remove mode indicator
   if (isRemoveMode) {
     c.fillStyle = 'rgba(244,67,54,0.08)';
@@ -751,7 +846,10 @@ function checkAnswer() {
     rb.className = 'result-box show success';
     rb.textContent = 'Perfect! You matched the floor plan! Great spatial thinking!';
     completedLevels.add(currentLevel);
-    document.getElementById('lvl' + currentLevel).className = 'level-btn active completed';
+    saveProgress();
+    const lvlBtn = document.getElementById('lvl' + currentLevel);
+    lvlBtn.className = 'level-btn active completed';
+    lvlBtn.textContent = 'Level ' + (currentLevel + 1) + ' \u2705';
     launchConfetti();
   } else {
     rb.className = 'result-box show failure';
@@ -777,6 +875,31 @@ function launchConfetti() {
     ], { duration: dur, easing: 'ease-out' });
     setTimeout(() => conf.remove(), dur);
   }
+}
+
+function peekAnswer() {
+  if (isPeeking) return;
+  isPeeking = true;
+  peekOpacity = 0.5;
+  drawGrid();
+
+  // Fade out over 2 seconds
+  const startTime = Date.now();
+  const duration = 2000;
+  function fadeStep() {
+    const elapsed = Date.now() - startTime;
+    const t = Math.min(elapsed / duration, 1);
+    peekOpacity = 0.5 * (1 - t);
+    drawGrid();
+    if (t < 1) {
+      requestAnimationFrame(fadeStep);
+    } else {
+      isPeeking = false;
+      peekOpacity = 0;
+      drawGrid();
+    }
+  }
+  requestAnimationFrame(fadeStep);
 }
 
 init();

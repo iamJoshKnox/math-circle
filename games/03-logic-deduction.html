@@ -184,14 +184,69 @@ h1 {
 }
 .creature-card .emoji { font-size: 2.2rem; }
 .creature-card .name { font-weight: bold; color: #9c27b0; font-size: 1.1rem; margin-top: 3px; }
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(240,147,251,0.6);
+  color: #fff;
+}
+.back-link:hover { opacity: 1; }
+.btn-hint {
+  padding: 10px 25px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  transition: transform 0.1s, background 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.btn-hint:hover { transform: scale(1.05); background: rgba(255,255,255,0.4); }
+.btn-hint:disabled { opacity: 0.4; cursor: default; transform: none; }
+.btn-reset-progress {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-left: 10px;
+}
+.btn-reset-progress:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
+.hint-box {
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 10px 18px;
+  color: #fff;
+  font-size: 1rem;
+  max-width: 650px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>Logic Creatures!</h1>
 <p class="subtitle">Read the clues and figure out who is who!</p>
 <div class="top-bar">
   <span>Puzzle: <span id="puzzleNum">1</span> / <span id="totalPuzzles">8</span></span>
   <span>Score: <span id="score">0</span></span>
+  <button class="btn-reset-progress" onclick="resetProgress()">Reset Progress</button>
 </div>
 
 <div id="gameArea">
@@ -200,7 +255,9 @@ h1 {
   <div class="clue-box" id="clueBox"><h3>Clues:</h3><div id="clues"></div></div>
   <div class="question-box" id="questionBox"><h3>Who is who?</h3><div id="assignments"></div></div>
   <div class="feedback" id="feedback"></div>
+  <div id="hintDisplay"></div>
   <div class="btn-row">
+    <button class="btn-hint" id="hintBtn" onclick="useHint()">Hint (<span id="hintsLeft">2</span> left)</button>
     <button class="btn btn-check" id="checkBtn" onclick="checkAnswer()">Check Answer!</button>
     <button class="btn btn-next" id="nextBtn" onclick="nextPuzzle()">Next Puzzle</button>
   </div>
@@ -223,7 +280,8 @@ const puzzles = [
       "The <b>tallest</b> creature wins the prize!"
     ],
     roles: ["Tallest"],
-    answer: {Tallest:"Plim"}
+    answer: {Tallest:"Plim"},
+    hints: ["Based on Clue 2, Plim is taller than Gobr, who is already taller than Stoon.", "So Plim must be the tallest of all three!"]
   },
   {
     title: "Who Lives Where?",
@@ -234,7 +292,8 @@ const puzzles = [
       "One creature lives in the cave, one in the tree, and one in the pond."
     ],
     roles: ["Lives in the cave","Lives in the tree","Lives in the pond"],
-    answer: {"Lives in the cave":"Tark","Lives in the tree":"Moop","Lives in the pond":"Zix"}
+    answer: {"Lives in the cave":"Tark","Lives in the tree":"Moop","Lives in the pond":"Zix"},
+    hints: ["Based on Clue 2, Moop lives in the tree.", "Based on Clue 1, Zix does NOT live in the cave, so Zix must live in the pond."]
   },
   {
     title: "The Booter",
@@ -246,7 +305,8 @@ const puzzles = [
       "Narg has 6 legs."
     ],
     roles: ["The booter"],
-    answer: {"The booter":"Narg"}
+    answer: {"The booter":"Narg"},
+    hints: ["Based on Clue 1, the booter has the MOST legs.", "Narg has 6 legs, which is more than Wug (2) and Blik (4)."]
   },
   {
     title: "Favorite Colors",
@@ -258,7 +318,8 @@ const puzzles = [
       "Each creature likes a different color: red, blue, or green."
     ],
     roles: ["Likes red","Likes blue","Likes green"],
-    answer: {"Likes red":"Dree","Likes blue":"Flub","Likes green":"Pex"}
+    answer: {"Likes red":"Dree","Likes blue":"Flub","Likes green":"Pex"},
+    hints: ["Based on Clue 3, Pex likes green.", "Based on Clue 1, Flub does NOT like red, so Flub must like blue."]
   },
   {
     title: "Who Ate the Cookie?",
@@ -270,7 +331,8 @@ const puzzles = [
       "Only one creature ate the cookie."
     ],
     roles: ["Ate the cookie"],
-    answer: {"Ate the cookie":"Feep"}
+    answer: {"Ate the cookie":"Feep"},
+    hints: ["Based on Clue 2, Zorp and Quib don't have pointy ears, so they can't be the thief.", "Based on Clue 3, Lunt was sleeping, so Lunt didn't eat it either."]
   },
   {
     title: "Race Finish Order",
@@ -282,7 +344,8 @@ const puzzles = [
       "Each creature finished in a different place: 1st, 2nd, or 3rd."
     ],
     roles: ["1st place","2nd place","3rd place"],
-    answer: {"1st place":"Grun","2nd place":"Blip","3rd place":"Yop"}
+    answer: {"1st place":"Grun","2nd place":"Blip","3rd place":"Yop"},
+    hints: ["Based on Clue 2, Blip finished after Grun, so Grun is ahead of Blip.", "Based on Clue 3, Yop finished after Blip, so the order is Grun, Blip, Yop."]
   },
   {
     title: "The Three Hats",
@@ -294,7 +357,8 @@ const puzzles = [
       "Each creature wears a different hat."
     ],
     roles: ["Red hat","Blue hat","Yellow hat"],
-    answer: {"Red hat":"Snig","Blue hat":"Tumm","Yellow hat":"Boff"}
+    answer: {"Red hat":"Snig","Blue hat":"Tumm","Yellow hat":"Boff"},
+    hints: ["Based on Clue 3, Boff's hat is NOT blue and NOT red, so it must be yellow.", "Based on Clue 2, Snig's hat is NOT blue, so Snig must have the red hat."]
   },
   {
     title: "Pets and Owners",
@@ -307,7 +371,8 @@ const puzzles = [
       "Kip does NOT have a fish."
     ],
     roles: ["Has the cat","Has the dog","Has the fish","Has the bird"],
-    answer: {"Has the cat":"Kip","Has the dog":"Venn","Has the fish":"Frax","Has the bird":"Dool"}
+    answer: {"Has the cat":"Kip","Has the dog":"Venn","Has the fish":"Frax","Has the bird":"Dool"},
+    hints: ["Based on Clue 3, Dool's pet can fly, so Dool has the bird.", "Based on Clue 4, Venn's pet says 'woof!', so Venn has the dog."]
   }
 ];
 
@@ -315,10 +380,75 @@ let currentPuzzle = 0;
 let score = 0;
 let selections = {};
 let answered = false;
+let hintsUsed = 0;
+let completedPuzzles = [];
+
+// --- Session Persistence ---
+const STORAGE_KEY = 'mathCircle_03_progress';
+
+function saveProgress() {
+  const data = { completedPuzzles, score };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data && Array.isArray(data.completedPuzzles)) {
+      completedPuzzles = data.completedPuzzles;
+      score = data.score || 0;
+      let next = 0;
+      for (let i = 0; i < puzzles.length; i++) {
+        if (!completedPuzzles.includes(i)) { next = i; break; }
+        if (i === puzzles.length - 1) next = puzzles.length;
+      }
+      currentPuzzle = next;
+      document.getElementById('score').textContent = score;
+    }
+  } catch(e) {}
+}
+
+function resetProgress() {
+  localStorage.removeItem(STORAGE_KEY);
+  completedPuzzles = [];
+  currentPuzzle = 0;
+  score = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('endScreen').style.display = 'none';
+  document.getElementById('gameArea').style.display = '';
+  renderPuzzle();
+}
+
+// --- Hint System ---
+function useHint() {
+  if (hintsUsed >= 2 || answered) return;
+  const p = puzzles[currentPuzzle];
+  if (!p.hints || hintsUsed >= p.hints.length) return;
+
+  const hintText = p.hints[hintsUsed];
+  hintsUsed++;
+  document.getElementById('hintsLeft').textContent = 2 - hintsUsed;
+  if (hintsUsed >= 2) {
+    document.getElementById('hintBtn').disabled = true;
+  }
+
+  const display = document.getElementById('hintDisplay');
+  const box = document.createElement('div');
+  box.className = 'hint-box';
+  box.textContent = hintText;
+  display.appendChild(box);
+}
 
 function renderPuzzle() {
   answered = false;
   selections = {};
+  hintsUsed = 0;
+  document.getElementById('hintBtn').disabled = false;
+  document.getElementById('hintBtn').style.display = '';
+  document.getElementById('hintsLeft').textContent = '2';
+  document.getElementById('hintDisplay').innerHTML = '';
   const p = puzzles[currentPuzzle];
   document.getElementById('puzzleNum').textContent = currentPuzzle + 1;
   document.getElementById('totalPuzzles').textContent = puzzles.length;
@@ -411,9 +541,12 @@ function checkAnswer() {
   });
 
   answered = true;
+  document.getElementById('hintBtn').style.display = 'none';
   if (allCorrect) {
     score++;
     document.getElementById('score').textContent = score;
+    if (!completedPuzzles.includes(currentPuzzle)) completedPuzzles.push(currentPuzzle);
+    saveProgress();
     const msgs = ["You figured it out! 🧠","Logic master! ⭐","Brilliant deduction! 🌟","Amazing thinking! 🎉"];
     document.getElementById('feedback').textContent = msgs[Math.floor(Math.random()*msgs.length)];
   } else {
@@ -433,6 +566,7 @@ function nextPuzzle() {
 }
 
 function showEnd() {
+  document.getElementById('hintBtn').style.display = 'none';
   document.getElementById('gameArea').style.display = 'none';
   const end = document.getElementById('endScreen');
   end.style.display = 'flex';
@@ -443,13 +577,20 @@ function showEnd() {
 function restart() {
   currentPuzzle = 0;
   score = 0;
+  completedPuzzles = [];
   document.getElementById('score').textContent = 0;
   document.getElementById('endScreen').style.display = 'none';
   document.getElementById('gameArea').style.display = '';
+  saveProgress();
   renderPuzzle();
 }
 
-renderPuzzle();
+loadProgress();
+if (currentPuzzle >= puzzles.length) {
+  showEnd();
+} else {
+  renderPuzzle();
+}
 </script>
 </body>
 </html>

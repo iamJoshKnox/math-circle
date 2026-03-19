@@ -242,9 +242,40 @@ h1 {
   color: #88aacc;
 }
 .confetti { position: fixed; pointer-events: none; z-index: 1000; }
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(0,255,136,0.15);
+  color: #00ff88;
+  border: 1px solid rgba(0,255,136,0.3);
+}
+.back-link:hover { opacity: 1; }
+.reset-progress-btn {
+  background: none;
+  border: 1px solid #555;
+  color: #888;
+  font-size: 0.8em;
+  padding: 4px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.reset-progress-btn:hover { color: #ff6b6b; border-color: #ff6b6b; }
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>&#x1F50D; Code Breaker</h1>
 <p class="subtitle">Crack the secret codes and decode hidden messages!</p>
 
@@ -277,6 +308,8 @@ h1 {
     <div class="big">&#x1F389; Code Cracked! &#x1F389;</div>
     <div id="successMsg" style="margin-top:10px;font-size:1.2em;color:#00ff88;"></div>
   </div>
+
+  <button class="reset-progress-btn" onclick="resetProgress()">Reset Progress</button>
 </div>
 
 <script>
@@ -364,6 +397,27 @@ let completedPuzzles = new Set();
 let substitutions = {};
 let hintsGiven = 0;
 
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('mathCircle_08_progress');
+    if (saved) {
+      JSON.parse(saved).forEach(i => completedPuzzles.add(i));
+    }
+  } catch(e) {}
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem('mathCircle_08_progress', JSON.stringify([...completedPuzzles]));
+  } catch(e) {}
+}
+
+function resetProgress() {
+  completedPuzzles.clear();
+  try { localStorage.removeItem('mathCircle_08_progress'); } catch(e) {}
+  selectPuzzle(0);
+}
+
 function encode(puzzle) {
   const msg = puzzle.message;
   if (puzzle.type === 'shift') {
@@ -386,16 +440,23 @@ function getUsedEncodedLetters(puzzle) {
 }
 
 function init() {
+  loadProgress();
   const sel = document.getElementById('levelSelector');
   puzzles.forEach((p, i) => {
     const btn = document.createElement('button');
-    btn.className = 'level-btn';
-    btn.textContent = p.name;
+    btn.className = 'level-btn' + (completedPuzzles.has(i) ? ' completed' : '');
+    btn.textContent = p.name + (completedPuzzles.has(i) ? ' \u2705' : '');
     btn.onclick = () => selectPuzzle(i);
     btn.id = 'lbtn' + i;
     sel.appendChild(btn);
   });
-  selectPuzzle(0);
+  // Start at first unsolved puzzle
+  let startIdx = 0;
+  for (let i = 0; i < puzzles.length; i++) {
+    if (!completedPuzzles.has(i)) { startIdx = i; break; }
+    if (i === puzzles.length - 1) startIdx = 0;
+  }
+  selectPuzzle(startIdx);
 }
 
 function selectPuzzle(idx) {
@@ -404,6 +465,7 @@ function selectPuzzle(idx) {
   hintsGiven = 0;
   document.querySelectorAll('.level-btn').forEach((b,i) => {
     b.className = 'level-btn' + (i === idx ? ' active' : '') + (completedPuzzles.has(i) ? ' completed' : '');
+    b.textContent = puzzles[i].name + (completedPuzzles.has(i) ? ' \u2705' : '');
   });
   const p = puzzles[idx];
   document.getElementById('levelInfo').textContent = p.difficulty;
@@ -562,7 +624,10 @@ function checkComplete() {
 
   if (allCorrect) {
     completedPuzzles.add(currentPuzzle);
-    document.getElementById('lbtn' + currentPuzzle).className = 'level-btn active completed';
+    saveProgress();
+    const lbtn = document.getElementById('lbtn' + currentPuzzle);
+    lbtn.className = 'level-btn active completed';
+    lbtn.textContent = puzzles[currentPuzzle].name + ' \u2705';
     const sb = document.getElementById('successBox');
     sb.className = 'success-box show';
     document.getElementById('successMsg').textContent = 'The message was: "' + p.message + '"';

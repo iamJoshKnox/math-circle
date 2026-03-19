@@ -177,20 +177,66 @@ button:active { transform: scale(0.95); }
   margin: 4px 0;
   text-align: center;
 }
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(15, 52, 96, 0.7);
+  color: #3498db;
+}
+.back-link:hover { opacity: 1; }
+.btn-hint {
+  background: #9b59b6;
+  color: #fff;
+}
+.btn-hint:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn-progress {
+  background: transparent;
+  color: #888;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+}
+.btn-progress:hover { color: #bbb; }
+.best-moves {
+  color: #2ecc71;
+  font-size: 0.95rem;
+}
+.peg-zone.glow-source .peg-rod {
+  box-shadow: 0 0 18px 6px rgba(46, 204, 113, 0.7);
+}
+.peg-zone.glow-dest .peg-rod {
+  box-shadow: 0 0 18px 6px rgba(52, 152, 219, 0.7);
+}
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>Tower of Hanoi</h1>
 <div class="info-bar">
   <span>Moves: <strong id="moveCount">0</strong></span>
   <span>Minimum: <strong id="minMoves">7</strong></span>
+  <span id="bestMovesSpan" class="best-moves"></span>
   <span>Disks: <strong id="diskCountLabel">3</strong></span>
 </div>
 <div class="controls">
   <button class="btn-disk" onclick="setDisks(3)">3 Disks</button>
   <button class="btn-disk" onclick="setDisks(4)">4 Disks</button>
   <button class="btn-disk" onclick="setDisks(5)">5 Disks</button>
+  <button class="btn-hint" id="btnHint" onclick="showHint()">Show Next Move (<span id="hintsLeft">3</span>)</button>
   <button class="btn-reset" onclick="resetGame()">Reset</button>
+  <button class="btn-progress" onclick="resetProgress()">Reset Progress</button>
 </div>
 <div class="message" id="message">Tap a peg to pick up the top disk, then tap another peg to place it!</div>
 <div class="game-area" id="gameArea">
@@ -233,6 +279,50 @@ let pegs = [[], [], []];
 let selectedPeg = -1;
 let moves = 0;
 let gameWon = false;
+let hintsRemaining = 3;
+let moveHistory = []; // track moves for hint computation
+
+const STORAGE_KEY = 'mathCircle_04_progress';
+
+function loadProgress() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return data || {};
+  } catch(e) { return {}; }
+}
+
+function saveProgress() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(loadProgress()));
+}
+
+function saveBest(diskCount, moveCount) {
+  const prog = loadProgress();
+  if (!prog.best) prog.best = {};
+  const key = String(diskCount);
+  if (!prog.best[key] || moveCount < prog.best[key]) {
+    prog.best[key] = moveCount;
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prog));
+}
+
+function getBest(diskCount) {
+  const prog = loadProgress();
+  if (prog.best && prog.best[String(diskCount)]) return prog.best[String(diskCount)];
+  return null;
+}
+
+function updateBestDisplay() {
+  const best = getBest(numDisks);
+  const span = document.getElementById('bestMovesSpan');
+  span.textContent = best !== null ? `Best: ${best}` : '';
+}
+
+function resetProgress() {
+  if (confirm('Reset all personal best records?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    updateBestDisplay();
+  }
+}
 
 function setDisks(n) {
   numDisks = n;
@@ -246,12 +336,17 @@ function resetGame() {
   selectedPeg = -1;
   moves = 0;
   gameWon = false;
+  hintsRemaining = 3;
+  moveHistory = [];
   for (let i = numDisks; i >= 1; i--) pegs[0].push(i);
   document.getElementById('moveCount').textContent = '0';
   document.getElementById('minMoves').textContent = (Math.pow(2, numDisks) - 1);
   document.getElementById('diskCountLabel').textContent = numDisks;
   document.getElementById('message').textContent = 'Tap a peg to pick up the top disk, then tap another peg to place it!';
   document.getElementById('victoryOverlay').classList.remove('show');
+  document.getElementById('hintsLeft').textContent = hintsRemaining;
+  document.getElementById('btnHint').disabled = false;
+  updateBestDisplay();
   stopConfetti();
   renderPegs();
 }
@@ -331,6 +426,8 @@ function pegClick(p) {
 
   if (pegs[2].length === numDisks) {
     gameWon = true;
+    saveBest(numDisks, moves);
+    updateBestDisplay();
     const min = Math.pow(2, numDisks) - 1;
     document.getElementById('victoryMsg').textContent = `You solved it in ${moves} moves!`;
     document.getElementById('victoryOptimal').textContent =
@@ -340,6 +437,74 @@ function pegClick(p) {
       startConfetti();
     }, 300);
   }
+}
+
+/* --- Hint System (optimal move via recursive Tower of Hanoi) --- */
+function getOptimalMoves(n, from, to, aux) {
+  if (n === 0) return [];
+  const moves = [];
+  moves.push(...getOptimalMoves(n - 1, from, aux, to));
+  moves.push([from, to]);
+  moves.push(...getOptimalMoves(n - 1, aux, to, from));
+  return moves;
+}
+
+function findNextOptimalMove() {
+  // Generate the full optimal sequence
+  const optimal = getOptimalMoves(numDisks, 0, 2, 1);
+  // Simulate moves to find what state we'd be in after each optimal move
+  const simPegs = [[], [], []];
+  for (let i = numDisks; i >= 1; i--) simPegs[0].push(i);
+
+  // Compare current state against optimal states to find where we match
+  for (let step = 0; step < optimal.length; step++) {
+    // Check if current state matches this simulated state
+    if (pegsMatch(pegs, simPegs)) {
+      return optimal[step]; // [from, to]
+    }
+    // Execute this optimal move in simulation
+    const [f, t] = optimal[step];
+    simPegs[t].push(simPegs[f].pop());
+  }
+  return null; // State doesn't match any optimal path point
+}
+
+function pegsMatch(a, b) {
+  for (let i = 0; i < 3; i++) {
+    if (a[i].length !== b[i].length) return false;
+    for (let j = 0; j < a[i].length; j++) {
+      if (a[i][j] !== b[i][j]) return false;
+    }
+  }
+  return true;
+}
+
+function showHint() {
+  if (gameWon || hintsRemaining <= 0) return;
+  const msg = document.getElementById('message');
+
+  const move = findNextOptimalMove();
+  if (!move) {
+    msg.textContent = 'You\'ve gone off the optimal path. Try resetting!';
+    return;
+  }
+
+  hintsRemaining--;
+  document.getElementById('hintsLeft').textContent = hintsRemaining;
+  if (hintsRemaining <= 0) document.getElementById('btnHint').disabled = true;
+
+  const [from, to] = move;
+  msg.textContent = `Hint: Move top disk from peg ${from + 1} to peg ${to + 1}`;
+
+  // Glow source peg, then destination
+  const srcZone = document.getElementById('peg' + from);
+  const dstZone = document.getElementById('peg' + to);
+  srcZone.classList.add('glow-source');
+  setTimeout(() => {
+    srcZone.classList.remove('glow-source');
+    dstZone.classList.add('glow-dest');
+    setTimeout(() => dstZone.classList.remove('glow-dest'), 800);
+  }, 800);
 }
 
 /* --- Confetti --- */

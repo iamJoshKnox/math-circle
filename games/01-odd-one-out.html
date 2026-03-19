@@ -164,17 +164,66 @@ h1 {
 }
 .end-screen h2 { color: #fff; font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
 .end-screen .final-score { color: #ffd54f; font-size: 2rem; }
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(102,126,234,0.6);
+  color: #fff;
+}
+.back-link:hover { opacity: 1; }
+.btn-hint {
+  padding: 10px 25px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  transition: transform 0.1s, background 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  margin-bottom: 10px;
+}
+.btn-hint:hover { transform: scale(1.05); background: rgba(255,255,255,0.4); }
+.btn-hint:disabled { opacity: 0.4; cursor: default; transform: none; }
+.btn-reset-progress {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-left: 10px;
+}
+.btn-reset-progress:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
+.item-card.hint-highlight {
+  box-shadow: 0 0 16px 4px rgba(255,215,0,0.6) !important;
+  border-color: #ffd700;
+}
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>Odd One Out!</h1>
 <p class="subtitle">Which one doesn't belong? (Sometimes more than one answer works!)</p>
 <div class="score-bar">
   <span>Round: <span id="roundNum">1</span> / <span id="totalRounds">12</span></span>
   <span>Score: <span id="score">0</span></span>
+  <button class="btn-reset-progress" onclick="resetProgress()">Reset Progress</button>
 </div>
 <div class="prompt" id="prompt"></div>
 <div class="items-container" id="items"></div>
+<button class="btn-hint" id="hintBtn" onclick="useHint()">Hint</button>
 <div class="feedback" id="feedback"></div>
 <div class="reason-box" id="reasonBox"></div>
 <button class="btn btn-next" id="nextBtn" onclick="nextRound()">Next Round</button>
@@ -330,6 +379,68 @@ const puzzles = [
 let currentRound = 0;
 let score = 0;
 let answered = false;
+let hintUsed = false;
+let completedPuzzles = [];
+
+// --- Session Persistence ---
+const STORAGE_KEY = 'mathCircle_01_progress';
+
+function saveProgress() {
+  const data = { completedPuzzles, score, currentRound };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data && Array.isArray(data.completedPuzzles)) {
+      completedPuzzles = data.completedPuzzles;
+      score = data.score || 0;
+      // Find next unsolved puzzle
+      let next = 0;
+      for (let i = 0; i < puzzles.length; i++) {
+        if (!completedPuzzles.includes(i)) { next = i; break; }
+        if (i === puzzles.length - 1) next = puzzles.length; // all done
+      }
+      currentRound = next;
+      document.getElementById('score').textContent = score;
+    }
+  } catch(e) {}
+}
+
+function resetProgress() {
+  localStorage.removeItem(STORAGE_KEY);
+  completedPuzzles = [];
+  currentRound = 0;
+  score = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('endScreen').style.display = 'none';
+  renderRound();
+}
+
+// --- Hint System ---
+function useHint() {
+  if (hintUsed || answered) return;
+  hintUsed = true;
+  document.getElementById('hintBtn').disabled = true;
+  const p = puzzles[currentRound];
+  const cards = document.querySelectorAll('.item-card');
+
+  // Highlight non-odd items (the ones that share the common attribute)
+  cards.forEach((card, idx) => {
+    if (!p.valid.includes(idx)) {
+      card.classList.add('hint-highlight');
+    }
+  });
+  document.getElementById('feedback').textContent = "These items share something in common. Which one is different?";
+
+  // Remove highlight after 2 seconds
+  setTimeout(() => {
+    cards.forEach(card => card.classList.remove('hint-highlight'));
+  }, 2000);
+}
 
 const encouragements = [
   "Great thinking! 🌟",
@@ -357,6 +468,9 @@ function shuffle(arr) {
 
 function renderRound() {
   answered = false;
+  hintUsed = false;
+  document.getElementById('hintBtn').disabled = false;
+  document.getElementById('hintBtn').style.display = '';
   const p = puzzles[currentRound];
   document.getElementById('roundNum').textContent = currentRound + 1;
   document.getElementById('totalRounds').textContent = puzzles.length;
@@ -401,6 +515,9 @@ function handleClick(idx, card) {
     answered = true;
     score++;
     document.getElementById('score').textContent = score;
+    document.getElementById('hintBtn').style.display = 'none';
+    if (!completedPuzzles.includes(currentRound)) completedPuzzles.push(currentRound);
+    saveProgress();
     card.classList.add('selected-correct');
 
     const enc = encouragements[Math.floor(Math.random() * encouragements.length)];
@@ -441,6 +558,7 @@ function showEnd() {
   document.getElementById('feedback').textContent = '';
   document.getElementById('reasonBox').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('hintBtn').style.display = 'none';
 
   const end = document.getElementById('endScreen');
   end.style.display = 'flex';
@@ -459,12 +577,19 @@ function showEnd() {
 function restart() {
   currentRound = 0;
   score = 0;
+  completedPuzzles = [];
   document.getElementById('score').textContent = 0;
   document.getElementById('endScreen').style.display = 'none';
+  saveProgress();
   renderRound();
 }
 
-renderRound();
+loadProgress();
+if (currentRound >= puzzles.length) {
+  showEnd();
+} else {
+  renderRound();
+}
 </script>
 </body>
 </html>

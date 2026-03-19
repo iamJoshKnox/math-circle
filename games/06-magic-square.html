@@ -211,6 +211,38 @@ button:active { transform: scale(0.95); }
 
 canvas.confetti { position: fixed; inset: 0; z-index: 101; pointer-events: none; }
 
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(15, 52, 96, 0.7);
+  color: #9b59b6;
+}
+.back-link:hover { opacity: 1; }
+.btn-progress {
+  background: transparent;
+  color: #888;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+}
+.btn-progress:hover { color: #bbb; }
+.solved-badge {
+  display: none;
+  color: #2ecc71;
+  font-size: 1rem;
+  margin: 4px 0;
+}
+.solved-badge.show { display: block; }
+
 @media (max-width: 600px) {
   .cell { width: 80px; height: 80px; font-size: 2rem; }
   .sum-label { width: 80px; }
@@ -220,9 +252,11 @@ canvas.confetti { position: fixed; inset: 0; z-index: 101; pointer-events: none;
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>Magic Square</h1>
 <div class="subtitle">Place numbers 1-9 so every row, column, and diagonal adds up to 15!</div>
 <div class="target">Target sum: <strong>15</strong></div>
+<div class="solved-badge" id="solvedBadge">Previously solved!</div>
 <div class="message" id="message">Tap a number, then tap a cell to place it!</div>
 
 <div class="game-layout">
@@ -244,6 +278,7 @@ canvas.confetti { position: fixed; inset: 0; z-index: 101; pointer-events: none;
   <button class="btn-hint" onclick="giveHint()">Hint</button>
   <button class="btn-clear" onclick="clearBoard()">Clear</button>
   <button class="btn-reset" onclick="resetGame()">Reset</button>
+  <button class="btn-progress" onclick="resetProgress()">Reset Progress</button>
 </div>
 
 <div class="victory-overlay" id="victoryOverlay">
@@ -265,13 +300,40 @@ const SOLUTION = [
   [4, 3, 8]
 ];
 
+const STORAGE_KEY = 'mathCircle_06_progress';
 let grid = [[0,0,0],[0,0,0],[0,0,0]];
 let locked = [[false,false,false],[false,false,false],[false,false,false]]; // hint-locked
 let selectedNum = null;
 let selectedCell = null;
 let won = false;
 
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+
+function saveSolved() {
+  const prog = loadProgress();
+  prog.solved = true;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prog));
+}
+
+function updateSolvedBadge() {
+  const prog = loadProgress();
+  const badge = document.getElementById('solvedBadge');
+  if (prog.solved) badge.classList.add('show');
+  else badge.classList.remove('show');
+}
+
+function resetProgress() {
+  if (confirm('Reset solved progress?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    updateSolvedBadge();
+  }
+}
+
 function init() {
+  updateSolvedBadge();
   renderBank();
   renderGrid();
   renderSums();
@@ -436,6 +498,8 @@ function checkWin() {
   if (grid[0][2] + grid[1][1] + grid[2][0] !== 15) return;
 
   won = true;
+  saveSolved();
+  updateSolvedBadge();
   setTimeout(() => {
     document.getElementById('victoryOverlay').classList.add('show');
     startConfetti();

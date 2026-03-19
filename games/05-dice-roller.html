@@ -195,9 +195,69 @@ button:active { transform: scale(0.95); }
 }
 .bar-label.predicted { color: #f1c40f; text-decoration: underline; }
 
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(13, 27, 42, 0.8);
+  color: #3498db;
+}
+.back-link:hover { opacity: 1; }
+.btn-progress {
+  background: transparent;
+  color: #888;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+}
+.btn-progress:hover { color: #bbb; }
+.btn-explain {
+  background: #9b59b6;
+  color: #fff;
+  display: none;
+}
+.btn-explain.visible { display: inline-block; }
+.explain-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #1b2838, #2d4059);
+  border: 2px solid #f39c12;
+  border-radius: 20px;
+  padding: 28px 32px;
+  max-width: 420px;
+  width: 90vw;
+  z-index: 200;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+.explain-popup.show { display: block; }
+.explain-popup h3 { color: #f1c40f; margin-bottom: 10px; font-size: 1.3rem; }
+.explain-popup p { font-size: 1.05rem; line-height: 1.5; margin-bottom: 10px; color: #ddd; }
+.explain-popup button { background: #f39c12; color: #fff; font-size: 1rem; padding: 8px 20px; border-radius: 12px; border: none; cursor: pointer; }
+.explain-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 199;
+}
+.explain-overlay.show { display: block; }
+
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>Dice Roller</h1>
 
 <div class="prediction-bar" id="predictionBar">
@@ -218,7 +278,17 @@ button:active { transform: scale(0.95); }
   <button class="btn-multi" onclick="rollDice(10)">Roll 10x</button>
   <button class="btn-multi" onclick="rollDice(100)">Roll 100x</button>
   <button class="btn-multi" onclick="rollDice(1000)">Roll 1000x</button>
+  <button class="btn-explain" id="btnExplain" onclick="showExplain()">Explain</button>
   <button class="btn-reset" onclick="resetAll()">Reset</button>
+  <button class="btn-progress" onclick="resetProgress()">Reset Progress</button>
+</div>
+
+<div class="explain-overlay" id="explainOverlay" onclick="hideExplain()"></div>
+<div class="explain-popup" id="explainPopup">
+  <h3>Why is 7 the most common?</h3>
+  <p>There are <strong>6 ways</strong> to roll a 7 (1+6, 2+5, 3+4, 4+3, 5+2, 6+1), but only <strong>1 way</strong> to roll a 2 (1+1) or 12 (6+6).</p>
+  <p>The closer a sum is to 7, the more combinations can make it. That's why the chart forms a pyramid shape!</p>
+  <button onclick="hideExplain()">Got it!</button>
 </div>
 
 <div class="roll-count">Total rolls: <strong id="totalRolls">0</strong></div>
@@ -244,17 +314,66 @@ const DOT_MAP = {
   6: [0, 2, 3, 5, 6, 8]
 };
 
+const STORAGE_KEY = 'mathCircle_05_progress';
 let counts = {};
 let totalRolls = 0;
 let prediction = null;
 let isRolling = false;
 
+function loadProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null;
+  } catch(e) { return null; }
+}
+
+function saveProgressData() {
+  const data = { counts: {}, totalRolls, prediction };
+  for (let i = 2; i <= 12; i++) data.counts[i] = counts[i];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function resetProgress() {
+  if (confirm('Reset all saved roll data?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    resetAll();
+  }
+}
+
+function showExplain() {
+  document.getElementById('explainPopup').classList.add('show');
+  document.getElementById('explainOverlay').classList.add('show');
+}
+
+function hideExplain() {
+  document.getElementById('explainPopup').classList.remove('show');
+  document.getElementById('explainOverlay').classList.remove('show');
+}
+
+function updateExplainVisibility() {
+  const btn = document.getElementById('btnExplain');
+  if (totalRolls >= 50) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+}
+
 function init() {
   for (let i = 2; i <= 12; i++) counts[i] = 0;
+
+  // Restore saved progress
+  const saved = loadProgress();
+  if (saved) {
+    if (saved.counts) {
+      for (let i = 2; i <= 12; i++) counts[i] = saved.counts[i] || 0;
+    }
+    totalRolls = saved.totalRolls || 0;
+    prediction = saved.prediction || null;
+    document.getElementById('totalRolls').textContent = totalRolls;
+  }
+
   buildPredictionButtons();
   renderDie('die1', 1);
   renderDie('die2', 1);
   renderChart();
+  updateExplainVisibility();
 }
 
 function buildPredictionButtons() {
@@ -264,11 +383,13 @@ function buildPredictionButtons() {
     const b = document.createElement('button');
     b.className = 'pred-btn';
     b.textContent = i;
+    if (prediction === i) b.classList.add('chosen');
     b.onclick = () => {
       prediction = i;
       document.querySelectorAll('.pred-btn').forEach(x => x.classList.remove('chosen'));
       b.classList.add('chosen');
       renderChart();
+      saveProgressData();
     };
     cont.appendChild(b);
   }
@@ -352,6 +473,8 @@ async function rollDice(times) {
 
   document.getElementById('totalRolls').textContent = totalRolls;
   renderChart();
+  saveProgressData();
+  updateExplainVisibility();
   isRolling = false;
 }
 
@@ -398,6 +521,8 @@ function resetAll() {
   renderDie('die1', 1);
   renderDie('die2', 1);
   renderChart();
+  saveProgressData();
+  updateExplainVisibility();
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }

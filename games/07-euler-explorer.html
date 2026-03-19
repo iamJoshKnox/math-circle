@@ -237,9 +237,55 @@ h1 {
 .results-table th { background: #764ba2; color: white; }
 .results-table td { background: #faf8ff; }
 .confetti { position: fixed; pointer-events: none; z-index: 1000; }
+.back-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  text-decoration: none;
+  font-size: 11pt;
+  padding: 6px 14px;
+  border-radius: 20px;
+  z-index: 1000;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  background: rgba(118,75,162,0.55);
+  color: #e0d0ff;
+}
+.back-link:hover { opacity: 1; }
+.hint-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.hint-btn:hover { transform: scale(1.03); box-shadow: 0 4px 15px rgba(255,193,7,0.4); }
+.hint-btn:disabled { opacity: 0.4; cursor: default; transform: none; box-shadow: none; }
+.reset-progress-btn {
+  background: none;
+  border: 1px solid #ccc;
+  color: #999;
+  font-size: 0.8em;
+  padding: 4px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 8px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.reset-progress-btn:hover { color: #e53935; border-color: #e53935; }
 </style>
 </head>
 <body>
+<a href="index.html" class="back-link">&larr; All Games</a>
 <h1>&#x1F30D; Euler Explorer</h1>
 <p class="subtitle">Count faces, vertices, and edges of 3D shapes!</p>
 
@@ -287,6 +333,7 @@ h1 {
       </div>
 
       <button class="check-btn" onclick="checkAnswers()">Check My Answers!</button>
+      <button class="hint-btn" id="hintBtn" onclick="giveHint()">&#x1F4A1; Hint</button>
 
       <div class="formula-box" id="formulaBox">
         <div>Euler's Formula:</div>
@@ -302,6 +349,8 @@ h1 {
     </thead>
     <tbody id="resultsBody"></tbody>
   </table>
+
+  <button class="reset-progress-btn" onclick="resetProgress()">Reset Progress</button>
 
   <div class="discovery-box" id="discoveryBox">
     <div style="font-size:1.8em;">&#x1F389; Amazing Discovery! &#x1F389;</div>
@@ -485,18 +534,45 @@ const shapes = [
 let currentShapeIdx = 0;
 let completedShapes = new Set();
 let currentMode = 'faces';
+let hintsUsed = {}; // track hint usage per shape index
 let hoverFace = -1;
 let hoverVertex = -1;
 let hoverEdge = -1;
 const canvas = document.getElementById('shapeCanvas');
 const ctx = canvas.getContext('2d');
 
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('mathCircle_07_progress');
+    if (saved) {
+      const arr = JSON.parse(saved);
+      arr.forEach(i => completedShapes.add(i));
+    }
+  } catch(e) {}
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem('mathCircle_07_progress', JSON.stringify([...completedShapes]));
+  } catch(e) {}
+}
+
+function resetProgress() {
+  completedShapes.clear();
+  hintsUsed = {};
+  try { localStorage.removeItem('mathCircle_07_progress'); } catch(e) {}
+  document.getElementById('resultsTable').className = 'results-table';
+  document.getElementById('discoveryBox').className = 'discovery-box';
+  selectShape(currentShapeIdx);
+}
+
 function init() {
+  loadProgress();
   const sel = document.getElementById('shapeSelector');
   shapes.forEach((s, i) => {
     const btn = document.createElement('button');
-    btn.className = 'shape-btn' + (i === 0 ? ' active' : '');
-    btn.textContent = s.name;
+    btn.className = 'shape-btn' + (i === 0 ? ' active' : '') + (completedShapes.has(i) ? ' completed' : '');
+    btn.textContent = s.name + (completedShapes.has(i) ? ' \u2705' : '');
     btn.onclick = () => selectShape(i);
     btn.id = 'sbtn' + i;
     sel.appendChild(btn);
@@ -504,6 +580,16 @@ function init() {
   canvas.addEventListener('mousemove', onCanvasMove);
   canvas.addEventListener('click', onCanvasClick);
   canvas.addEventListener('mouseleave', () => { hoverFace = -1; hoverVertex = -1; hoverEdge = -1; drawShape(); });
+
+  // Restore table if enough completed
+  if (completedShapes.size >= 3) {
+    document.getElementById('resultsTable').className = 'results-table show';
+    updateTable();
+  }
+  if (completedShapes.size >= 4) {
+    document.getElementById('discoveryBox').className = 'discovery-box show';
+  }
+
   selectShape(0);
 }
 
@@ -511,6 +597,7 @@ function selectShape(idx) {
   currentShapeIdx = idx;
   document.querySelectorAll('.shape-btn').forEach((b,i) => {
     b.className = 'shape-btn' + (i === idx ? ' active' : '') + (completedShapes.has(i) ? ' completed' : '');
+    b.textContent = shapes[i].name + (completedShapes.has(i) ? ' \u2705' : '');
   });
   const s = shapes[idx];
   document.getElementById('shapeName').textContent = s.name;
@@ -522,6 +609,8 @@ function selectShape(idx) {
   document.getElementById('statusV').textContent = '';
   document.getElementById('statusE').textContent = '';
   document.getElementById('formulaBox').className = 'formula-box';
+  document.getElementById('hintBtn').disabled = !!hintsUsed[idx];
+  document.getElementById('hintBtn').textContent = hintsUsed[idx] ? 'Hint Used' : '\uD83D\uDCA1 Hint';
   hoverFace = -1; hoverVertex = -1; hoverEdge = -1;
   drawShape();
 }
@@ -690,7 +779,10 @@ function checkAnswers() {
 
   if (fOk && vOk && eOk) {
     completedShapes.add(currentShapeIdx);
-    document.getElementById('sbtn' + currentShapeIdx).className = 'shape-btn active completed';
+    saveProgress();
+    const sbtn = document.getElementById('sbtn' + currentShapeIdx);
+    sbtn.className = 'shape-btn active completed';
+    sbtn.textContent = shapes[currentShapeIdx].name + ' \u2705';
 
     const euler = s.V - s.E + s.F;
     const fb = document.getElementById('formulaBox');
@@ -742,6 +834,28 @@ function launchConfetti() {
     ], { duration: dur, easing: 'ease-out' });
     setTimeout(() => conf.remove(), dur);
   }
+}
+
+function giveHint() {
+  if (hintsUsed[currentShapeIdx]) return;
+  const s = shapes[currentShapeIdx];
+  const fields = [
+    { id: 'inputF', correct: s.F, label: 'Faces' },
+    { id: 'inputV', correct: s.V, label: 'Vertices' },
+    { id: 'inputE', correct: s.E, label: 'Edges' }
+  ];
+  // Find first empty or wrong field
+  let target = fields.find(f => {
+    const val = parseInt(document.getElementById(f.id).value);
+    return isNaN(val) || val !== f.correct;
+  });
+  if (!target) return; // all correct already
+  document.getElementById(target.id).value = target.correct;
+  document.getElementById(target.id).style.background = '#fff8e1';
+  setTimeout(() => { document.getElementById(target.id).style.background = ''; }, 1500);
+  hintsUsed[currentShapeIdx] = true;
+  document.getElementById('hintBtn').disabled = true;
+  document.getElementById('hintBtn').textContent = 'Hint Used';
 }
 
 init();
