@@ -230,6 +230,23 @@ h1 {
   box-shadow: 0 0 12px rgba(255,152,0,0.6);
   animation: cursorPulse 1.2s ease-in-out infinite alternate;
 }
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16pt;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+.sound-toggle:hover { opacity: 1; }
 @keyframes cursorPulse {
   from { box-shadow: 0 0 8px rgba(255,152,0,0.4); }
   to { box-shadow: 0 0 18px rgba(255,152,0,0.8); }
@@ -238,6 +255,7 @@ h1 {
 </head>
 <body>
 <a href="index.html" class="back-link">&larr; All Games</a>
+<button class="sound-toggle" onclick="soundMuted=!soundMuted; localStorage.setItem('mathCircle_soundMuted',soundMuted); this.textContent=soundMuted?'🔇':'🔊'" title="Toggle sound">🔊</button>
 <h1>&#x1F3E0; Floor Plan Designer</h1>
 <p class="subtitle">Look at the room and recreate it as a top-down floor plan!</p>
 
@@ -285,6 +303,70 @@ h1 {
 </div>
 
 <script>
+// Sound effects (Web Audio API - no external files)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let soundMuted = false;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.3) {
+  if (soundMuted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfx(name) {
+  if (soundMuted) return;
+  switch(name) {
+    case 'click':
+      playTone(800, 0.08, 'square', 0.15);
+      break;
+    case 'correct':
+      playTone(523, 0.12); setTimeout(() => playTone(659, 0.12), 100); setTimeout(() => playTone(784, 0.2), 200);
+      break;
+    case 'wrong':
+      playTone(200, 0.15, 'sawtooth', 0.2); setTimeout(() => playTone(180, 0.2, 'sawtooth', 0.2), 120);
+      break;
+    case 'hint':
+      playTone(440, 0.1, 'triangle', 0.2); setTimeout(() => playTone(660, 0.15, 'triangle', 0.2), 80);
+      break;
+    case 'levelup':
+      playTone(523, 0.1); setTimeout(() => playTone(659, 0.1), 80); setTimeout(() => playTone(784, 0.1), 160); setTimeout(() => playTone(1047, 0.25), 240);
+      break;
+    case 'select':
+      playTone(600, 0.06, 'square', 0.12);
+      break;
+    case 'navigate':
+      playTone(500, 0.04, 'sine', 0.1);
+      break;
+    case 'place':
+      playTone(500, 0.06, 'triangle', 0.15); setTimeout(() => playTone(700, 0.08, 'triangle', 0.15), 50);
+      break;
+    case 'remove':
+      playTone(500, 0.06, 'triangle', 0.12); setTimeout(() => playTone(350, 0.08, 'triangle', 0.12), 50);
+      break;
+    case 'type':
+      playTone(700, 0.04, 'square', 0.08);
+      break;
+  }
+}
+
+// Load mute preference
+soundMuted = localStorage.getItem('mathCircle_soundMuted') === 'true';
+
 const GRID = 8;
 const furnitureTypes = {
   bed: { name: 'Bed', icon: '\u{1F6CF}', color: '#5C6BC0', w: 2, h: 3 },
@@ -444,6 +526,10 @@ function init() {
     const highest = Math.max(...completedLevels);
     startIdx = Math.min(highest + 1, levels.length - 1);
   }
+  // Update mute button text
+  const muteBtn = document.querySelector('.sound-toggle');
+  if (muteBtn) muteBtn.textContent = soundMuted ? '🔇' : '🔊';
+
   selectLevel(startIdx);
 }
 
@@ -488,6 +574,7 @@ function buildPalette() {
     item.dataset.w = n.w;
     item.dataset.h = n.h;
     item.onclick = () => {
+      sfx('select');
       isRemoveMode = false;
       if (selectedType === n.type && !isRotated) {
         selectedType = null;
@@ -827,6 +914,7 @@ function onGridClick(e) {
       gx >= f.x && gx < f.x + f.w && gy >= f.y && gy < f.y + f.h
     );
     if (idx >= 0) {
+      sfx('remove');
       placedFurniture.splice(idx, 1);
     }
     drawGrid();
@@ -847,11 +935,13 @@ function onGridClick(e) {
   });
   if (overlaps) return;
 
+  sfx('place');
   placedFurniture.push({ type: selectedType, x: gx, y: gy, w: pw, h: ph });
   drawGrid();
 }
 
 function rotateSelected() {
+  sfx('click');
   isRotated = !isRotated;
   drawGrid();
 }
@@ -875,6 +965,7 @@ function checkAnswer() {
   const rb = document.getElementById('resultBox');
 
   if (placedFurniture.length !== target.length) {
+    sfx('wrong');
     rb.className = 'result-box show failure';
     rb.textContent = 'Not quite! You have ' + placedFurniture.length + ' pieces but need ' + target.length + '. Keep trying!';
     return;
@@ -899,6 +990,8 @@ function checkAnswer() {
   }
 
   if (allMatch) {
+    sfx('correct');
+    setTimeout(() => sfx('levelup'), 400);
     rb.className = 'result-box show success';
     rb.textContent = 'Perfect! You matched the floor plan! Great spatial thinking!';
     completedLevels.add(currentLevel);
@@ -908,6 +1001,7 @@ function checkAnswer() {
     lvlBtn.textContent = 'Level ' + (currentLevel + 1) + ' \u2705';
     launchConfetti();
   } else {
+    sfx('wrong');
     rb.className = 'result-box show failure';
     rb.textContent = 'Almost! Some furniture is in the wrong spot. Compare carefully with the 3D view!';
   }
@@ -935,6 +1029,7 @@ function launchConfetti() {
 
 function peekAnswer() {
   if (isPeeking) return;
+  sfx('hint');
   isPeeking = true;
   peekOpacity = 0.5;
   drawGrid();
@@ -971,6 +1066,7 @@ function placeAtCursor() {
       cursorX >= f.x && cursorX < f.x + f.w && cursorY >= f.y && cursorY < f.y + f.h
     );
     if (idx >= 0) {
+      sfx('remove');
       placedFurniture.splice(idx, 1);
     }
     drawGrid();
@@ -985,6 +1081,7 @@ function placeAtCursor() {
     cursorX < f.x + f.w && cursorX + pw > f.x && cursorY < f.y + f.h && cursorY + ph > f.y
   );
   if (overlaps) return;
+  sfx('place');
   placedFurniture.push({ type: selectedType, x: cursorX, y: cursorY, w: pw, h: ph });
   drawGrid();
 }
@@ -995,6 +1092,7 @@ function removeAtCursor() {
     cursorX >= f.x && cursorX < f.x + f.w && cursorY >= f.y && cursorY < f.y + f.h
   );
   if (idx >= 0) {
+    sfx('remove');
     placedFurniture.splice(idx, 1);
     drawGrid();
   }
@@ -1012,6 +1110,7 @@ document.addEventListener('keydown', function(e) {
   switch (e.key) {
     case 'ArrowLeft':
       e.preventDefault();
+      sfx('navigate');
       kbCursorActive = true;
       cursorX = Math.max(0, cursorX - 1);
       hoverGridX = cursorX; hoverGridY = cursorY;
@@ -1019,6 +1118,7 @@ document.addEventListener('keydown', function(e) {
       break;
     case 'ArrowRight':
       e.preventDefault();
+      sfx('navigate');
       kbCursorActive = true;
       cursorX = Math.min(GRID - 1, cursorX + 1);
       hoverGridX = cursorX; hoverGridY = cursorY;
@@ -1026,6 +1126,7 @@ document.addEventListener('keydown', function(e) {
       break;
     case 'ArrowUp':
       e.preventDefault();
+      sfx('navigate');
       kbCursorActive = true;
       cursorY = Math.max(0, cursorY - 1);
       hoverGridX = cursorX; hoverGridY = cursorY;
@@ -1033,6 +1134,7 @@ document.addEventListener('keydown', function(e) {
       break;
     case 'ArrowDown':
       e.preventDefault();
+      sfx('navigate');
       kbCursorActive = true;
       cursorY = Math.min(GRID - 1, cursorY + 1);
       hoverGridX = cursorX; hoverGridY = cursorY;

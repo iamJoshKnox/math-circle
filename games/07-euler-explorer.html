@@ -302,6 +302,23 @@ h1 {
   font-size: 0.95em;
   margin: 0 1px;
 }
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16pt;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+.sound-toggle:hover { opacity: 1; }
 .shape-btn:focus-visible {
   outline: 3px solid #ffc107;
   outline-offset: 2px;
@@ -315,6 +332,7 @@ h1 {
 </head>
 <body>
 <a href="index.html" class="back-link">&larr; All Games</a>
+<button class="sound-toggle" onclick="soundMuted=!soundMuted; localStorage.setItem('mathCircle_soundMuted',soundMuted); this.textContent=soundMuted?'🔇':'🔊'" title="Toggle sound">🔊</button>
 <h1>&#x1F30D; Euler Explorer</h1>
 <p class="subtitle">Count faces, vertices, and edges of 3D shapes!</p>
 
@@ -397,6 +415,70 @@ h1 {
 </div>
 
 <script>
+// Sound effects (Web Audio API - no external files)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let soundMuted = false;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.3) {
+  if (soundMuted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfx(name) {
+  if (soundMuted) return;
+  switch(name) {
+    case 'click':
+      playTone(800, 0.08, 'square', 0.15);
+      break;
+    case 'correct':
+      playTone(523, 0.12); setTimeout(() => playTone(659, 0.12), 100); setTimeout(() => playTone(784, 0.2), 200);
+      break;
+    case 'wrong':
+      playTone(200, 0.15, 'sawtooth', 0.2); setTimeout(() => playTone(180, 0.2, 'sawtooth', 0.2), 120);
+      break;
+    case 'hint':
+      playTone(440, 0.1, 'triangle', 0.2); setTimeout(() => playTone(660, 0.15, 'triangle', 0.2), 80);
+      break;
+    case 'levelup':
+      playTone(523, 0.1); setTimeout(() => playTone(659, 0.1), 80); setTimeout(() => playTone(784, 0.1), 160); setTimeout(() => playTone(1047, 0.25), 240);
+      break;
+    case 'select':
+      playTone(600, 0.06, 'square', 0.12);
+      break;
+    case 'navigate':
+      playTone(500, 0.04, 'sine', 0.1);
+      break;
+    case 'place':
+      playTone(500, 0.06, 'triangle', 0.15); setTimeout(() => playTone(700, 0.08, 'triangle', 0.15), 50);
+      break;
+    case 'remove':
+      playTone(500, 0.06, 'triangle', 0.12); setTimeout(() => playTone(350, 0.08, 'triangle', 0.12), 50);
+      break;
+    case 'type':
+      playTone(700, 0.04, 'square', 0.08);
+      break;
+  }
+}
+
+// Load mute preference
+soundMuted = localStorage.getItem('mathCircle_soundMuted') === 'true';
+
 const shapes = [
   {
     name: "Cube", desc: "A box shape with 6 square faces",
@@ -626,10 +708,15 @@ function init() {
     document.getElementById('discoveryBox').className = 'discovery-box show';
   }
 
+  // Update mute button text
+  const muteBtn = document.querySelector('.sound-toggle');
+  if (muteBtn) muteBtn.textContent = soundMuted ? '🔇' : '🔊';
+
   selectShape(0);
 }
 
 function selectShape(idx) {
+  sfx('click');
   currentShapeIdx = idx;
   document.querySelectorAll('.shape-btn').forEach((b,i) => {
     b.className = 'shape-btn' + (i === idx ? ' active' : '') + (completedShapes.has(i) ? ' completed' : '');
@@ -814,6 +901,7 @@ function checkAnswers() {
   document.getElementById('statusE').textContent = eOk ? '\u2705' : '\u274C';
 
   if (fOk && vOk && eOk) {
+    sfx('levelup');
     completedShapes.add(currentShapeIdx);
     saveProgress();
     const sbtn = document.getElementById('sbtn' + currentShapeIdx);
@@ -837,6 +925,8 @@ function checkAnswers() {
         launchConfetti();
       }, 800);
     }
+  } else {
+    sfx('wrong');
   }
 }
 
@@ -874,6 +964,7 @@ function launchConfetti() {
 
 function giveHint() {
   if (hintsUsed[currentShapeIdx]) return;
+  sfx('hint');
   const s = shapes[currentShapeIdx];
   const fields = [
     { id: 'inputF', correct: s.F, label: 'Faces' },
@@ -910,10 +1001,12 @@ document.addEventListener('keydown', function(e) {
 
   if (e.key === 'ArrowLeft') {
     e.preventDefault();
+    sfx('navigate');
     const newIdx = (currentShapeIdx - 1 + shapes.length) % shapes.length;
     selectShape(newIdx);
   } else if (e.key === 'ArrowRight') {
     e.preventDefault();
+    sfx('navigate');
     const newIdx = (currentShapeIdx + 1) % shapes.length;
     selectShape(newIdx);
   } else if (e.key === 'Enter' && !isInput) {

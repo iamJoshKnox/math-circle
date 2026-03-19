@@ -294,6 +294,23 @@ h1 {
   margin: 0 1px;
   color: #00ff88;
 }
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16pt;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+.sound-toggle:hover { opacity: 1; }
 .sub-to:focus-visible {
   border-color: #00ff88 !important;
   box-shadow: 0 0 12px rgba(0,255,136,0.5) !important;
@@ -307,6 +324,7 @@ h1 {
 </head>
 <body>
 <a href="index.html" class="back-link">&larr; All Games</a>
+<button class="sound-toggle" onclick="soundMuted=!soundMuted; localStorage.setItem('mathCircle_soundMuted',soundMuted); this.textContent=soundMuted?'🔇':'🔊'" title="Toggle sound">🔊</button>
 <h1>&#x1F50D; Code Breaker</h1>
 <p class="subtitle">Crack the secret codes and decode hidden messages!</p>
 
@@ -350,6 +368,70 @@ h1 {
 </div>
 
 <script>
+// Sound effects (Web Audio API - no external files)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let soundMuted = false;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.3) {
+  if (soundMuted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfx(name) {
+  if (soundMuted) return;
+  switch(name) {
+    case 'click':
+      playTone(800, 0.08, 'square', 0.15);
+      break;
+    case 'correct':
+      playTone(523, 0.12); setTimeout(() => playTone(659, 0.12), 100); setTimeout(() => playTone(784, 0.2), 200);
+      break;
+    case 'wrong':
+      playTone(200, 0.15, 'sawtooth', 0.2); setTimeout(() => playTone(180, 0.2, 'sawtooth', 0.2), 120);
+      break;
+    case 'hint':
+      playTone(440, 0.1, 'triangle', 0.2); setTimeout(() => playTone(660, 0.15, 'triangle', 0.2), 80);
+      break;
+    case 'levelup':
+      playTone(523, 0.1); setTimeout(() => playTone(659, 0.1), 80); setTimeout(() => playTone(784, 0.1), 160); setTimeout(() => playTone(1047, 0.25), 240);
+      break;
+    case 'select':
+      playTone(600, 0.06, 'square', 0.12);
+      break;
+    case 'navigate':
+      playTone(500, 0.04, 'sine', 0.1);
+      break;
+    case 'place':
+      playTone(500, 0.06, 'triangle', 0.15); setTimeout(() => playTone(700, 0.08, 'triangle', 0.15), 50);
+      break;
+    case 'remove':
+      playTone(500, 0.06, 'triangle', 0.12); setTimeout(() => playTone(350, 0.08, 'triangle', 0.12), 50);
+      break;
+    case 'type':
+      playTone(700, 0.04, 'square', 0.08);
+      break;
+  }
+}
+
+// Load mute preference
+soundMuted = localStorage.getItem('mathCircle_soundMuted') === 'true';
+
 const puzzles = [
   {
     name: "Puzzle 1",
@@ -493,10 +575,15 @@ function init() {
     if (!completedPuzzles.has(i)) { startIdx = i; break; }
     if (i === puzzles.length - 1) startIdx = 0;
   }
+  // Update mute button text
+  const muteBtn = document.querySelector('.sound-toggle');
+  if (muteBtn) muteBtn.textContent = soundMuted ? '🔇' : '🔊';
+
   selectPuzzle(startIdx);
 }
 
 function selectPuzzle(idx) {
+  sfx('select');
   currentPuzzle = idx;
   substitutions = {};
   hintsGiven = 0;
@@ -542,6 +629,7 @@ function buildSubGrid() {
       const val = e.target.value.toUpperCase();
       e.target.value = val;
       if (val) {
+        sfx('type');
         substitutions[letter] = val;
       } else {
         delete substitutions[letter];
@@ -660,6 +748,7 @@ function checkComplete() {
   });
 
   if (allCorrect) {
+    sfx('correct');
     completedPuzzles.add(currentPuzzle);
     saveProgress();
     const lbtn = document.getElementById('lbtn' + currentPuzzle);
@@ -679,6 +768,7 @@ function giveHint() {
   // Find an unsolved letter
   const unsolved = usedLetters.filter(l => !substitutions[l] || substitutions[l] !== getCorrectMapping(l));
   if (unsolved.length === 0) return;
+  sfx('hint');
 
   // Reveal one
   const reveal = unsolved[0];
@@ -742,12 +832,14 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft') {
     if (isSubInput || inputs.length > 0) {
       e.preventDefault();
+      sfx('navigate');
       const nextIdx = isSubInput ? Math.max(0, currentIdx - 1) : 0;
       inputs[nextIdx].focus();
     }
   } else if (e.key === 'ArrowRight') {
     if (isSubInput || inputs.length > 0) {
       e.preventDefault();
+      sfx('navigate');
       const nextIdx = isSubInput ? Math.min(inputs.length - 1, currentIdx + 1) : 0;
       inputs[nextIdx].focus();
     }

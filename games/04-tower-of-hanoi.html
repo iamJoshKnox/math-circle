@@ -217,6 +217,23 @@ button:active { transform: scale(0.95); }
   color: #3498db;
 }
 .back-link:hover { opacity: 1; }
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16pt;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+.sound-toggle:hover { opacity: 1; }
 .btn-hint {
   background: #9b59b6;
   color: #fff;
@@ -248,6 +265,7 @@ button:active { transform: scale(0.95); }
 </head>
 <body>
 <a href="index.html" class="back-link">&larr; All Games</a>
+<button class="sound-toggle" onclick="soundMuted=!soundMuted; localStorage.setItem('mathCircle_soundMuted',soundMuted); this.textContent=soundMuted?'🔇':'🔊'" title="Toggle sound">🔊</button>
 <h1>Tower of Hanoi</h1>
 <div class="info-bar">
   <span>Moves: <strong id="moveCount">0</strong></span>
@@ -299,6 +317,74 @@ button:active { transform: scale(0.95); }
 </div>
 
 <script>
+// Sound effects (Web Audio API - no external files)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let soundMuted = false;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.3) {
+  if (soundMuted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfx(name) {
+  if (soundMuted) return;
+  switch(name) {
+    case 'click':
+      playTone(800, 0.08, 'square', 0.15);
+      break;
+    case 'correct':
+      playTone(523, 0.12); setTimeout(() => playTone(659, 0.12), 100); setTimeout(() => playTone(784, 0.2), 200);
+      break;
+    case 'wrong':
+      playTone(200, 0.15, 'sawtooth', 0.2); setTimeout(() => playTone(180, 0.2, 'sawtooth', 0.2), 120);
+      break;
+    case 'hint':
+      playTone(440, 0.1, 'triangle', 0.2); setTimeout(() => playTone(660, 0.15, 'triangle', 0.2), 80);
+      break;
+    case 'levelup':
+      playTone(523, 0.1); setTimeout(() => playTone(659, 0.1), 80); setTimeout(() => playTone(784, 0.1), 160); setTimeout(() => playTone(1047, 0.25), 240);
+      break;
+    case 'select':
+      playTone(600, 0.06, 'square', 0.12);
+      break;
+    case 'navigate':
+      playTone(500, 0.04, 'sine', 0.1);
+      break;
+    case 'pickup':
+      playTone(400, 0.08, 'triangle', 0.15); setTimeout(() => playTone(600, 0.08, 'triangle', 0.15), 60);
+      break;
+    case 'drop':
+      playTone(600, 0.08, 'triangle', 0.15); setTimeout(() => playTone(400, 0.1, 'triangle', 0.15), 60);
+      break;
+    case 'dice':
+      for (let i = 0; i < 4; i++) setTimeout(() => playTone(300 + Math.random()*400, 0.05, 'square', 0.1), i * 50);
+      break;
+  }
+}
+
+// Load mute preference
+soundMuted = localStorage.getItem('mathCircle_soundMuted') === 'true';
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.querySelector('.sound-toggle');
+  if (btn) btn.textContent = soundMuted ? '🔇' : '🔊';
+});
+
 const COLORS = [
   '#e74c3c', '#f39c12', '#2ecc71', '#3498db', '#9b59b6',
   '#1abc9c', '#e67e22', '#ec407a'
@@ -358,6 +444,7 @@ function resetProgress() {
 
 function setDisks(n) {
   numDisks = n;
+  sfx('click');
   document.querySelectorAll('.btn-disk').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
   resetGame();
@@ -424,6 +511,7 @@ function pegClick(p) {
       return;
     }
     selectedPeg = p;
+    sfx('pickup');
     msg.textContent = 'Now tap another peg to move the disk!';
     renderPegs();
     return;
@@ -440,6 +528,7 @@ function pegClick(p) {
   const targetTop = pegs[p].length > 0 ? pegs[p][pegs[p].length - 1] : Infinity;
 
   if (movingDisk > targetTop) {
+    sfx('wrong');
     const zone = document.getElementById('peg' + p);
     zone.classList.add('invalid-flash');
     setTimeout(() => zone.classList.remove('invalid-flash'), 400);
@@ -450,6 +539,7 @@ function pegClick(p) {
   }
 
   pegs[p].push(pegs[selectedPeg].pop());
+  sfx('drop');
   moves++;
   document.getElementById('moveCount').textContent = moves;
   selectedPeg = -1;
@@ -464,6 +554,7 @@ function pegClick(p) {
     document.getElementById('victoryMsg').textContent = `You solved it in ${moves} moves!`;
     document.getElementById('victoryOptimal').textContent =
       moves === min ? 'That\'s the minimum -- perfect!' : `The minimum is ${min} moves. Can you do better?`;
+    sfx('levelup');
     setTimeout(() => {
       document.getElementById('victoryOverlay').classList.add('show');
       startConfetti();
@@ -521,6 +612,7 @@ function showHint() {
     return;
   }
 
+  sfx('hint');
   hintsRemaining--;
   document.getElementById('hintsLeft').textContent = hintsRemaining;
   if (hintsRemaining <= 0) document.getElementById('btnHint').disabled = true;
@@ -614,6 +706,7 @@ document.addEventListener('keydown', function(e) {
   if (key === '1' || key === '2' || key === '3') {
     e.preventDefault();
     const pegIdx = parseInt(key) - 1;
+    sfx('navigate');
     setKbFocus(pegIdx);
     pegClick(pegIdx);
     return;
@@ -642,6 +735,7 @@ document.addEventListener('keydown', function(e) {
       newIdx = Math.min(diskOptions.length - 1, currentIdx + 1);
     }
     if (newIdx !== currentIdx) {
+      sfx('click');
       numDisks = diskOptions[newIdx];
       document.querySelectorAll('.btn-disk').forEach((b, i) => {
         b.classList.toggle('active', i === newIdx);

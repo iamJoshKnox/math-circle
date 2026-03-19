@@ -65,9 +65,8 @@ Each game has a keyboard legend (auto-hidden on touch devices) and visible focus
 - [x] 09-floor-plan — Arrows move grid cursor, 1-9 select furniture, R rotate, Enter place, Delete remove, P peek, C clear
 
 ### 1.5 Sound Effects
-Add optional audio feedback (success chimes, clicks, dice rolls).
-Respect system mute. Include a mute toggle.
-- [ ] All games
+Web Audio API synthesized tones (no external files). Mute toggle (top-right) with localStorage persistence.
+- [x] All 9 games — click, correct, wrong, levelup, hint, navigate, plus game-specific sounds (dice rattle, disk pickup/drop, furniture place/remove, letter type)
 
 ### 1.6 Onboarding / Tutorial
 Show a brief "How to Play" overlay on first visit (dismissible, stored in localStorage).

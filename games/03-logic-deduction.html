@@ -199,6 +199,23 @@ h1 {
   color: #fff;
 }
 .back-link:hover { opacity: 1; }
+.sound-toggle {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16pt;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+.sound-toggle:hover { opacity: 1; }
 .btn-hint {
   padding: 10px 25px;
   font-size: 1.1rem;
@@ -264,6 +281,7 @@ h1 {
 </head>
 <body>
 <a href="index.html" class="back-link">&larr; All Games</a>
+<button class="sound-toggle" onclick="soundMuted=!soundMuted; this.textContent=soundMuted?'🔇':'🔊'; try{localStorage.setItem('mathCircle_soundMuted',soundMuted)}catch(e){}" title="Toggle sound">🔊</button>
 <h1>Logic Creatures!</h1>
 <p class="subtitle">Read the clues and figure out who is who!</p>
 <div class="top-bar">
@@ -297,6 +315,59 @@ h1 {
 </div>
 
 <script>
+// Sound effects (Web Audio API - no external files)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let soundMuted = false;
+try { soundMuted = localStorage.getItem('mathCircle_soundMuted') === 'true'; if (soundMuted) document.querySelector('.sound-toggle').textContent = '🔇'; } catch(e) {}
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.3) {
+  if (soundMuted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfx(name) {
+  if (soundMuted) return;
+  switch(name) {
+    case 'click':
+      playTone(800, 0.08, 'square', 0.15);
+      break;
+    case 'correct':
+      playTone(523, 0.12); setTimeout(() => playTone(659, 0.12), 100); setTimeout(() => playTone(784, 0.2), 200);
+      break;
+    case 'wrong':
+      playTone(200, 0.15, 'sawtooth', 0.2); setTimeout(() => playTone(180, 0.2, 'sawtooth', 0.2), 120);
+      break;
+    case 'hint':
+      playTone(440, 0.1, 'triangle', 0.2); setTimeout(() => playTone(660, 0.15, 'triangle', 0.2), 80);
+      break;
+    case 'levelup':
+      playTone(523, 0.1); setTimeout(() => playTone(659, 0.1), 80); setTimeout(() => playTone(784, 0.1), 160); setTimeout(() => playTone(1047, 0.25), 240);
+      break;
+    case 'select':
+      playTone(600, 0.06, 'square', 0.12);
+      break;
+    case 'navigate':
+      playTone(500, 0.04, 'sine', 0.1);
+      break;
+  }
+}
+
 const puzzles = [
   {
     title: "The Tallest Creature",
@@ -453,6 +524,7 @@ function useHint() {
   if (hintsUsed >= 2 || answered) return;
   const p = puzzles[currentPuzzle];
   if (!p.hints || hintsUsed >= p.hints.length) return;
+  sfx('hint');
 
   const hintText = p.hints[hintsUsed];
   hintsUsed++;
@@ -530,6 +602,7 @@ function renderPuzzle() {
 
 function selectChoice(role, creature, btn) {
   if (answered) return;
+  sfx('click');
   // Deselect previous for this role
   const row = btn.parentElement;
   row.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
@@ -570,6 +643,7 @@ function checkAnswer() {
   answered = true;
   document.getElementById('hintBtn').style.display = 'none';
   if (allCorrect) {
+    sfx('correct');
     score++;
     document.getElementById('score').textContent = score;
     if (!completedPuzzles.includes(currentPuzzle)) completedPuzzles.push(currentPuzzle);
@@ -577,6 +651,7 @@ function checkAnswer() {
     const msgs = ["You figured it out! 🧠","Logic master! ⭐","Brilliant deduction! 🌟","Amazing thinking! 🎉"];
     document.getElementById('feedback').textContent = msgs[Math.floor(Math.random()*msgs.length)];
   } else {
+    sfx('wrong');
     document.getElementById('feedback').textContent = "Not quite! The green ones show the right answers. Keep thinking! 💪";
   }
   document.getElementById('checkBtn').style.display = 'none';
@@ -584,6 +659,7 @@ function checkAnswer() {
 }
 
 function nextPuzzle() {
+  sfx('levelup');
   currentPuzzle++;
   if (currentPuzzle >= puzzles.length) {
     showEnd();
@@ -658,6 +734,7 @@ document.addEventListener('keydown', function(e) {
         else { kbRoleIndex = (kbRoleIndex + 1) % rows.length; kbCreatureIndex = Math.max(kbCreatureIndex, 0); }
       }
       updateKbFocus03();
+      sfx('navigate');
       break;
     case 'ArrowUp':
     case 'ArrowLeft':
@@ -670,6 +747,7 @@ document.addEventListener('keydown', function(e) {
         else { kbRoleIndex = (kbRoleIndex - 1 + rows.length) % rows.length; kbCreatureIndex = Math.max(kbCreatureIndex, 0); }
       }
       updateKbFocus03();
+      sfx('navigate');
       break;
     case 'Enter':
     case ' ':
